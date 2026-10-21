@@ -1,0 +1,2372 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2a1a10">
+<meta name="description" content="Paris Cast - a rádio da escola">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Paris Cast</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500..800;1,6..96,500..800&family=DM+Mono:wght@400;500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: barra lateral escura fixa (cargo e navegação) + área de trabalho clara ou escura em tons de marrom.
+   Para colocar a logo ao fundo da rádio: defina --logo-url: url("...") no :root. */
+:root {
+  --ground: #1A110C;
+  --panel: #251913;
+  --panel-2: #2F2018;
+  --raise: #3A2920;
+  --line: #4A3528;
+  --ink: #F2E6D6;
+  --ink-2: #C3AE98;
+  --ink-3: #9C8672;
+  --accent: #D99A4E;
+  --accent-ink: #1A110C;
+  --accent-soft: #3B2A1B;
+  --side: #130B07;
+  --side-ink: #EBDCC8;
+  --side-ink-2: #A58F7A;
+  --side-line: #2E1F16;
+  --side-on: #2A1A11;
+  --side-accent: #D99A4E;
+  --live: #E8683E;
+  --ok: #9CC287;
+  --warn: #E3B341;
+  --bad: #EA7C6B;
+  --logo-url: none;
+  --shade: rgba(0, 0, 0, .4);
+  --hi: rgba(255, 226, 180, .07);
+  --f-display: 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
+  --f-body: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-mono: 'DM Mono', ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --ground: #E4D5C1; --panel: #F2E8DA; --panel-2: #E9DBC8; --raise: #DCC9B1; --line: #C6AF93;
+    --ink: #2A190F; --ink-2: #5B4333; --ink-3: #75594A;
+    --accent: #8A4A1C; --accent-ink: #FFF3E3; --accent-soft: #E3CDB0;
+    --side: #2B1810; --side-ink: #F0E1CC; --side-ink-2: #B49C85; --side-line: #432A1D; --side-on: #3C2417;
+    --live: #B8401C; --ok: #3F6F2B; --warn: #7F5A00; --bad: #A8392A; --shade: rgba(60, 30, 10, .22); --hi: rgba(255, 255, 255, .55);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --ground: #E4D5C1; --panel: #F2E8DA; --panel-2: #E9DBC8; --raise: #DCC9B1; --line: #C6AF93;
+  --ink: #2A190F; --ink-2: #5B4333; --ink-3: #75594A;
+  --accent: #8A4A1C; --accent-ink: #FFF3E3; --accent-soft: #E3CDB0;
+  --side: #2B1810; --side-ink: #F0E1CC; --side-ink-2: #B49C85; --side-line: #432A1D; --side-on: #3C2417;
+  --live: #B8401C; --ok: #3F6F2B; --warn: #7F5A00; --bad: #A8392A; --shade: rgba(60, 30, 10, .22); --hi: rgba(255, 255, 255, .55);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--ground); color: var(--ink); font: 15px/1.5 var(--f-body); -webkit-font-smoothing: antialiased; }
+body.lock { overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+h1, h2, h3, p { margin: 0; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.muted { color: var(--ink-2); }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+svg.i { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.fundo-logo { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: var(--logo-url) center / min(72vmin, 680px) no-repeat; opacity: .07; }
+.app { position: relative; z-index: 1; display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100%; }
+
+/* Barra lateral */
+.side { position: sticky; top: 0; align-self: start; height: 100dvh; display: flex; flex-direction: column; gap: 24px; background: var(--side); color: var(--side-ink); border-right: 1px solid var(--side-line); padding-block: 24px; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: 16px; overflow-y: auto; }
+.mark { font-family: var(--f-display); font-weight: 700; font-size: 28px; line-height: 1; }
+.mark em { font-style: italic; font-weight: 500; color: var(--side-accent); }
+.brand small { display: block; margin-top: 9px; font: 500 10.5px var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--side-ink-2); }
+.nav { display: grid; gap: 4px; }
+.nav button { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 0 12px; border: 0; border-radius: 8px; background: none; color: var(--side-ink-2); font-weight: 600; text-align: left; }
+.nav button:hover { background: var(--side-line); color: var(--side-ink); }
+.nav button[aria-current="page"] { background: var(--side-on); color: var(--side-ink); box-shadow: inset 3px 0 0 var(--side-accent); }
+.who { margin-top: auto; display: grid; gap: 12px; padding-top: 16px; border-top: 1px solid var(--side-line); }
+.who .cargo { font: 500 11px var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--side-ink-2); }
+.who .cargo b { display: block; margin-top: 3px; font: 600 16px var(--f-body); letter-spacing: 0; text-transform: none; color: var(--side-ink); }
+.who label { font: 500 11px var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--side-ink-2); display: grid; gap: 6px; }
+.who select, .mhead select { min-height: 38px; padding: 0 10px; border-radius: 8px; border: 1px solid #5a3f2e; background: var(--side-line); color: var(--side-ink); color-scheme: dark; }
+.clk { font: 500 12px var(--f-mono); color: var(--side-ink-2); }
+.mhead { display: none; }
+
+/* Área principal */
+.main { min-width: 0; padding-block: 28px 64px; padding-left: max(16px, 3vw, env(safe-area-inset-left, 0px)); padding-right: max(16px, 3vw, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1160px; margin: 0 auto; display: grid; gap: 22px; }
+.ph { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
+.ph h1 { font: 600 clamp(30px, 4.2vw, 42px) / 1.05 var(--f-display); text-wrap: balance; }
+.ph p { margin-top: 8px; max-width: 64ch; color: var(--ink-2); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.eyebrow { font: 500 11px var(--f-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
+
+/* Controles */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); font-weight: 600; text-decoration: none; }
+.btn:hover { border-color: var(--ink-3); }
+.btn.pri { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.pri:hover { filter: brightness(1.08); }
+.btn.sm { min-height: 36px; padding: 0 13px; font-size: 13.5px; }
+.btn.ghost { background: none; }
+.btn.danger { color: var(--bad); border-color: var(--bad); background: none; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+.btn svg.i { width: 18px; height: 18px; }
+.ib { width: 36px; height: 36px; display: grid; place-items: center; border: 0; border-radius: 6px; background: none; color: var(--ink-3); }
+.ib:hover { background: var(--raise); color: var(--ink); }
+.ib svg.i { width: 18px; height: 18px; }
+.fld { display: grid; gap: 6px; min-width: 0; }
+.fld > label { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+input[type="text"], input[type="search"], input[type="date"], select, textarea { width: 100%; min-height: 42px; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--ground); color: var(--ink); }
+textarea { min-height: 76px; resize: vertical; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 99px; border: 1px solid var(--line); font-size: 12px; font-weight: 600; color: var(--ink-2); white-space: nowrap; }
+.chip.ok { color: var(--ok); border-color: var(--ok); }
+.chip.warn { color: var(--warn); border-color: var(--warn); }
+.chip.bad { color: var(--bad); border-color: var(--bad); }
+.chip.acc { color: var(--accent); border-color: var(--accent); }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.empty { display: grid; justify-items: center; gap: 10px; padding: 40px 20px; text-align: center; color: var(--ink-2); }
+.empty h3 { font: 600 21px var(--f-display); color: var(--ink); }
+.empty p { max-width: 46ch; }
+.msg { min-height: 1.4em; font-size: 13.5px; color: var(--bad); }
+.msg.okm { color: var(--ok); }
+
+/* Faixa de reprodução */
+.strip { display: flex; align-items: center; gap: 14px; padding: 10px 14px; margin-bottom: 22px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.strip .tx { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.strip .tx small { color: var(--ink-3); }
+.lamp { width: 10px; height: 10px; border-radius: 50%; background: var(--ink-3); flex: none; }
+.lamp.on { background: var(--live); box-shadow: 0 0 0 4px color-mix(in srgb, var(--live) 25%, transparent); animation: pulso 2.2s ease-in-out infinite; }
+@keyframes pulso { 50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--live) 8%, transparent); } }
+
+/* Ao vivo */
+.live { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.hero { padding: clamp(20px, 3vw, 34px); display: grid; gap: 18px; background: linear-gradient(165deg, var(--panel-2), var(--panel)); }
+.onair { display: inline-flex; align-items: center; gap: 10px; font: 500 12px var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-2); }
+.hero h2 { font: 600 clamp(30px, 5vw, 54px) / 1.03 var(--f-display); text-wrap: balance; overflow-wrap: anywhere; }
+.hero .art { font-size: 18px; color: var(--ink-2); }
+.prog { height: 4px; border-radius: 2px; background: var(--raise); overflow: hidden; }
+.prog i { display: block; height: 100%; width: 0; background: var(--accent); }
+.times { display: flex; justify-content: space-between; font: 500 12.5px var(--f-mono); color: var(--ink-3); margin-top: 8px; }
+.ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+.ctl .vol { flex: 1; min-width: 160px; max-width: 260px; }
+.next { padding: 8px 18px 14px; }
+.next h3 { padding: 12px 0 4px; font: 600 20px var(--f-display); }
+.next ol { list-style: none; margin: 0; padding: 0; }
+.next li { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.next li:last-child { border-bottom: 0; }
+.next .t { font: 500 13px var(--f-mono); color: var(--ink-3); }
+.next b, .row b, .song b { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.next small, .row small, .song small { display: block; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Programação */
+.dayhead { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; justify-content: space-between; }
+.wk { display: flex; flex-wrap: wrap; gap: 6px; }
+.wk button { position: relative; min-width: 58px; padding: 8px 10px 9px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); display: grid; justify-items: center; gap: 1px; }
+.wk button b { font: 600 19px/1.1 var(--f-display); }
+.wk button span { font: 500 10.5px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.wk button:hover { border-color: var(--ink-3); }
+.wk button.hoje { box-shadow: inset 0 -3px 0 var(--live); }
+.wk button.tem::after { content: ""; position: absolute; top: 6px; right: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.wk button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.wk button[aria-pressed="true"] span { color: inherit; }
+.wk button[aria-pressed="true"].tem::after { background: var(--accent-ink); }
+.tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.tools input[type="date"] { width: auto; min-height: 38px; }
+.sumline { color: var(--ink-2); }
+.regua { position: relative; padding-top: 22px; }
+.regua .track { position: relative; height: 34px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); overflow: hidden; }
+.regua .seg { position: absolute; top: 0; bottom: 0; border-right: 2px solid var(--panel); }
+.regua .tk { position: absolute; top: 0; transform: translateX(-50%); font: 500 10.5px var(--f-mono); color: var(--ink-3); }
+.regua .sep { position: absolute; top: 18px; bottom: 0; border-left: 1px dashed var(--ink-3); }
+.regua .nd { position: absolute; top: 16px; bottom: -5px; width: 2px; margin-left: -1px; background: var(--live); }
+.regua .nd::before { content: ""; position: absolute; top: -4px; left: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--live); }
+.sectors { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 16px; align-items: start; }
+.sector header { padding: 16px 16px 14px; border-bottom: 1px solid var(--line); }
+.sector .sh { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.sector h3 { font: 600 24px var(--f-display); }
+.hrs { font: 500 12px var(--f-mono); letter-spacing: .08em; color: var(--ink-3); }
+.meter { height: 6px; margin: 12px 0 7px; border-radius: 3px; background: var(--raise); overflow: hidden; }
+.meter b { display: block; height: 100%; background: var(--accent); }
+.mt { font-size: 13px; color: var(--ink-2); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.rows { list-style: none; margin: 0; padding: 0; }
+.row { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto auto; align-items: center; gap: 8px 10px; padding: 10px 6px 10px 16px; border-bottom: 1px solid var(--line); }
+.row .t { font: 500 12.5px var(--f-mono); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.row .d { font: 500 12.5px var(--f-mono); color: var(--ink-2); }
+.row .cc { display: flex; }
+.row.now { background: var(--accent-soft); }
+.row.flash { animation: brilho 2.4s ease-out; }
+@keyframes brilho { from { background: color-mix(in srgb, var(--accent) 45%, transparent); } to { background: transparent; } }
+.row .aviso { grid-column: 2 / -1; font-size: 12px; color: var(--warn); }
+.sector footer { padding: 12px 16px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.hint { font-size: 13px; color: var(--ink-3); }
+
+/* Programateca */
+.folders { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+.folder { display: grid; gap: 10px; text-align: left; padding: 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); }
+.folder:hover { border-color: var(--ink-3); background: var(--panel-2); }
+.folder svg.i { width: 30px; height: 30px; stroke-width: 1.6; }
+.folder b { font: 600 18px var(--f-display); display: block; }
+.folder small { color: var(--ink-3); }
+.libgrid { display: grid; gap: 18px; align-items: start; }
+.libgrid.det { grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); }
+.list { overflow: hidden; }
+.song { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px 14px; align-items: center; width: 100%; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--line); background: none; text-align: left; }
+.song:last-child { border-bottom: 0; }
+.song:hover { background: var(--panel-2); }
+.song[aria-pressed="true"] { background: var(--accent-soft); }
+.song .d { font: 500 12.5px var(--f-mono); color: var(--ink-2); }
+.detail { padding: 20px; display: grid; gap: 16px; position: sticky; top: 16px; }
+.detail h2 { font: 600 28px / 1.1 var(--f-display); overflow-wrap: anywhere; }
+.detail dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; }
+.detail dt { color: var(--ink-3); font-size: 13px; }
+.detail dd { margin: 0; overflow-wrap: anywhere; }
+.detail hr { border: 0; border-top: 1px solid var(--line); margin: 0; width: 100%; }
+.detail h3 { font: 600 17px var(--f-display); }
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+
+/* Pedidos */
+.compose { padding: 18px; display: grid; gap: 14px; }
+.reqs { padding: 4px 18px; }
+.req { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.req:last-child { border-bottom: 0; }
+.av { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--raise); display: grid; place-items: center; font-weight: 700; color: var(--ink-2); overflow: hidden; }
+.req .hd { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.req .hd small { color: var(--ink-3); }
+.req .pede { margin-top: 4px; }
+.req .acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
+
+/* Ouvintes */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); overflow: hidden; }
+.stats > div { padding: 16px 20px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 -1px -1px 0; }
+.stats .n { font: 600 34px / 1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+.stats .l { margin-top: 4px; font-size: 13px; color: var(--ink-2); }
+.sec2 { padding: 20px; display: grid; gap: 14px; }
+.sec2 h2 { font: 600 22px var(--f-display); }
+.bars { display: grid; gap: 11px; }
+.bar { display: grid; grid-template-columns: minmax(80px, 130px) minmax(0, 1fr) 78px; gap: 12px; align-items: center; }
+.bar .n { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar .tr { height: 14px; border-radius: 0 4px 4px 0; background: var(--panel-2); }
+.bar .tr i { display: block; height: 100%; min-width: 4px; border-radius: 0 4px 4px 0; background: var(--accent); }
+.bar .v { text-align: right; font: 500 12.5px var(--f-mono); color: var(--ink-2); }
+.tw { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 560px; }
+th { text-align: left; font: 500 11px var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); padding: 10px 12px; border-bottom: 1px solid var(--line); }
+td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td .pp { display: flex; align-items: center; gap: 10px; min-width: 0; }
+td select { min-height: 36px; width: auto; }
+
+
+/* Janela */
+.modal { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; }
+.modal[hidden] { display: none; }
+.scrim { position: absolute; inset: 0; background: rgba(10, 5, 2, .68); }
+.sheet { position: relative; width: min(580px, 100%); max-height: min(90dvh, 780px); overflow: auto; display: grid; gap: 16px; padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); box-shadow: 0 24px 60px rgba(0, 0, 0, .45); }
+.sheet h2 { font: 600 26px var(--f-display); }
+.acts { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+.pk { max-height: 46dvh; overflow: auto; border: 1px solid var(--line); border-radius: 8px; }
+.pk .song { grid-template-columns: minmax(0, 1fr) auto auto; cursor: default; }
+.pk .song[data-off="1"] { opacity: .5; }
+#toast { position: fixed; left: 50%; bottom: 24px; z-index: 60; translate: -50% 12px; max-width: min(92vw, 460px); padding: 11px 18px; border-radius: 8px; background: var(--ink); color: var(--ground); font-size: 14px; text-align: center; opacity: 0; pointer-events: none; transition: opacity .2s, translate .2s; }
+#toast.show { opacity: 1; translate: -50% 0; }
+
+.fmod { display: grid; gap: 16px; }
+/* Estúdio (programação em estilo mesa de corte) */
+.est { display: grid; gap: 12px; }
+.est-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 18px; }
+.est-bar h1 { font: 600 clamp(26px, 3.4vw, 34px) / 1.05 var(--f-display); }
+.est-grid { display: grid; grid-template-columns: 270px minmax(0, 1fr) 310px; grid-template-areas: "lib mon scn" "lib tl scn"; gap: 10px; align-items: stretch; }
+.dock { display: flex; flex-direction: column; min-width: 0; overflow: hidden; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+.dock .dh { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0; padding: 7px 12px; font: 500 11px var(--f-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3); background: var(--panel-2); border-bottom: 1px solid var(--line); }
+.dock.lib { grid-area: lib; max-height: 82vh; }
+.dock.mon { grid-area: mon; }
+.dock.tl { grid-area: tl; }
+.dock.scn { grid-area: scn; max-height: 82vh; }
+.lib-tools { display: grid; gap: 8px; padding: 10px; border-bottom: 1px solid var(--line); }
+.fchips { display: flex; flex-wrap: wrap; gap: 5px; }
+.fchips button { padding: 3px 9px; border-radius: 99px; border: 1px solid var(--line); background: none; font-size: 12px; font-weight: 600; color: var(--ink-2); }
+.fchips button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.fchips button:disabled { opacity: .4; cursor: default; }
+.lsongs { overflow: auto; flex: 1; min-height: 120px; }
+.ls { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto 30px; align-items: center; gap: 8px; padding: 7px 8px 7px 10px; border-bottom: 1px solid var(--line); cursor: grab; }
+.ls:hover { background: var(--panel-2); }
+.ls[data-used="1"] { opacity: .5; }
+.ls b { display: block; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ls small { display: block; font-size: 12px; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ls .d { font: 500 12px var(--f-mono); color: var(--ink-2); }
+.ls .ib { width: 28px; height: 28px; border: 1px solid var(--line); }
+.mons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
+.mon1 { display: grid; gap: 5px; align-content: start; min-height: 128px; padding: 12px 14px; border-radius: 6px; background: var(--ground); border: 2px solid var(--line); }
+.mon1.pgm { border-color: var(--live); }
+.mon1.pvw { border-color: var(--ok); }
+.mon1 .tag { font: 600 11px var(--f-mono); letter-spacing: .18em; text-transform: uppercase; }
+.mon1.pgm .tag { color: var(--live); }
+.mon1.pvw .tag { color: var(--ok); }
+.mon1 h3 { font: 600 clamp(18px, 2.2vw, 26px) / 1.1 var(--f-display); overflow-wrap: anywhere; }
+.mon1 p { color: var(--ink-2); font-size: 13.5px; }
+.mon1 .prog { margin-top: 4px; }
+.tlbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 8px 12px; border-bottom: 1px solid var(--line); font-size: 12.5px; color: var(--ink-2); }
+.tlbar input[type="range"] { width: 120px; }
+.tlscroll { overflow-x: auto; overflow-y: hidden; background: var(--ground); }
+.tlin { position: relative; width: calc(104px + var(--w)); padding-bottom: 6px; }
+.ruler { position: relative; height: 24px; margin-left: 104px; border-bottom: 1px solid var(--line); }
+.ruler span { position: absolute; top: 5px; font: 500 10.5px var(--f-mono); color: var(--ink-3); transform: translateX(3px); }
+.ruler i { position: absolute; top: 15px; bottom: 0; border-left: 1px solid var(--line); }
+.lane { display: flex; height: 64px; border-bottom: 1px solid var(--line); }
+.lane .lh { position: sticky; left: 0; z-index: 3; flex: none; width: 104px; padding: 8px 10px; display: grid; align-content: center; gap: 2px; background: var(--panel-2); border-right: 1px solid var(--line); text-align: left; border-top: 0; border-bottom: 0; border-left: 3px solid transparent; }
+.lane .lh b { font: 600 15px var(--f-display); }
+.lane .lh small { font: 500 10.5px var(--f-mono); color: var(--ink-3); letter-spacing: .06em; }
+.lane.act .lh { border-left-color: var(--accent); background: var(--accent-soft); }
+.ltrack { position: relative; flex: none; width: var(--w); background-image: linear-gradient(to right, var(--line) 1px, transparent 1px); background-size: calc(var(--z) * 30) 100%; }
+.lane.past .ltrack { background-color: color-mix(in srgb, var(--ink-3) 8%, transparent); }
+.ltrack.over { outline: 2px dashed var(--accent); outline-offset: -3px; background-color: var(--accent-soft); }
+.blk { position: absolute; top: 7px; bottom: 7px; padding: 4px 7px; border-radius: 5px; border: 1px solid rgba(0, 0, 0, .35); color: #1A110C; overflow: hidden; text-align: left; display: grid; align-content: start; gap: 1px; cursor: grab; }
+.blk b { font-size: 12px; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.blk small { font: 500 10.5px var(--f-mono); opacity: .8; white-space: nowrap; }
+.blk[aria-pressed="true"] { outline: 2px solid var(--ink); outline-offset: 1px; z-index: 2; }
+.blk.now { box-shadow: 0 0 0 2px var(--live); z-index: 1; }
+.blk.drop-b { box-shadow: -4px 0 0 var(--accent); }
+.lane.past .blk, .lane.ro .blk { cursor: pointer; }
+.ph-line { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--live); z-index: 2; pointer-events: none; }
+.qlist { overflow: auto; flex: 1; min-height: 80px; }
+.sc { display: grid; gap: 6px; width: 100%; padding: 10px 12px; border: 0; border-bottom: 1px solid var(--line); background: none; text-align: left; border-left: 3px solid transparent; }
+.sc:hover { background: var(--panel-2); }
+.sc[aria-pressed="true"] { background: var(--accent-soft); border-left-color: var(--accent); }
+.sc .sh { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.sc b { font: 600 17px var(--f-display); }
+.q { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; gap: 4px 8px; padding: 7px 6px 7px 12px; border-bottom: 1px solid var(--line); }
+.q[aria-current="true"] { background: var(--accent-soft); }
+.q .t { font: 500 12px var(--f-mono); color: var(--ink-3); }
+.q b { display: block; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.q small { display: block; font-size: 12px; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.q .cc { display: flex; }
+.q .ib { width: 28px; height: 28px; }
+.statusbar { display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: center; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font: 500 12px var(--f-mono); color: var(--ink-2); }
+.statusbar b { color: var(--ink); font-weight: 500; }
+@media (max-width: 1100px) {
+  .est-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "mon mon" "tl tl" "lib scn"; }
+  .dock.lib, .dock.scn { max-height: 70vh; }
+}
+@media (max-width: 720px) {
+  .est-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "mon" "tl" "scn" "lib"; }
+  .mons { grid-template-columns: minmax(0, 1fr); }
+}
+
+.app.gate { grid-template-columns: minmax(0, 1fr); }
+.app.gate .side { display: none; }
+.reg { max-width: 520px; margin: clamp(8px, 5vh, 56px) auto 0; padding: clamp(20px, 4vw, 34px); display: grid; gap: 18px; }
+.reg .mark { color: var(--ink); }
+.reg .mark em { color: var(--accent); }
+.reg h1 { font: 600 clamp(28px, 5vw, 38px) / 1.05 var(--f-display); }
+.who2 { display: block; font-size: 12px; font-weight: 400; color: var(--ink-3); }
+.tel { font: 500 13px var(--f-mono); white-space: nowrap; }
+.acesso { display: grid; grid-template-columns: minmax(0, 1fr) minmax(230px, auto); gap: 14px 28px; align-items: center; padding: 20px; border-bottom: 1px solid var(--line); }
+.acesso:last-child { border-bottom: 0; }
+.acesso h3 { font: 600 22px var(--f-display); }
+.acesso .accode { display: grid; gap: 10px; justify-items: start; }
+.code { display: inline-block; padding: 8px 14px; border: 1px dashed var(--ink-3); border-radius: 8px; background: var(--ground); font: 500 22px var(--f-mono); letter-spacing: .14em; user-select: all; }
+.steps { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--ink-2); }
+.who .btn { width: 100%; background: var(--side-line); border-color: #5a3f2e; color: var(--side-ink); }
+.who .btn.ghost { background: none; }
+@media (max-width: 900px) {
+  .live, .libgrid.det { grid-template-columns: minmax(0, 1fr); }
+  .acesso { grid-template-columns: minmax(0, 1fr); }
+  .detail { position: static; }
+}
+@media (max-width: 820px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .side { position: fixed; z-index: 40; left: 0; right: 0; bottom: 0; top: auto; height: auto; flex-direction: row; gap: 0; padding: 6px max(6px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(6px, env(safe-area-inset-left, 0px)); border-right: 0; border-top: 1px solid var(--side-line); overflow: visible; }
+  .side .brand, .side .who { display: none; }
+  .nav { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); width: 100%; gap: 2px; }
+  .nav button { flex-direction: column; justify-content: center; gap: 3px; min-height: 52px; padding: 4px 2px; font-size: 11px; text-align: center; }
+  .nav button[aria-current="page"] { box-shadow: inset 0 3px 0 var(--side-accent); }
+  .nav button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .main { padding-bottom: 110px; padding-top: 16px; }
+  .mhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .mhead .mark { color: var(--ink); font-size: 24px; }
+  .mhead .mark em { color: var(--accent); }
+  .mhead .rp { display: flex; align-items: center; gap: 8px; }
+  .mhead select { background: var(--panel); color: var(--ink); border-color: var(--line); color-scheme: inherit; }
+  #toast { bottom: 96px; }
+  .row { grid-template-columns: 56px minmax(0, 1fr) auto; }
+  .row .cc { grid-column: 2 / -1; justify-content: flex-end; }
+  .bar { grid-template-columns: 78px minmax(0, 1fr) 66px; gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lamp.on, .row.flash { animation: none; }
+  #toast { transition: none; }
+}
+
+/* ===== Acabamento: atmosfera, latão, disco de vinil e detalhes ===== */
+body {
+  background:
+    radial-gradient(1100px 520px at 88% -8%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 62%),
+    radial-gradient(800px 480px at -8% 108%, color-mix(in srgb, var(--live) 9%, transparent), transparent 60%),
+    var(--ground);
+  background-attachment: fixed;
+}
+.fundo-deco { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='28' viewBox='0 0 56 28'%3E%3Cg fill='none' stroke='%23D99A4E' stroke-opacity='.10' stroke-width='1'%3E%3Cpath d='M0 28a28 28 0 0 1 56 0M10 28a18 18 0 0 1 36 0M19 28a9 9 0 0 1 18 0'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-image: linear-gradient(180deg, #000, transparent 72%); mask-image: linear-gradient(180deg, #000, transparent 72%); }
+.panel { box-shadow: inset 0 1px 0 var(--hi), 0 14px 32px -22px var(--shade); }
+.panel, .dock, .sheet { border-radius: 12px; }
+
+/* emblema */
+.emb { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand .emb { width: 40px; height: 45px; color: var(--side-accent); }
+.brand small { margin-top: 7px; }
+
+/* barra lateral */
+.side { background: linear-gradient(180deg, color-mix(in srgb, var(--side) 92%, var(--accent)) 0%, var(--side) 38%); }
+.nav button { transition: background-color .15s, color .15s; position: relative; }
+.nav button[aria-current="page"] { background: linear-gradient(90deg, color-mix(in srgb, var(--side-accent) 22%, transparent), transparent 90%); }
+.nav button[aria-current="page"] svg.i { color: var(--side-accent); }
+.nav .sh { display: none; }
+.nb { margin-left: auto; min-width: 22px; padding: 0 7px; border-radius: 99px; background: var(--live); color: #fff; font: 600 12px / 20px var(--f-mono); text-align: center; }
+
+/* cabeçalho das páginas com ornamento */
+.ph { position: relative; padding-bottom: 18px; }
+.ph::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 18%, transparent) 55%, transparent); }
+.ph::before { content: ""; position: absolute; left: 0; bottom: -3px; width: 7px; height: 7px; background: var(--accent); transform: rotate(45deg); z-index: 1; }
+.ph h1 { letter-spacing: -.01em; }
+
+/* botões */
+.btn { transition: border-color .15s, filter .15s, transform .1s; }
+.btn:active:not([disabled]) { transform: translateY(1px); }
+.btn.pri { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 86%, #fff) 0%, var(--accent) 52%, color-mix(in srgb, var(--accent) 84%, #000) 100%); border-color: color-mix(in srgb, var(--accent) 70%, #000); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 8px 16px -10px var(--shade); }
+.btn.lg { min-height: 50px; padding: 0 26px; font-size: 16px; border-radius: 10px; }
+
+/* Ao vivo */
+.hero { position: relative; overflow: hidden; background: radial-gradient(520px 280px at 0% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%), linear-gradient(165deg, var(--panel-2), var(--panel)); }
+.hero-in { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(18px, 3vw, 34px); align-items: center; }
+.hinfo { display: grid; gap: 14px; min-width: 0; }
+.onair { justify-self: start; align-items: center; white-space: nowrap; letter-spacing: .12em; padding: 5px 14px 5px 11px; border: 1px solid color-mix(in srgb, var(--live) 50%, transparent); border-radius: 99px; background: color-mix(in srgb, var(--live) 11%, transparent); color: var(--ink); }
+.dotline { display: flex; gap: 8px; align-items: center; }
+.hero h2 + .art { margin-top: 8px; }
+.vinyl { --c: var(--accent); position: relative; width: clamp(140px, 21vw, 220px); aspect-ratio: 1; border-radius: 50%; flex: none;
+  background:
+    conic-gradient(from 25deg, rgba(255, 235, 200, 0), rgba(255, 235, 200, .17) 10%, rgba(255, 235, 200, 0) 24%, rgba(255, 235, 200, .12) 60%, rgba(255, 235, 200, 0) 74%),
+    repeating-radial-gradient(circle at 50% 50%, #1a110c 0 2px, #251913 2px 3px);
+  box-shadow: 0 22px 40px -18px var(--shade), 0 0 0 5px color-mix(in srgb, var(--c) 22%, transparent), inset 0 0 0 2px rgba(255, 255, 255, .04); }
+.vinyl .lbl { position: absolute; inset: 31%; border-radius: 50%; background: radial-gradient(circle at 34% 28%, color-mix(in srgb, var(--c) 66%, #fff), var(--c) 58%, color-mix(in srgb, var(--c) 66%, #000)); box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .22), 0 0 0 4px #120b07; }
+.vinyl::after { content: ""; position: absolute; inset: 47.5%; border-radius: 50%; background: var(--ground); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .5); }
+.vinyl.spin { animation: giro 7s linear infinite; }
+@keyframes giro { to { transform: rotate(360deg); } }
+.eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; margin-left: 8px; }
+.eq i { width: 3px; height: 100%; border-radius: 1px; background: var(--live); transform-origin: bottom; transform: scaleY(.22); }
+.eq.on i { animation: eq 1s ease-in-out infinite; }
+.eq.on i:nth-child(2) { animation-duration: .74s; animation-delay: -.2s; }
+.eq.on i:nth-child(3) { animation-duration: 1.2s; animation-delay: -.5s; }
+.eq.on i:nth-child(4) { animation-duration: .9s; animation-delay: -.1s; }
+.eq.on i:nth-child(5) { animation-duration: 1.1s; animation-delay: -.7s; }
+@keyframes eq { 0%, 100% { transform: scaleY(.22); } 50% { transform: scaleY(1); } }
+.hero .ctl { padding-top: 6px; }
+.next li .chip svg.i { width: 14px; height: 14px; }
+.next li { transition: background-color .15s; }
+.today { padding: 18px 20px 20px; display: grid; gap: 6px; }
+.today h3 { font: 600 20px var(--f-display); }
+
+/* Programação e setores */
+.sector[data-sec="dia"], .sc[data-sec="dia"] { --tint: 38 78% 58%; }
+.sector[data-sec="tarde"], .sc[data-sec="tarde"] { --tint: 17 72% 58%; }
+.sector[data-sec="noite"], .sc[data-sec="noite"] { --tint: 262 34% 70%; }
+.sector header { background: linear-gradient(180deg, hsl(var(--tint) / .16), transparent); }
+.sector h3, .sc b { display: inline-flex; align-items: center; gap: 9px; }
+.sector h3 svg.i, .sc b svg.i { color: hsl(var(--tint)); }
+.sector .meter b, .sc .meter b { background: hsl(var(--tint)); }
+.sc[aria-pressed="true"] { background: linear-gradient(90deg, hsl(var(--tint) / .18), transparent); border-left-color: hsl(var(--tint)); }
+.row { transition: background-color .15s; }
+.row:hover { background: var(--panel-2); }
+.wk button { transition: border-color .15s, background-color .15s; }
+
+/* Programateca */
+.folder { position: relative; overflow: hidden; transition: border-color .15s, transform .15s, background-color .15s; }
+.folder::after { content: ""; position: absolute; right: -18px; top: -18px; width: 70px; height: 70px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%); }
+.folder:hover { transform: translateY(-2px); }
+
+/* Pedidos */
+.compose { background: linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--panel) 90%, var(--accent))); }
+.cfoot { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.cfoot .hint { max-width: 52ch; }
+.anon { display: flex; gap: 14px; align-items: flex-start; padding: 16px 18px; border: 1px dashed color-mix(in srgb, var(--accent) 60%, var(--line)); border-radius: 12px; background: color-mix(in srgb, var(--accent) 6%, transparent); color: var(--ink-2); }
+.anon svg.i { width: 24px; height: 24px; color: var(--accent); margin-top: 2px; }
+.anon b { display: block; color: var(--ink); font: 600 18px var(--f-display); margin-bottom: 2px; }
+.rq-head { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; }
+.tabs { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.tabs button { min-height: 36px; padding: 0 14px; border: 0; border-radius: 7px; background: none; color: var(--ink-2); font-weight: 600; }
+.tabs button b { margin-left: 6px; font: 500 12px var(--f-mono); }
+.tabs button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.rqs { list-style: none; margin: 0; padding: 0; overflow: hidden; }
+.rq { --st: var(--line); display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; padding: 18px 18px 18px 16px; border-bottom: 1px solid var(--line); border-left: 4px solid var(--st); }
+.rq:last-child { border-bottom: 0; }
+.rq[data-st="novo"] { --st: var(--warn); }
+.rq[data-st="programateca"] { --st: var(--accent); }
+.rq[data-st="programada"] { --st: var(--ok); }
+.rq[data-st="recusada"] { --st: var(--bad); }
+.rq .hd { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.rq .hd small { color: var(--ink-3); }
+.song-t { margin-top: 8px; font: 600 clamp(20px, 2.4vw, 26px) / 1.15 var(--f-display); overflow-wrap: anywhere; }
+.song-a { color: var(--ink-2); }
+.quote { margin: 10px 0 0; padding: 9px 13px; border-radius: 8px; border-left: 3px solid var(--line); background: var(--ground); color: var(--ink-2); font-style: italic; overflow-wrap: anywhere; }
+.doneby { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 13px; color: var(--ok); }
+.doneby svg.i { width: 16px; height: 16px; }
+.rq .acts { margin-top: 12px; }
+.mine { border: 1px dashed var(--line); border-radius: 12px; padding: 4px 14px 14px; }
+.mine summary { cursor: pointer; padding: 12px 0; font-weight: 600; color: var(--ink-2); }
+.mine .compose { margin-top: 4px; }
+.bigic svg.i { width: 34px; height: 34px; color: var(--accent); }
+
+/* Ouvintes */
+.stats .n { background: linear-gradient(180deg, var(--ink), color-mix(in srgb, var(--ink) 70%, var(--accent))); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.bar .tr i { background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 60%, #000), var(--accent)); }
+tbody tr:hover td { background: var(--panel-2); }
+
+/* Estúdio */
+.dock { box-shadow: inset 0 1px 0 var(--hi), 0 14px 30px -22px var(--shade); }
+.dock .dh { position: relative; padding-left: 28px; }
+.dock .dh::before { content: ""; position: absolute; left: 12px; top: 50%; width: 6px; height: 6px; border-radius: 50%; translate: 0 -50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.mon1.pgm { box-shadow: 0 0 22px -8px var(--live); }
+.blk { box-shadow: 0 2px 6px -3px var(--shade), inset 0 1px 0 rgba(255, 255, 255, .25); }
+
+/* Cadastro */
+.reg2 { max-width: 920px; margin: clamp(4px, 5vh, 52px) auto 0; display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); overflow: hidden; }
+.reg-art { display: grid; align-content: space-between; gap: 28px; padding: clamp(24px, 4vw, 38px); color: var(--side-ink); background: radial-gradient(420px 300px at 0% 0%, color-mix(in srgb, var(--side-accent) 24%, transparent), transparent 70%), var(--side); border-right: 1px solid var(--side-line); }
+.reg-art .emb.big { width: 92px; height: 104px; color: var(--side-accent); stroke-width: 1.8; }
+.reg-art .mark { font-size: 32px; }
+.reg-art p { margin-top: 10px; color: var(--side-ink-2); }
+.reg-pts { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.reg-pts li { display: flex; gap: 12px; align-items: center; color: var(--side-ink); font-size: 14px; }
+.reg-pts svg.i { color: var(--side-accent); }
+.reg-form { display: grid; align-content: center; gap: 22px; padding: clamp(24px, 4vw, 40px); }
+.reg-form h1 { font: 600 clamp(28px, 4vw, 36px) / 1.05 var(--f-display); }
+
+/* Janelas e avisos */
+.sheet { border-top: 2px solid var(--accent); }
+.scrim { backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+#toast { border-left: 4px solid var(--accent); box-shadow: 0 14px 30px -12px var(--shade); }
+.strip { background: linear-gradient(90deg, color-mix(in srgb, var(--live) 8%, var(--panel)), var(--panel) 40%); }
+.wrap.enter { animation: entra .28s ease-out both; }
+@keyframes entra { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 820px) {
+  .nav .lg { display: none; }
+  .nav .sh { display: inline; }
+  .nb { position: absolute; top: 2px; right: 14%; margin: 0; min-width: 18px; padding: 0 5px; font-size: 11px; line-height: 18px; }
+  .hero-in { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+  .hinfo { justify-items: center; }
+  .hinfo > div { width: 100%; }
+  .vinyl { width: min(56vw, 200px); }
+  .reg2 { grid-template-columns: minmax(0, 1fr); }
+  .reg-art { grid-template-columns: auto minmax(0, 1fr); align-items: center; border-right: 0; border-bottom: 1px solid var(--side-line); }
+  .reg-art .emb.big { width: 54px; height: 61px; }
+  .reg-pts { display: none; }
+  .rq { grid-template-columns: 36px minmax(0, 1fr); gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vinyl.spin, .eq.on i, .wrap.enter { animation: none; }
+  .folder, .btn { transition: none; }
+}
+.esttime{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mut,#b9a089);margin:8px 0 2px}.esttime input{flex:1;min-width:0}
+
+/* ---- Acabamento 2: palco e estúdio ---- */
+body { background-image: radial-gradient(1200px 520px at 85% -8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%), radial-gradient(900px 480px at -5% 105%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%); background-attachment: fixed; }
+.wrap > .ph h1, .est-bar h1 { position: relative; padding-bottom: 12px; }
+.wrap > .ph h1::after, .est-bar h1::after { content: ""; position: absolute; left: 0; bottom: 0; width: 64px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, var(--accent), transparent); }
+.dock { border-top: 2px solid color-mix(in srgb, var(--accent) 70%, transparent); transition: box-shadow .2s; }
+.dock:hover { box-shadow: inset 0 1px 0 var(--hi), 0 18px 34px -20px var(--shade); }
+.dock .dh { background: linear-gradient(180deg, var(--panel-2), var(--panel)); border-bottom: 1px solid var(--line); }
+.ruler { height: 30px; background: linear-gradient(180deg, var(--panel-2), var(--ground)); }
+.ruler i { top: auto; bottom: 0; height: 5px; }
+.ruler i.H { height: 9px; }
+.ruler i.M { height: 16px; border-left-color: var(--ink-3); }
+.ruler span { top: 4px; font-weight: 600; }
+.ltrack { background-image: linear-gradient(to right, color-mix(in srgb, var(--ink-3) 35%, transparent) 1px, transparent 1px), repeating-linear-gradient(135deg, transparent 0 9px, color-mix(in srgb, var(--ink-3) 7%, transparent) 9px 10px); background-size: calc(var(--z) * 60) 100%, auto; }
+.ltrack .hl { position: absolute; top: 2px; padding-left: 4px; font: 600 9.5px var(--f-mono); font-style: normal; color: var(--ink-3); opacity: .75; pointer-events: none; letter-spacing: .05em; }
+.lane { height: 72px; }
+.lane .lh { box-shadow: 6px 0 10px -8px var(--shade); }
+.blk { top: 16px; bottom: 7px; border-radius: 6px; transition: transform .12s, box-shadow .12s; background-image: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0) 55%); }
+.blk:hover { transform: translateY(-1px); box-shadow: 0 6px 12px -6px var(--shade); }
+.blk.now { animation: nowpulse 2s ease-in-out infinite; }
+@keyframes nowpulse { 50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--live) 35%, transparent); } }
+.ph-line { box-shadow: 0 0 8px var(--live); }
+.fixo { display: inline-block; vertical-align: 1px; margin-left: 4px; padding: 1px 6px; border-radius: 999px; font: 600 9.5px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); }
+.q { transition: background .15s; }
+.q:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.q .t { font-weight: 600; color: var(--accent); }
+.statusbar { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border-radius: 10px; }
+.esttime input { border-radius: 8px; }
+.sc { transition: transform .15s, box-shadow .15s; }
+.sc:hover { transform: translateY(-1px); }
+.sc[aria-pressed="true"] { box-shadow: inset 3px 0 0 var(--accent), 0 10px 20px -14px var(--shade); }
+@media (prefers-reduced-motion: reduce) { .blk.now { animation: none; } }
+
+/* ---- Cargos ---- */
+.rb { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 999px; font: 600 11px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; border: 1px solid var(--line); color: var(--ink-2); background: var(--panel-2); }
+.rb.r-dono { color: #fff; background: var(--accent); border-color: var(--accent); }
+.rb.r-programador { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.rb.r-produtor { color: var(--ok); border-color: var(--ok); }
+.fc { display: inline-flex; gap: 6px; align-items: center; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel-2); color: var(--ink-2); font: 600 12.5px var(--f-body, inherit); cursor: pointer; transition: all .15s; }
+.fc b { font: 600 11px var(--f-mono); opacity: .8; }
+.fc:hover { border-color: var(--accent); }
+.fc[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.rolepick { display: grid; gap: 8px; }
+.rp-opt { display: grid; gap: 3px; text-align: left; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); cursor: pointer; transition: all .15s; }
+.rp-opt span { font-size: 13px; color: var(--ink-2); }
+.rp-opt:hover { border-color: var(--accent); transform: translateY(-1px); }
+.rp-opt[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); background: var(--accent-soft); }
+
+/* ---- Envio em lote ---- */
+.folder.bulk { border-style: dashed; border-color: var(--accent); background: var(--accent-soft); }
+.bkdrop { display: grid; justify-items: center; gap: 4px; padding: 22px 14px; border: 2px dashed var(--line); border-radius: 12px; background: var(--panel-2); text-align: center; cursor: pointer; transition: all .15s; }
+.bkdrop span { font-size: 12.5px; color: var(--ink-3); }
+.bkdrop:hover, .bkdrop.over { border-color: var(--accent); background: var(--accent-soft); }
+.bklist { display: grid; gap: 6px; max-height: 40vh; overflow: auto; }
+.bkrow { display: grid; gap: 2px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); }
+.bkrow b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bks { font-size: 12px; color: var(--ink-2); }
+.bks.good { color: var(--ok); }
+.bks.bad { color: var(--warn); }
+
+.cpdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cpd { position: relative; display: grid; justify-items: center; gap: 1px; padding: 8px 2px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); cursor: pointer; transition: all .12s; }
+.cpd b { font: 600 17px var(--f-display); }
+.cpd span { font: 500 10px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.cpd i { position: absolute; top: 1px; right: 5px; color: var(--accent); font-style: normal; font-size: 16px; line-height: 1; }
+.cpd:hover { border-color: var(--accent); }
+.cpd[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.cpd[aria-pressed="true"] span, .cpd[aria-pressed="true"] i { color: #fff; }
+
+/* ---- Acabamento 3: refinamento final ---- */
+::selection { background: color-mix(in srgb, var(--accent) 45%, transparent); }
+* { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--ink-3) 55%, transparent) transparent; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.btn, .ib, .fc, .cpd, .rp-opt, .folder { -webkit-tap-highlight-color: transparent; }
+.btn:active, .ib:active, .fc:active, .cpd:active { transform: translateY(1px) scale(.985); }
+.btn.pri { background-image: linear-gradient(180deg, color-mix(in srgb, var(--accent) 92%, #fff), var(--accent)); box-shadow: 0 8px 18px -10px var(--accent), inset 0 1px 0 rgba(255,255,255,.35); transition: transform .12s, box-shadow .15s, filter .15s; }
+.btn.pri:hover { filter: brightness(1.06); box-shadow: 0 12px 22px -10px var(--accent), inset 0 1px 0 rgba(255,255,255,.4); }
+.hero { position: relative; overflow: hidden; }
+.hero::before { content: ""; position: absolute; inset: -30% -10% auto auto; width: 70%; height: 90%; background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%); pointer-events: none; }
+.hero > * { position: relative; }
+.cd { display: grid; gap: 2px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--line); background: color-mix(in srgb, var(--panel-2) 80%, transparent); width: fit-content; }
+.cd b { font: 600 34px/1.1 var(--f-display); font-variant-numeric: tabular-nums; color: var(--accent); }
+.modal > * { animation: popin .22s cubic-bezier(.2,.8,.2,1); }
+@keyframes popin { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+#toast > * { box-shadow: 0 16px 34px -14px var(--shade); backdrop-filter: blur(6px); }
+.folder::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--c, var(--accent)); opacity: .85; }
+.folder:hover { transform: translateY(-3px); box-shadow: 0 16px 28px -18px var(--shade); }
+.folder small { font-variant-numeric: tabular-nums; }
+.credit { margin: 14px 0 2px; font: 500 10.5px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); opacity: .75; }
+.row { grid-template-columns: 74px minmax(0, 1fr) auto; padding-right: 16px; }
+.row .t { font-size: 11.5px; }
+.row b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+@media (hover: hover) and (min-width: 781px) {
+  .row { position: relative; }
+  .row .cc { position: absolute; right: 6px; top: 50%; translate: 0 -50%; opacity: 0; padding-left: 22px; background: linear-gradient(90deg, transparent, var(--panel) 28%); transition: opacity .15s; }
+  .row:hover .cc, .row:focus-within .cc { opacity: 1; }
+  .row.now .cc { background: linear-gradient(90deg, transparent, var(--accent-soft) 28%); }
+}
+.row { transition: background .15s; }
+.row:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+.panel.next li { transition: background .15s; border-radius: 8px; }
+.panel.next li:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+@media (prefers-reduced-motion: reduce) { .modal > *, .folder, .btn { animation: none; transition: none; } }
+.tw td:has(> .rb) { white-space: nowrap; }
+.tw td:has(> .rb) .btn { margin-left: 8px; }
+.tw td:has(> .rb) .btn svg { display: none; }
+</style>
+</head>
+<body>
+
+
+<div class="fundo-logo" aria-hidden="true"></div>
+<div class="fundo-deco" aria-hidden="true"></div>
+<div class="app">
+  <aside class="side" id="side"></aside>
+  <main class="main" id="main"></main>
+</div>
+<div class="modal" id="modal" hidden></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script src="backend.js"></script>
+<script>
+(() => {
+'use strict';
+
+/* ---------- Constantes ---------- */
+const SECT = [
+  { id: 'dia', nome: 'Dia', ini: 6, fim: 12 },
+  { id: 'tarde', nome: 'Tarde', ini: 12, fim: 18 },
+  { id: 'noite', nome: 'Noite', ini: 18, fim: 24 }
+];
+const CAP = 6 * 3600;
+const ROLES = { ouvinte: 'Ouvinte', produtor: 'Produtor', programador: 'Programador', dono: 'Dono' };
+const STAFF = ['produtor', 'programador', 'dono'];
+const ALL = ['ouvinte', 'produtor', 'programador', 'dono'];
+const LAND = { ouvinte: 'aovivo', produtor: 'programateca', programador: 'estudio', dono: 'ouvintes' };
+const DEF_FOLDERS = ['Funk', 'Forró', 'Rap', 'Trap', 'Sertanejo', 'Pagode', 'Samba', 'MPB', 'Rock', 'Pop', 'Eletrônica', 'Gospel', 'Reggae', 'Axé', 'Piseiro', 'Outros'];
+const HUES = [28, 10, 44, 338, 36, 20, 52, 4, 62, 350, 24, 16, 70, 40, 32, 0];
+const DOW = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+const DOWS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+const MES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+const MESS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+const NAV = [
+  { id: 'aovivo', nome: 'Ao vivo', ic: 'radio', roles: ALL },
+  { id: 'programacao', nome: 'Programação', curto: 'Grade', ic: 'cal', roles: ALL },
+  { id: 'estudio', nome: 'Estúdio', ic: 'studio', roles: ['programador', 'dono'] },
+  { id: 'pedidos', nome: (r) => (r === 'ouvinte' ? 'Pedir música' : 'Pedidos'), curto: 'Pedidos', ic: 'chat', roles: ALL },
+  { id: 'programateca', nome: 'Programateca', curto: 'Pastas', ic: 'folder', roles: STAFF },
+  { id: 'ouvintes', nome: 'Ouvintes', ic: 'people', roles: STAFF }
+];
+const ICON = {
+  radio: '<rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8l9-4.5"/><circle cx="9" cy="14" r="2.6"/><path d="M15 12.5h3M15 16h3"/>',
+  cal: '<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3M7.5 14h3M13.5 14h3"/>',
+  chat: '<path d="M4 5.5h16v10.5H10l-4.5 4v-4H4z"/><path d="M8 10h8"/>',
+  folder: '<path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v8.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/>',
+  people: '<circle cx="9" cy="8.5" r="3.2"/><path d="M3 19c.5-3.5 3-5 6-5s5.5 1.5 6 5"/><path d="M16 5.5a3 3 0 0 1 0 6M18 14.5c1.8.6 3 2 3.2 4.5"/>',
+  studio: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11M13 13h5M13 16.5h3"/>',
+  play: '<path d="M8 5.5v13l11-6.5z" fill="currentColor"/>',
+  stop: '<rect x="6.5" y="6.5" width="11" height="11" rx="1.5" fill="currentColor"/>',
+  up: '<path d="m6 14 6-6 6 6"/>',
+  down: '<path d="m6 10 6 6 6-6"/>',
+  x: '<path d="m6 6 12 12M18 6 6 18"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  back: '<path d="m14 6-6 6 6 6"/>',
+  edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  key: '<circle cx="8" cy="15" r="3.5"/><path d="M10.5 12.5 19 4M16 7l3 3M14 9l2 2"/>'
+};
+Object.assign(ICON, {
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>',
+  sunset: '<path d="M6.5 16a5.5 5.5 0 0 1 11 0M3 16h18M12 6v2M5 9.2l1.4 1.4M19 9.2l-1.4 1.4M8 20h8"/>',
+  moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+  lock: '<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  folderok: '<path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v8.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><path d="m9 13.2 2.2 2.2L15.5 11"/>'
+});
+const emblem = (cls) => '<svg class="emb ' + (cls || '') + '" viewBox="0 0 64 72" aria-hidden="true"><path d="M5 68V31a27 27 0 0 1 54 0v37z"/><path d="M32 13 22.5 60M32 13 41.5 60M26.5 40h11M28.8 29h6.4M22.5 60h19"/><path d="M26.5 60q5.5-10 11 0"/><path d="M26 11a6 6 0 0 0 0 6M22.5 9a10 10 0 0 0 0 10M38 11a6 6 0 0 1 0 6M41.5 9a10 10 0 0 1 0 10"/><path d="M5 68h54"/></svg>';
+const SECT_IC = { dia: 'sun', tarde: 'sunset', noite: 'moon' };
+const sectIc = (id) => ic(SECT_IC[id] || 'sun');
+const ic = (n) => '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + (ICON[n] || '') + '</svg>';
+
+/* ---------- Utilitários ---------- */
+const $ = (s, r) => (r || document).querySelector(s);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const p2 = (n) => String(n).padStart(2, '0');
+const slug = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'pasta';
+const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const hh = (s) => p2(Math.floor(s / 3600)) + ':' + p2(Math.floor((s % 3600) / 60));
+const hhmmss = (s) => hh(s) + ':' + p2(Math.floor(s % 60));
+const mmss = (s) => Math.floor(s / 60) + ':' + p2(Math.floor(s % 60));
+function hm(s) {
+  s = Math.max(0, Math.round(s));
+  if (s < 60) return s + 's';
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+  return h ? h + 'h ' + p2(m) + 'min' : m + 'min';
+}
+function parseDur(v) {
+  v = String(v || '').trim();
+  if (!v) return 0;
+  const parts = v.split(':').map((x) => Number(x));
+  if (parts.some((x) => !isFinite(x) || x < 0)) return 0;
+  if (parts.length === 1) return Math.round(parts[0]);
+  if (parts.length === 2) return Math.round(parts[0] * 60 + parts[1]);
+  if (parts.length === 3) return Math.round(parts[0] * 3600 + parts[1] * 60 + parts[2]);
+  return 0;
+}
+function nowSP() {
+  const d = new Date(Date.now() - 3 * 3600 * 1000);
+  return { date: d.toISOString().slice(0, 10), sec: d.getUTCHours() * 3600 + d.getUTCMinutes() * 60 + d.getUTCSeconds() };
+}
+const pd = (date) => { const a = date.split('-').map(Number); return new Date(Date.UTC(a[0], a[1] - 1, a[2])); };
+function addDays(date, n) { const d = pd(date); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+const longDate = (date) => { const d = pd(date); return cap(DOW[d.getUTCDay()]) + ', ' + d.getUTCDate() + ' de ' + MES[d.getUTCMonth()] + ' de ' + d.getUTCFullYear(); };
+const shortDate = (date) => { const d = pd(date); return p2(d.getUTCDate()) + '/' + p2(d.getUTCMonth() + 1); };
+function weekStart(date) { const w = pd(date).getUTCDay(); return addDays(date, w === 0 ? -6 : 1 - w); }
+function ago(ms) {
+  if (!ms) return '—';
+  const s = Math.max(0, (Date.now() - ms) / 1000);
+  if (s < 90) return 'agora';
+  if (s < 3600) return 'há ' + Math.round(s / 60) + ' min';
+  if (s < 86400) return 'há ' + Math.round(s / 3600) + ' h';
+  const d = new Date(ms - 3 * 3600 * 1000);
+  return p2(d.getUTCDate()) + '/' + p2(d.getUTCMonth() + 1) + '/' + d.getUTCFullYear();
+}
+const sectName = (id) => (SECT.find((s) => s.id === id) || {}).nome || id;
+
+/* ---------- Estado ---------- */
+const S = {
+  view: 'aovivo', date: nowSP().date, folder: null, sel: null, libq: '', as: null, landed: false,
+  songs: {}, plan: {}, requests: {}, keys: {}, grants: {}, keysLoaded: false, listeners: {}, roles: {}, folders: {}, names: {}, people: {}, namesLoaded: false, reqPriv: null, reqKid: null, reqPlain: {}, reqBad: {}, cfgLoaded: false, keyLoaded: false, ownerPriv: null, rkBusy: false, fade: 0, confirmReg: null, prof: {}, config: {}, myCodes: {}, fails: 0, lockUntil: 0,
+  uid: null, isOwner: false, canEdit: false, canWrite: null, me: null,
+  db: null, user: null, assets: null,
+  tuned: false, vol: 0.85, audioMsg: '', flash: null, confirmDel: null
+};
+const D = {};
+const val = (k, d) => (D[k] !== undefined ? D[k] : d);
+let AIR = null, curKey = null, loadedKey = null, P = null, M = null, acc = { sec: 0, styles: {} }, sinceFlush = 0, flushing = false;
+
+const myRole = () => {
+  if (S.isOwner) return 'dono';
+  const r = S.roles[S.uid];
+  return r && ROLES[r.role] ? r.role : 'ouvinte';
+};
+const role = () => S.as || myRole();
+const isStaff = () => role() !== 'ouvinte';
+function can(a) {
+  const r = role();
+  if (a === 'cadastrar') return r === 'produtor' || r === 'dono';
+  if (a === 'programar') return r === 'programador' || r === 'dono';
+  if (a === 'cargos') return r === 'dono' && S.canEdit && !S.as;
+  return false;
+}
+
+/* ---------- Pastas, músicas, grade ---------- */
+function allFolders() {
+  const list = DEF_FOLDERS.map((n) => ({ id: slug(n), nome: n }));
+  for (const [id, f] of Object.entries(S.folders)) if (!list.some((x) => x.id === id)) list.push({ id, nome: f.nome || id });
+  return list;
+}
+const folderName = (id) => { const f = allFolders().find((x) => x.id === id); return f ? f.nome : id ? cap(String(id)) : 'Sem pasta'; };
+function sColor(id) {
+  const i = allFolders().findIndex((f) => f.id === id);
+  let k = i;
+  if (k < 0) { k = 0; for (const c of String(id)) k = (k * 31 + c.charCodeAt(0)) % 997; }
+  return 'hsl(' + HUES[k % HUES.length] + ' 46% 56%)';
+}
+const dotFor = (id) => '<span class="dot" style="background:' + sColor(id) + '"></span>';
+const songsIn = (fid) => Object.values(S.songs).filter((s) => s.style === fid).sort((a, b) => fold(a.title).localeCompare(fold(b.title)));
+
+function layoutOf(sid, items, pins) {
+  const sec = SECT.find((x) => x.id === sid);
+  let t = sec.ini * 3600;
+  const out = [];
+  for (const id of items || []) {
+    const song = S.songs[id];
+    const d = song ? (+song.dur || 0) : 0;
+    const pin = pins && pins[id] != null ? +pins[id] : null;
+    const start = pin != null ? Math.max(pin, t) : t;
+    out.push({ id, song, start, end: start + d, dur: d, pin });
+    t = start + d;
+  }
+  return out;
+}
+function layout(date, sid) {
+  const doc = S.plan[date + '_' + sid] || {};
+  return layoutOf(sid, doc.items, doc.pins);
+}
+const clk = (sec) => { sec = Math.round(sec); return p2(Math.floor(sec / 3600) % 24) + ':' + p2(Math.floor(sec % 3600 / 60)) + ':' + p2(sec % 60); };
+const parseClk = (v) => { const m = /^(\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec((v || '').trim()); return m ? (+m[1]) * 3600 + (+m[2]) * 60 + (+(m[3] || 0)) : null; };
+const sectAt = (sec) => SECT.find((x) => sec >= x.ini * 3600 && sec < x.fim * 3600);
+function planPlace(date, sid, id, sec) {
+  const doc = S.plan[date + '_' + sid] || {};
+  const sc = SECT.find((x) => x.id === sid);
+  const items = (doc.items || []).filter((x) => x !== id);
+  const pins = Object.assign({}, doc.pins || {}); delete pins[id];
+  const d = +(S.songs[id] || {}).dur || 0;
+  let at = items.length;
+  if (sec != null) {
+    sec = Math.max(sc.ini * 3600, Math.min(sc.fim * 3600 - d, Math.round(sec)));
+    const L = layoutOf(sid, items, pins);
+    at = L.filter((e) => e.start < sec).length;
+    pins[id] = sec;
+  }
+  items.splice(at, 0, id);
+  const L2 = layoutOf(sid, items, pins);
+  if (L2.length && L2[L2.length - 1].end > sc.fim * 3600) return { err: 'Não cabe nesse horário: as músicas seguintes passariam das ' + p2(sc.fim) + 'h.' };
+  const me = L2.find((e) => e.id === id);
+  return { items, pins, start: me.start, pinned: sec != null };
+}
+const savePlan = (date, sid, items, pins) => W(() => S.db.doc('plan/' + date + '_' + sid).set({ date, sector: sid, items, pins: pins || {} }));
+const usedSec = (date, sid) => layout(date, sid).reduce((a, e) => a + e.dur, 0);
+function dayUsedMap(date) {
+  const m = {};
+  for (const s of SECT) for (const id of ((S.plan[date + '_' + s.id] || {}).items || [])) m[id] = s.id;
+  return m;
+}
+const dayCount = (date) => SECT.reduce((a, s) => a + (((S.plan[date + '_' + s.id] || {}).items || []).length), 0);
+const LOCK_PAST = false; // true trava a edição de setores que já foram ao ar
+function isPast(date, sid) {
+  if (!LOCK_PAST) return false;
+  const n = nowSP(), sec = SECT.find((s) => s.id === sid);
+  return date < n.date || (date === n.date && n.sec >= sec.fim * 3600);
+}
+function entriesAbs(fromDay, days) {
+  const out = [];
+  for (let k = 0; k < days; k++) {
+    const date = addDays(fromDay, k);
+    for (const s of SECT) for (const e of layout(date, s.id)) out.push(Object.assign({}, e, { date, sector: s.id, abs: k * 86400 + e.start, absEnd: k * 86400 + e.end }));
+  }
+  return out;
+}
+function onAir() {
+  const n = nowSP();
+  const list = entriesAbs(n.date, 3);
+  const cur = list.find((e) => e.song && e.dur > 0 && e.abs <= n.sec && n.sec < e.absEnd) || null;
+  const sector = SECT.find((s) => n.sec >= s.ini * 3600 && n.sec < s.fim * 3600) || null;
+  return { n, list, cur, sector };
+}
+function plannedWhere(id) {
+  const out = [];
+  for (const d of Object.values(S.plan)) if ((d.items || []).includes(id)) out.push({ date: d.date, sector: d.sector });
+  return out.sort((a, b) => (a.date + a.sector < b.date + b.sector ? -1 : 1));
+}
+
+/* ---------- Escrita ---------- */
+let Q = Promise.resolve();
+function W(fn) {
+  if (!S.db) { toast('Armazenamento indisponível nesta visualização.'); return Promise.resolve(false); }
+  const run = async () => {
+    try { await fn(); return true; } catch (e) {
+      console.warn(e);
+      toast(e && e.code === 'invalid_argument' ? 'Sem permissão para salvar. Peça ao dono acesso de colaborador.' : 'Não foi possível salvar agora. Tente de novo.');
+      return false;
+    }
+  };
+  const p = Q.then(run, run);
+  Q = p.then(() => 0, () => 0);
+  return p;
+}
+async function addToPlan(songId, date, sid, sec) {
+  const song = S.songs[songId];
+  if (!song) return { ok: false, msg: 'Música não encontrada.' };
+  const d = +song.dur || 0;
+  if (d <= 0) return { ok: false, msg: 'Esta música está sem duração. Edite e informe a duração.' };
+  if (!date) return { ok: false, msg: 'Escolha o dia.' };
+  if (isPast(date, sid)) return { ok: false, msg: 'Esse horário já passou. Escolha o resto de hoje ou outro dia.' };
+  const used = dayUsedMap(date);
+  if (used[songId]) return { ok: false, msg: '“' + song.title + '” já toca em ' + shortDate(date) + ' no setor ' + sectName(used[songId]) + '. Uma música não se repete no mesmo dia.' };
+  const free = CAP - usedSec(date, sid);
+  if (d > free) return { ok: false, msg: 'Não cabe no setor ' + sectName(sid) + ': restam ' + hm(free) + ' e a música tem ' + mmss(d) + '.' };
+  const pl = planPlace(date, sid, songId, sec != null ? sec : null);
+  if (pl.err) return { ok: false, msg: pl.err };
+  const ok = await savePlan(date, sid, pl.items, pl.pins);
+  if (!ok) return { ok: false, msg: '' };
+  for (const [rid, r] of Object.entries(S.requests)) {
+    if (r.songId === songId && r.status !== 'programada') W(() => S.db.doc('requests/' + rid).update({ status: 'programada' }));
+  }
+  return { ok: true, start: pl.start, pinned: pl.pinned };
+}
+async function moveItem(date, sid, i, dir) {
+  const items = ((S.plan[date + '_' + sid] || {}).items || []).slice();
+  const j = i + dir;
+  if (j < 0 || j >= items.length) return;
+  const t = items[i]; items[i] = items[j]; items[j] = t;
+  await savePlan(date, sid, items, (S.plan[date + '_' + sid] || {}).pins);
+}
+async function removeItem(date, sid, i) {
+  const items = ((S.plan[date + '_' + sid] || {}).items || []).slice();
+  const pins = Object.assign({}, (S.plan[date + '_' + sid] || {}).pins || {});
+  delete pins[items[i]];
+  items.splice(i, 1);
+  await savePlan(date, sid, items, pins);
+}
+
+/* ---------- Pessoas ---------- */
+const nm = (id) => { const r = S.names[id]; if (r && r.nome) return r.nome; const p = S.prof[id]; return (p && p.name) || (id === S.uid && S.me && S.me.name) || 'Ouvinte'; };
+function avatar(id, cls) {
+  const p = S.prof[id];
+  if (p && p.avatarUrl) return '<img class="av ' + (cls || '') + '" src="' + esc(p.avatarUrl) + '" alt="">';
+  return '<span class="av ' + (cls || '') + '" aria-hidden="true">' + esc(nm(id).charAt(0).toUpperCase()) + '</span>';
+}
+let nameT = 0;
+function scheduleNames() {
+  clearTimeout(nameT);
+  nameT = setTimeout(async () => {
+    if (!S.user) return;
+    const ids = new Set();
+    Object.keys(S.listeners).forEach((i) => ids.add(i));
+    Object.values(S.reqPlain).forEach((r) => r && r.by && ids.add(r.by));
+    Object.values(S.songs).forEach((s) => s.by && ids.add(s.by));
+    if (S.uid) ids.add(S.uid);
+    if (!ids.size) return;
+    try { S.prof = await S.user.profiles([...ids]); scheduleRender(); } catch (e) { /* sem nomes */ }
+  }, 150);
+}
+
+/* ---------- Áudio ---------- */
+const audio = new Audio();
+audio.preload = 'auto';
+audio.volume = S.vol;
+function setAudioMsg(t) {
+  S.audioMsg = t;
+  const el = $('#audioMsg');
+  if (el) el.textContent = t;
+}
+audio.addEventListener('ended', () => { try { AIR = onAir(); syncAudio(AIR); } catch (e) { /* o relógio retoma */ } });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden || !S.tuned) return;
+  try { AIR = onAir(); syncAudio(AIR); if (audio.src && audio.paused && AIR.cur && AIR.cur.song && AIR.cur.song.assetId) { const pr = audio.play(); if (pr && pr.catch) pr.catch(() => {}); } } catch (e) { /* ok */ }
+});
+audio.addEventListener('play', () => { try { if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; } catch (e) { /* ok */ } });
+audio.addEventListener('pause', () => { try { if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; } catch (e) { /* ok */ } });
+audio.addEventListener('error', () => { setAudioMsg('Não foi possível carregar o áudio desta faixa. A programação segue no horário.'); });
+/* Faixa quase muda: mantém o navegador achando que a rádio está tocando (segundo plano) nos intervalos. */
+const pauseQuiet = (el) => { if (el.paused) return; el._q = true; el.pause(); };
+let userPaused = false, resumeTries = [];
+function autoResume(el) {
+  el.addEventListener('pause', () => {
+    if (el._q) { el._q = false; return; }
+    if (!S.tuned || userPaused || el.ended) return;
+    const now = Date.now();
+    resumeTries = resumeTries.filter((t) => now - t < 15000);
+    if (resumeTries.length >= 4) return;
+    resumeTries.push(now);
+    setTimeout(() => { if (S.tuned && !userPaused && el.paused && el.src) { const pr = el.play(); if (pr && pr.catch) pr.catch(() => {}); } }, 200);
+  });
+}
+const keep = new Audio();
+keep.loop = true; keep.volume = 0.05;
+(function () {
+  try {
+    const n = 16000, b = new Uint8Array(44 + n), v = new DataView(b.buffer), w = (o, t) => { for (let i = 0; i < t.length; i++) b[o + i] = t.charCodeAt(i); };
+    w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, 'data'); v.setUint32(40, n, true);
+    for (let i = 0; i < n; i++) b[44 + i] = 128 + (i % 400 < 200 ? 1 : -1);
+    keep.src = URL.createObjectURL(new Blob([b], { type: 'audio/wav' }));
+  } catch (e) { /* sem faixa de espera */ }
+})();
+function startKeep(title) {
+  try {
+    if (keep.paused) { const pr = keep.play(); if (pr && pr.catch) pr.catch(() => {}); }
+    if ('mediaSession' in navigator && window.MediaMetadata) navigator.mediaSession.metadata = new MediaMetadata({ title: title || 'Intervalo', artist: 'Paris Cast', album: 'Paris Cast' });
+  } catch (e) { /* ok */ }
+}
+const stopKeep = () => { try { pauseQuiet(keep); } catch (e) { /* ok */ } };
+autoResume(audio); autoResume(keep);
+function syncAudio(air) {
+  if (!S.tuned) { pauseQuiet(audio); stopKeep(); return; }
+  const cur = air.cur;
+  if (!cur) { pauseQuiet(audio); loadedKey = null; startKeep('Intervalo'); return; }
+  const key = cur.date + cur.sector + cur.id;
+  const offset = air.n.sec - cur.abs;
+  if (!cur.song.assetId) {
+    pauseQuiet(audio);
+    startKeep(cur.song.title);
+    loadedKey = key;
+    if (!S.audioMsg) setAudioMsg('Esta faixa não tem arquivo de áudio. A programação segue no horário.');
+    return;
+  }
+  if (key !== loadedKey) {
+    loadedKey = key;
+    setAudioMsg('');
+    audio.src = window.__assetUrl ? window.__assetUrl(cur.song.assetId) : '/_blob/' + cur.song.assetId;
+    stopKeep();
+    try {
+      if ('mediaSession' in navigator && window.MediaMetadata) {
+        navigator.mediaSession.metadata = new MediaMetadata({ title: cur.song.title || 'Paris Cast', artist: cur.song.artist || '', album: 'Paris Cast' });
+        navigator.mediaSession.setActionHandler('pause', () => { userPaused = true; audio.pause(); keep.pause(); });
+        navigator.mediaSession.setActionHandler('play', () => { userPaused = false; loadedKey = null; try { AIR = onAir(); syncAudio(AIR); } catch (e) { audio.play(); } });
+      }
+    } catch (e) { /* sem controles na tela de bloqueio */ }
+    audio.addEventListener('loadedmetadata', () => { try { audio.currentTime = Math.min(offset, (audio.duration || offset) - 0.5); } catch (e) { /* sem seek */ } }, { once: true });
+    const pr = audio.play();
+    if (pr && pr.catch) pr.catch(() => setAudioMsg('O navegador bloqueou o áudio. Toque em “Ouvir ao vivo” de novo.'));
+  } else if (!audio.paused && Math.abs(audio.currentTime - offset) > 4) {
+    try { audio.currentTime = offset; } catch (e) { /* ignorar */ }
+  }
+}
+async function flush() {
+  if (!acc.sec || !S.db || !S.uid || flushing || S.canWrite === false) return;
+  flushing = true;
+  const a = acc;
+  acc = { sec: 0, styles: {} };
+  try {
+    const cur = S.listeners[S.uid] || {};
+    const styles = Object.assign({}, cur.styles || {});
+    for (const k of Object.keys(a.styles)) styles[k] = (styles[k] || 0) + a.styles[k];
+    await S.db.doc('listeners/' + S.uid).set({ first: cur.first || Date.now(), last: Date.now(), ls: Date.now(), visits: cur.visits || 1, sec: (cur.sec || 0) + a.sec, styles });
+  } catch (e) {
+    acc.sec += a.sec;
+    for (const k of Object.keys(a.styles)) acc.styles[k] = (acc.styles[k] || 0) + a.styles[k];
+  }
+  flushing = false;
+}
+async function registerVisit() {
+  if (!S.db || !S.uid || S.canWrite === false) return;
+  try {
+    const ref = S.db.doc('listeners/' + S.uid);
+    const snap = await ref.get();
+    const now = Date.now();
+    if (snap.exists) await ref.update({ last: now, visits: ((snap.data() || {}).visits || 0) + 1 });
+    else await ref.set({ first: now, last: now, ls: 0, visits: 1, sec: 0, styles: {} });
+  } catch (e) { console.warn(e); }
+}
+
+/* ---------- Visões ---------- */
+function stripHTML() {
+  if (S.view === 'aovivo') return '';
+  const cur = AIR.cur;
+  if (!cur && !S.tuned) return '';
+  const tx = cur ? '<b>' + esc(cur.song.title) + '</b> <small>' + esc(cur.song.artist) + '</small>' : '<small>Fora do ar neste momento</small>';
+  return '<div class="strip"><span class="lamp ' + (cur ? 'on' : '') + '"></span><div class="tx">' + tx + '</div>' +
+    (S.tuned ? '<button class="btn sm" type="button" data-act="stop">' + ic('stop') + 'Parar</button>' : '<button class="btn sm pri" type="button" data-act="play">' + ic('play') + 'Ouvir</button>') + '</div>';
+}
+
+function greet() {
+  const h = nowSP().sec / 3600, g = h < 5 ? 'Boa madrugada' : h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
+  const n = S.uid && S.names[S.uid] && S.names[S.uid].nome;
+  return n ? g + ', ' + n.split(' ')[0] : g;
+}
+const eqHTML = (on) => '<span class="eq' + (on ? ' on' : '') + '" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>';
+const vinylHTML = (song, spin) => '<div class="vinyl' + (spin ? ' spin' : '') + '" style="--c:' + (song ? sColor(song.style) : 'var(--ink-3)') + '" aria-hidden="true"><span class="lbl"></span></div>';
+
+const cdFmt = (d) => { d = Math.max(0, Math.round(d)); const h = Math.floor(d / 3600), m = Math.floor(d % 3600 / 60), q = d % 60; return h ? h + 'h ' + p2(m) + 'min' : p2(m) + ':' + p2(q); };
+function vAoVivo() {
+  const a = AIR, cur = a.cur, n = a.n;
+  const nextList = a.list.filter((e) => e.song && e.dur > 0 && e.abs > n.sec).slice(0, 6);
+  const nothing = !cur && !nextList.length;
+  let hero;
+  if (cur) {
+    const pct = Math.min(100, Math.max(0, ((n.sec - cur.abs) / cur.dur) * 100));
+    hero = vinylHTML(cur.song, S.tuned) + '<div class="hinfo"><div class="onair"><span class="lamp on"></span>No ar · setor ' + esc(sectName(cur.sector)) + eqHTML(S.tuned) + '</div>' +
+      '<div><h2>' + esc(cur.song.title) + '</h2><p class="art">' + esc(cur.song.artist) + '</p></div>' +
+      '<div class="muted dotline">' + dotFor(cur.song.style) + esc(folderName(cur.song.style)) + '</div>' +
+      '<div><div class="prog"><i id="progBar" style="width:' + pct.toFixed(2) + '%"></i></div><div class="times"><span id="tEl">' + mmss(n.sec - cur.abs) + '</span><span>' + mmss(cur.dur) + '</span></div></div></div>';
+  } else if (nothing) {
+    hero = vinylHTML(null, false) + '<div class="hinfo"><div class="onair"><span class="lamp"></span>Fora do ar</div><div><h2>A grade está vazia</h2><p class="art">Ainda não há músicas programadas. Quando o programador montar a programação, ela começa a tocar no horário.</p></div>' +
+      (can('programar') ? '<div><button class="btn pri" type="button" data-act="nav" data-v="estudio">Montar programação</button></div>' : can('cadastrar') ? '<div><button class="btn pri" type="button" data-act="nav" data-v="programateca">Abrir programateca</button></div>' : '') + '</div>';
+  } else {
+    const nx = nextList[0];
+    hero = vinylHTML(nx.song, false) + '<div class="hinfo"><div class="onair"><span class="lamp"></span>' + (a.sector ? 'Intervalo' : 'Madrugada') + '</div>' +
+      '<div><h2>' + (a.sector ? 'Sem música agora' : 'A rádio volta às 06:00') + '</h2><p class="art">Próxima: ' + esc(nx.song.title) + ' — ' + esc(nx.song.artist) + ', às ' + hh(nx.start) + (nx.abs >= 86400 ? ' de amanhã' : '') + '.</p></div>' +
+      '<div class="cd"><span class="eyebrow">Próxima música em</span><b id="cdNext">' + cdFmt(nx.abs - n.sec) + '</b></div><p class="hint">Dia 06:00–12:00 · Tarde 12:00–18:00 · Noite 18:00–24:00. De madrugada a rádio fica em pausa.</p></div>';
+  }
+  const ctl = '<div class="ctl">' + (S.tuned
+    ? '<button class="btn pri lg" type="button" data-act="stop">' + ic('stop') + 'Parar</button>'
+    : '<button class="btn pri lg" type="button" data-act="play">' + ic('play') + 'Ouvir ao vivo</button>') +
+    '<label class="vol"><span class="eyebrow">Volume</span><input id="vol" type="range" min="0" max="100" value="' + Math.round(S.vol * 100) + '" aria-label="Volume"></label></div>' +
+    '<p class="hint" id="audioMsg" role="status">' + esc(S.audioMsg) + '</p>';
+  const nxt = nextList.length
+    ? '<ol>' + nextList.map((e) => '<li><span class="t">' + hh(e.start) + '</span><span style="min-width:0"><b>' + esc(e.song.title) + '</b><small>' + esc(e.song.artist) + '</small></span><span class="chip">' + (e.abs >= 86400 ? 'amanhã' : sectIc(e.sector) + esc(sectName(e.sector))) + '</span></li>').join('') + '</ol>'
+    : '<div class="empty" style="padding:24px 0"><p>Nada programado à frente.</p></div>';
+  const lays = SECT.map((s) => ({ s, items: layout(n.date, s.id) }));
+  return '<div class="wrap"><div class="ph"><div><h1>Ao vivo</h1><p>' + esc(greet()) + '. Todos ouvem a mesma coisa ao mesmo tempo. A programação é montada pela equipe da rádio.</p></div></div>' +
+    '<div class="live"><section class="panel hero" aria-label="No ar"><div class="hero-in">' + hero + '</div>' + ctl + '</section><section class="panel next" aria-label="A seguir"><h3>A seguir</h3>' + nxt + '</section></div>' +
+    '<section class="panel today" aria-label="Grade de hoje"><h3>A grade de hoje</h3>' + reguaHTML(n.date, lays) + '</section></div>';
+}
+
+function reguaHTML(date, lays) {
+  const today = nowSP().date, n = nowSP();
+  const R0 = 6 * 3600, RL = 18 * 3600;
+  const segs = lays.map((l) => l.items.filter((e) => e.song && e.dur > 0).map((e) => '<i class="seg" style="left:' + ((e.start - R0) / RL * 100).toFixed(3) + '%;width:' + (e.dur / RL * 100).toFixed(3) + '%;background:' + sColor(e.song.style) + '" title="' + esc(hh(e.start) + ' · ' + e.song.title + ' — ' + e.song.artist) + '"></i>').join('')).join('');
+  const ticks = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24].map((h) => '<span class="tk" style="left:' + ((h * 3600 - R0) / RL * 100) + '%">' + p2(h) + '</span>').join('');
+  const seps = [12, 18].map((h) => '<i class="sep" style="left:' + ((h * 3600 - R0) / RL * 100) + '%"></i>').join('');
+  const needle = date === today && n.sec >= R0 ? '<i class="nd" id="needle" style="left:' + ((n.sec - R0) / RL * 100).toFixed(3) + '%"></i>' : '';
+  return '<div class="regua" aria-label="Régua do dia, das 06:00 às 24:00">' + ticks + '<div class="track">' + segs + '</div>' + seps + needle + '</div>';
+}
+
+function vProg() {
+  const date = S.date, today = nowSP().date, edit = can('programar');
+  const ws = weekStart(date);
+  const chips = Array.from({ length: 7 }, (_, k) => {
+    const d = addDays(ws, k), p = pd(d);
+    return '<button type="button" data-act="date-set" data-date="' + d + '" aria-pressed="' + (d === date) + '" class="' + (d === today ? 'hoje ' : '') + (dayCount(d) ? 'tem' : '') + '" aria-label="' + esc(longDate(d)) + '"><b>' + p.getUTCDate() + '</b><span>' + DOWS[p.getUTCDay()] + '</span></button>';
+  }).join('');
+  const lays = SECT.map((s) => ({ s, items: layout(date, s.id) }));
+  const total = lays.reduce((a, l) => a + l.items.reduce((x, e) => x + e.dur, 0), 0);
+  const count = lays.reduce((a, l) => a + l.items.length, 0);
+  const regua = reguaHTML(date, lays);
+
+  const secs = lays.map(({ s, items }) => {
+    const used = items.reduce((x, e) => x + e.dur, 0);
+    const free = CAP - used;
+    const past = isPast(date, s.id);
+    const cur = AIR.cur;
+    const rows = items.map((e, i) => {
+      const prev = items[i - 1];
+      const same = prev && prev.song && e.song && fold(prev.song.artist) === fold(e.song.artist);
+      const isNow = cur && cur.date === date && cur.sector === s.id && cur.id === e.id;
+      const fl = S.flash && S.flash.date === date && S.flash.sector === s.id && S.flash.id === e.id;
+      const title = e.song ? esc(e.song.title) : 'Música removida';
+      const sub = e.song ? esc(e.song.artist) + ' · ' + dotFor(e.song.style) + ' ' + esc(folderName(e.song.style)) : 'Retire da grade';
+      const ctl = edit && !past ? '<span class="cc"><button class="ib" type="button" data-act="up" data-sector="' + s.id + '" data-i="' + i + '" aria-label="Subir" ' + (i === 0 ? 'disabled' : '') + '>' + ic('up') + '</button><button class="ib" type="button" data-act="down" data-sector="' + s.id + '" data-i="' + i + '" aria-label="Descer" ' + (i === items.length - 1 ? 'disabled' : '') + '>' + ic('down') + '</button><button class="ib" type="button" data-act="rm" data-sector="' + s.id + '" data-i="' + i + '" aria-label="Retirar da grade">' + ic('x') + '</button></span>' : '<span class="cc"></span>';
+      return '<li class="row' + (isNow ? ' now' : '') + (fl ? ' flash' : '') + '"><span class="t">' + hhmmss(e.start) + '</span><span style="min-width:0"><b>' + title + '</b><small>' + sub + '</small></span><span class="d">' + mmss(e.dur) + '</span>' + ctl + (same ? '<span class="aviso">Mesmo artista da faixa anterior.</span>' : '') + '</li>';
+    }).join('');
+    const body = items.length ? '<ol class="rows">' + rows + '</ol>' : '<div class="empty" style="padding:28px 16px"><p>Sem músicas neste setor. A rádio fica em silêncio de ' + s.ini + 'h às ' + s.fim + 'h.</p></div>';
+    const foot = edit && !past ? '<button class="btn sm pri" type="button" data-act="open-picker" data-sector="' + s.id + '">' + ic('plus') + 'Adicionar música</button>' : past ? '<span class="chip">Já foi ao ar</span>' : '<span class="hint">Somente leitura</span>';
+    return '<section class="panel sector" data-sec="' + s.id + '" aria-label="Setor ' + s.nome + '"><header><div class="sh"><h3>' + sectIc(s.id) + s.nome + '</h3><span class="hrs">' + p2(s.ini) + ':00–' + p2(s.fim) + ':00</span></div><div class="meter"><b style="width:' + Math.min(100, used / CAP * 100).toFixed(1) + '%"></b></div><div class="mt"><span>' + items.length + (items.length === 1 ? ' música' : ' músicas') + ' · ' + hm(used) + '</span><span>' + (free > 0 ? hm(free) + ' livres' : 'Completo') + '</span></div></header>' + body + '<footer>' + foot + '<span class="hint">Cada faixa começa quando a anterior termina.</span></footer></section>';
+  }).join('');
+
+  const sub = edit ? 'Monte a grade do dia. As faixas tocam em sequência, sem sobreposição, e uma música não se repete no mesmo dia.' : 'A grade da rádio. Os horários mostram quando cada música entra no ar.';
+  return '<div class="wrap"><div class="ph"><div><h1>Programação</h1><p>' + sub + '</p></div></div>' +
+    '<div class="dayhead"><div class="wk" role="group" aria-label="Dias da semana">' + chips + '</div><div class="tools"><button class="ib" type="button" data-act="date-prev" aria-label="Dia anterior">' + ic('back') + '</button><input type="date" id="planDate" data-act="date-input" value="' + date + '" aria-label="Ir para o dia"><button class="ib" type="button" data-act="date-next" aria-label="Próximo dia" style="transform:scaleX(-1)">' + ic('back') + '</button><button class="btn sm" type="button" data-act="date-today">Hoje</button>' + (can('programar') ? '<button class="btn sm" type="button" data-act="copy-open">Copiar este dia</button>' : '') + '</div></div>' +
+    '<div><h2 style="font:600 26px var(--f-display)">' + esc(longDate(date)) + '</h2><p class="sumline">' + (count ? count + (count === 1 ? ' música' : ' músicas') + ' · ' + hm(total) + ' programados de 18h' : 'Nenhuma música programada neste dia') + '</p></div>' +
+    regua + '<div class="sectors">' + secs + '</div></div>';
+}
+
+function songRow(s, opts) {
+  opts = opts || {};
+  const planned = plannedWhere(s.id).filter((x) => x.date >= nowSP().date).length;
+  return '<button type="button" class="song" data-act="sel-song" data-id="' + s.id + '" aria-pressed="' + (S.sel === s.id) + '"><span style="min-width:0"><b>' + esc(s.title) + '</b><small>' + esc(s.artist) + (opts.showStyle ? ' · ' + dotFor(s.style) + ' ' + esc(folderName(s.style)) : '') + '</small></span><span>' + (planned ? '<span class="chip acc">Na grade</span>' : '') + '</span><span class="d">' + mmss(+s.dur || 0) + '</span></button>';
+}
+
+function detailHTML() {
+  const s = S.songs[S.sel];
+  if (!s) return '';
+  const where = plannedWhere(s.id);
+  const cad = can('cadastrar'), prog = can('programar');
+  let planForm = '';
+  if (prog) {
+    const pd0 = val('tpDate', S.date), ps0 = val('tpSector', 'dia');
+    const free = CAP - usedSec(pd0, ps0);
+    const used = dayUsedMap(pd0)[s.id];
+    const info = used ? 'Já toca neste dia (' + sectName(used) + ').' : 'Setor ' + sectName(ps0) + ': ' + hm(free) + ' livres em ' + shortDate(pd0) + '.';
+    planForm = '<hr><h3>Adicionar à programação</h3><div class="two"><div class="fld"><label for="tpDate">Dia</label><input type="date" id="tpDate" data-d="tpDate" data-re="1" value="' + esc(pd0) + '"></div><div class="fld"><label for="tpSector">Setor</label><select id="tpSector" data-d="tpSector" data-re="1">' + SECT.map((x) => '<option value="' + x.id + '"' + (x.id === ps0 ? ' selected' : '') + '>' + x.nome + ' (' + p2(x.ini) + 'h–' + p2(x.fim) + 'h)</option>').join('') + '</select></div></div><p class="hint">' + esc(info) + ' Deixe o horário em branco para entrar no fim do setor.</p><div class="fld"><label for="tpTime">Começar às (opcional)</label><input type="time" step="1" id="tpTime" data-d="tpTime" value="' + esc(val('tpTime', '')) + '"></div><button class="btn pri" type="button" data-act="to-plan">' + ic('plus') + 'Adicionar à programação</button>';
+  }
+  const mgr = cad ? '<hr><div class="acts" style="justify-content:flex-start"><button class="btn sm" type="button" data-act="edit-song">' + ic('edit') + 'Editar</button>' + (S.confirmDel === s.id ? '<button class="btn sm danger" type="button" data-act="del-yes">Confirmar exclusão</button><button class="btn sm ghost" type="button" data-act="del-no">Cancelar</button>' : '<button class="btn sm danger" type="button" data-act="del-ask">Excluir</button>') + '</div>' + (where.length && S.confirmDel === s.id ? '<p class="msg">Esta música está na grade. Retire-a da programação antes de excluir.</p>' : '') : '';
+  return '<aside class="panel detail" aria-label="Detalhes da música"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><span class="eyebrow">Música</span><button class="ib" type="button" data-act="close-song" aria-label="Fechar detalhes">' + ic('x') + '</button></div><h2>' + esc(s.title) + '</h2>' +
+    '<dl><dt>Cantor / banda</dt><dd>' + esc(s.artist) + '</dd><dt>Estilo</dt><dd>' + dotFor(s.style) + ' ' + esc(folderName(s.style)) + '</dd><dt>Duração</dt><dd class="mono">' + mmss(+s.dur || 0) + '</dd><dt>Áudio</dt><dd>' + (s.assetId ? 'Arquivo na nuvem' : 'Sem arquivo (só cadastro)') + '</dd><dt>Cadastrada por</dt><dd>' + esc(s.by ? nm(s.by) : '—') + '</dd><dt>Na grade</dt><dd>' + (where.length ? where.slice(0, 6).map((w) => shortDate(w.date) + ' ' + sectName(w.sector)).join(', ') : 'Ainda não') + '</dd></dl>' + planForm + mgr + '</aside>';
+}
+
+function vLib() {
+  const cad = can('cadastrar'), prog = can('programar');
+  const q = fold(S.libq);
+  const intro = cad && !prog ? 'Busque músicas, separe por estilo e guarde nas pastas. Veja também os pedidos dos ouvintes.' : prog && !cad ? 'Abra uma pasta, escolha a música e adicione à programação do dia ou de outra data.' : 'Pastas por estilo. Cadastre músicas e adicione à programação.';
+  const searchBox = '<div class="fld" style="max-width:420px"><label for="libq">Buscar música</label><input type="search" id="libq" data-d="libq" data-re="1" placeholder="Nome, cantor ou banda" value="' + esc(S.libq) + '" autocomplete="off"></div>';
+  let left;
+  if (q) {
+    const res = Object.values(S.songs).filter((s) => fold(s.title + ' ' + s.artist).includes(q)).sort((a, b) => fold(a.title).localeCompare(fold(b.title)));
+    left = res.length ? '<div class="panel list">' + res.map((s) => songRow(s, { showStyle: true })).join('') + '</div>' : '<div class="panel empty"><h3>Nada encontrado</h3><p>Nenhuma música com “' + esc(S.libq) + '”.</p></div>';
+  } else if (S.folder) {
+    const fl = songsIn(S.folder);
+    left = '<div class="crumbs"><button class="btn sm ghost" type="button" data-act="back">' + ic('back') + 'Pastas</button><h2 style="font:600 28px var(--f-display)">' + dotFor(S.folder) + ' ' + esc(folderName(S.folder)) + '</h2><span class="muted">' + fl.length + (fl.length === 1 ? ' música' : ' músicas') + '</span><span style="flex:1"></span>' + (cad ? '<button class="btn pri sm" type="button" data-act="add-song">' + ic('plus') + 'Adicionar música</button>' : '') + '</div>' +
+      (fl.length ? '<div class="panel list">' + fl.map((s) => songRow(s)).join('') + '</div>' : '<div class="panel empty"><h3>Pasta vazia</h3><p>' + (cad ? 'Adicione a primeira música de ' + esc(folderName(S.folder)) + '.' : 'O produtor ainda não colocou músicas nesta pasta.') + '</p>' + (cad ? '<button class="btn pri" type="button" data-act="add-song">' + ic('plus') + 'Adicionar música</button>' : '') + '</div>');
+  } else {
+    left = '<div class="folders">' + allFolders().map((f) => {
+      const l = songsIn(f.id), tot = l.reduce((a, s) => a + (+s.dur || 0), 0);
+      return '<button type="button" class="folder" style="--c:' + sColor(f.id) + '" data-act="open-folder" data-id="' + f.id + '"><span style="color:' + sColor(f.id) + '">' + ic('folder') + '</span><span><b>' + esc(f.nome) + '</b><small>' + (l.length ? l.length + (l.length === 1 ? ' música · ' : ' músicas · ') + hm(tot) : 'Vazia') + '</small></span></button>';
+    }).join('') + (cad ? '<button type="button" class="folder bulk" data-act="bulk-open"><span class="muted">' + ic('plus') + '</span><span><b>Enviar várias músicas</b><small>Separa nas pastas sozinho</small></span></button>' : '') + (cad ? '<button type="button" class="folder" data-act="new-folder" style="border-style:dashed"><span class="muted">' + ic('plus') + '</span><span><b>Nova pasta</b><small>Outro estilo</small></span></button>' : '') + '</div>';
+  }
+  const det = S.sel && S.songs[S.sel] ? detailHTML() : '';
+  return '<div class="wrap"><div class="ph"><div><h1>Programateca</h1><p>' + intro + '</p></div>' + searchBox + '</div><div class="libgrid' + (det ? ' det' : '') + '"><div style="display:grid;gap:14px;min-width:0">' + left + '</div>' + det + '</div></div>';
+}
+
+/* ---------- Pedidos protegidos (cifrados) ---------- */
+const b64 = (u) => { u = new Uint8Array(u); let t = ''; for (let i = 0; i < u.length; i += 8192) t += String.fromCharCode.apply(null, u.subarray(i, i + 8192)); return btoa(t); };
+const unb64 = (t) => Uint8Array.from(atob(t), (c) => c.charCodeAt(0));
+const RSA = { name: 'RSA-OAEP', hash: 'SHA-256' };
+async function genReqKeys() {
+  const kp = await crypto.subtle.generateKey({ name: 'RSA-OAEP', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['encrypt', 'decrypt']);
+  return { pub: b64(await crypto.subtle.exportKey('spki', kp.publicKey)), priv: b64(await crypto.subtle.exportKey('pkcs8', kp.privateKey)), kid: Math.random().toString(36).slice(2, 10) };
+}
+async function encReq(obj) {
+  const pub = await crypto.subtle.importKey('spki', unb64(S.config.reqkeys.pub), RSA, false, ['encrypt']);
+  const aes = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt']);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aes, new TextEncoder().encode(JSON.stringify(obj)));
+  const k = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, pub, await crypto.subtle.exportKey('raw', aes));
+  return { k: b64(k), iv: b64(iv), ct: b64(ct) };
+}
+async function decReq(enc) {
+  const raw = await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, S.reqPriv, unb64(enc.k));
+  const aes = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['decrypt']);
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(enc.iv) }, aes, unb64(enc.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+const kidOf = (pub) => String(pub).slice(-32);
+async function devKey() {
+  if (S.dev) return S.dev;
+  let v = null;
+  try { v = JSON.parse(localStorage.getItem('rp_dk_' + S.uid) || 'null'); } catch (e) { v = null; }
+  if (!(v && v.pub && v.priv)) {
+    const g = await genReqKeys();
+    v = { pub: g.pub, priv: g.priv };
+    try { localStorage.setItem('rp_dk_' + S.uid, JSON.stringify(v)); } catch (e) { /* só nesta sessão */ }
+  }
+  S.dev = { pub: v.pub, priv: await crypto.subtle.importKey('pkcs8', unb64(v.priv), RSA, false, ['decrypt']) };
+  return S.dev;
+}
+async function publishDevKey() {
+  if (!S.db || !S.uid || S.canWrite === false || S.devPosting || !S.keysLoaded) return;
+  S.devPosting = true;
+  try {
+    const d = await devKey();
+    const cur = S.myKey;
+    if (!cur || cur.pub !== d.pub) { await S.db.doc('keys/' + S.uid).set({ pub: d.pub, at: Date.now() }); S.myKey = { pub: d.pub }; }
+  } catch (e) { console.warn(e); }
+  S.devPosting = false;
+}
+async function wrapFor(pubB64, privB64) {
+  const pub = await crypto.subtle.importKey('spki', unb64(pubB64), RSA, false, ['encrypt']);
+  const aes = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt']);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aes, new TextEncoder().encode(privB64));
+  const k = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, pub, await crypto.subtle.exportKey('raw', aes));
+  return { k: b64(k), iv: b64(iv), ct: b64(ct) };
+}
+async function unwrapGrant(g) {
+  const d = await devKey();
+  const raw = await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, d.priv, unb64(g.k));
+  const aes = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['decrypt']);
+  return new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(g.iv) }, aes, unb64(g.ct)));
+}
+const isDono = () => S.isOwner || (!!S.canEdit && !!S.roles[S.uid] && S.roles[S.uid].role === 'dono');
+async function ensureGrants() {
+  const rk = S.config.reqkeys;
+  if (!isDono() || !S.reqPrivB64 || !rk || !rk.kid || S.reqKid !== rk.kid || S.grBusy || !S.keysLoaded) return;
+  S.grBusy = true;
+  try {
+    for (const [uid, r] of Object.entries(S.roles)) {
+      if (!r || !STAFF.includes(r.role) || uid === S.uid) continue;
+      const k = (S.keys || {})[uid];
+      if (!k || !k.pub) continue;
+      const g = (S.grants || {})[uid];
+      if (g && g.kid === rk.kid && g.dp === kidOf(k.pub)) continue;
+      const w = await wrapFor(k.pub, S.reqPrivB64);
+      await S.db.doc('grants/' + uid).set(Object.assign(w, { kid: rk.kid, dp: kidOf(k.pub), at: Date.now() }));
+    }
+    for (const uid of Object.keys(S.grants || {})) {
+      const r = S.roles[uid];
+      if (!r || !STAFF.includes(r.role)) await S.db.doc('grants/' + uid).delete();
+    }
+  } catch (e) { console.warn(e); }
+  S.grBusy = false;
+}
+async function setPriv(privB64, persist, kid) {
+  S.reqPriv = await crypto.subtle.importKey('pkcs8', unb64(privB64), RSA, false, ['decrypt']);
+  S.reqKid = kid || null; S.reqPrivB64 = privB64;
+  S.reqPlain = {}; S.reqBad = {};
+  if (persist) { try { localStorage.setItem('rp_rk_' + S.uid, JSON.stringify({ kid, priv: privB64 })); } catch (e) { /* sem armazenamento */ } }
+  decryptAll();
+}
+function clearKey() {
+  S.reqPriv = null; S.reqKid = null; S.reqPrivB64 = null; S.reqPlain = {}; S.reqBad = {};
+  try { localStorage.removeItem('rp_rk_' + S.uid); } catch (e) { /* ok */ }
+}
+let decBusy = false, decAgain = false;
+async function decryptAll() {
+  if (!S.reqPriv) return;
+  if (decBusy) { decAgain = true; return; }
+  decBusy = true;
+  try {
+    for (const [id, r] of Object.entries(S.requests)) {
+      if (!r.enc || S.reqPlain[id] || S.reqBad[id] === r.enc.ct) continue;
+      delete S.reqBad[id];
+      try { S.reqPlain[id] = await decReq(r.enc); } catch (e) { S.reqBad[id] = r.enc.ct; }
+    }
+  } finally { decBusy = false; }
+  scheduleRender();
+  if (decAgain) { decAgain = false; decryptAll(); }
+}
+const reqData = (id) => { const r = S.requests[id] || {}; return r.enc ? (S.reqPlain[id] || null) : r; };
+async function restoreKey() {
+  if (S.reqPriv || S.isOwner || !S.uid || S.rsBusy) return;
+  const rk = S.config.reqkeys;
+  if (!rk || !rk.kid) return;
+  S.rsBusy = true;
+  try {
+    let done = false;
+    try {
+      const v = JSON.parse(localStorage.getItem('rp_rk_' + S.uid) || 'null');
+      if (v && v.kid === rk.kid && v.priv) { await setPriv(v.priv, false, v.kid); done = true; }
+    } catch (e) { /* sem chave guardada */ }
+    const r = S.roles[S.uid];
+    const g = (S.grants || {})[S.uid];
+    if (!done && r && STAFF.includes(r.role) && g && g.kid === rk.kid && S.keysLoaded) {
+      try { await setPriv(await unwrapGrant(g), true, rk.kid); } catch (e) { console.warn(e); }
+    }
+  } finally { S.rsBusy = false; }
+}
+async function ensureReqKeys() {
+  if (!S.isOwner || !S.db || !S.uid || S.rkBusy || !S.cfgLoaded || !S.keyLoaded) return;
+  S.rkBusy = true;
+  try {
+    let rk = S.config.reqkeys, priv = S.ownerPriv;
+    if (!rk || !rk.pub || !rk.kid || !priv) {
+      const g = await genReqKeys();
+      await S.db.doc('data/users/' + S.uid + '/reqkey').set({ priv: g.priv });
+      S.ownerPriv = priv = g.priv;
+      rk = { pub: g.pub, kid: g.kid };
+      await S.db.doc('config/reqkeys').set(rk);
+      S.config.reqkeys = rk;
+    }
+    if (!S.reqPriv || S.reqKid !== rk.kid) await setPriv(priv, false, rk.kid);
+    ensureGrants();
+  } catch (e) { console.warn(e); }
+  S.rkBusy = false;
+}
+async function rotateKeys() {
+  if (!S.isOwner || !S.reqPriv) { toast('Aguarde a proteção ficar ativa e tente de novo.'); return; }
+  const ok = await W(async () => {
+    const plains = {};
+    for (const [id, r] of Object.entries(S.requests)) if (r.enc) { try { plains[id] = S.reqPlain[id] || await decReq(r.enc); } catch (e) { /* ilegível */ } }
+    const g = await genReqKeys();
+    await S.db.doc('data/users/' + S.uid + '/reqkey').set({ priv: g.priv });
+    S.ownerPriv = g.priv;
+    S.config.reqkeys = { pub: g.pub, kid: g.kid };
+    await S.db.doc('config/reqkeys').set(S.config.reqkeys);
+    for (const [id, pl] of Object.entries(plains)) await S.db.doc('requests/' + id).update({ enc: await encReq(pl), kid: g.kid });
+    await setPriv(g.priv, false, g.kid);
+  });
+  if (ok) { toast('Chave trocada. A equipe recebe a nova chave sozinha.'); ensureReqKeys(); }
+}
+
+const REQ_ST = { novo: ['Novo', 'warn'], programateca: ['Na pasta', 'acc'], programada: ['Na programação', 'ok'], recusada: ['Não será tocada', 'bad'] };
+const pendCount = () => Object.values(S.requests).filter((r) => !r.status || r.status === 'novo').length;
+const pendBadge = () => (isStaff() && pendCount() ? '<span class="nb" aria-label="' + pendCount() + ' pedidos novos">' + pendCount() + '</span>' : '');
+
+function vPed() {
+  const staff = isStaff();
+  const blocked = S.canWrite === false;
+  const ready = !!(S.config.reqkeys && S.config.reqkeys.pub);
+  const off = blocked || !ready;
+  const dis = off ? 'disabled' : '';
+  const comp = '<form class="panel compose" data-act="send-request"><div class="two"><div class="fld"><label for="rqTitle">Música</label><input id="rqTitle" type="text" data-d="rqTitle" value="' + esc(val('rqTitle', '')) + '" placeholder="Nome da música" autocomplete="off" ' + dis + '></div><div class="fld"><label for="rqArtist">Cantor, cantora ou banda</label><input id="rqArtist" type="text" data-d="rqArtist" value="' + esc(val('rqArtist', '')) + '" placeholder="Opcional" autocomplete="off" ' + dis + '></div></div><div class="fld"><label for="rqMsg">Recado</label><textarea id="rqMsg" data-d="rqMsg" placeholder="Quer mandar um alô junto? (opcional)" ' + dis + '>' + esc(val('rqMsg', '')) + '</textarea></div><div class="cfoot"><p class="hint">' + (blocked ? 'Seu acesso é só de leitura, então não dá para enviar pedidos.' : !ready ? 'Os pedidos ainda estão sendo ativados. Tente de novo em instantes.' : 'O pedido não é garantia. A equipe decide se a música entra na programação.') + '</p><button class="btn pri" type="submit" ' + dis + '>' + ic('check') + 'Enviar pedido</button></div><p class="msg" id="rqMsgOut" role="status"></p></form>';
+  if (!staff) {
+    return '<div class="wrap"><div class="ph"><div><h1>Pedir música</h1><p>Peça uma música para a Paris Cast e ela pode entrar na programação.</p></div></div>' + comp +
+      '<div class="anon">' + ic('lock') + '<div><b>Seu pedido é anônimo</b><p>Só a equipe da rádio vê o que foi pedido e quem pediu. Os outros ouvintes não veem nada.</p></div></div></div>';
+  }
+  return '<div class="wrap"><div class="ph"><div><h1>Pedidos de música</h1><p>Veja quem pediu, qual música e o recado. Confirme quando a música já estiver na pasta da programateca.</p></div></div>' + pedBoard(ready) + '<details class="mine"><summary>Fazer um pedido também</summary>' + comp + '</details></div>';
+}
+function pedBoard(ready) {
+  if (!ready) return '<div class="panel empty"><h3>Pedidos ainda não ativados</h3><p>O dono precisa abrir a rádio uma vez para ativar a proteção dos pedidos.</p></div>';
+  if (!S.reqPriv) {
+    if (S.isOwner) return '<div class="panel empty"><h3>Ativando a proteção…</h3><p>Aguarde alguns segundos.</p></div>';
+    return '<div class="panel empty"><span class="bigic">' + ic('lock') + '</span><h3>Pedidos ainda bloqueados neste aparelho</h3><p>Os pedidos são protegidos. O dono libera a chave para o seu cargo quando está com a rádio aberta, o que leva alguns segundos. Depois toque abaixo.</p><button class="btn pri" type="button" data-act="unlock-req">Verificar de novo</button></div>';
+  }
+  const f = val('rqf', 'pend');
+  const all = Object.entries(S.requests).map(([id, r]) => ({ id, r, d: reqData(id) }));
+  const isNew = (r) => !r.status || r.status === 'novo';
+  const nNew = all.filter((x) => isNew(x.r)).length;
+  const list = all.filter((x) => f === 'all' || isNew(x.r)).sort((a, b) => (b.r.at || 0) - (a.r.at || 0));
+  const tabs = '<div class="tabs" role="group" aria-label="Filtrar pedidos"><button type="button" data-act="rq-filter" data-f="pend" aria-pressed="' + (f !== 'all') + '">Novos <b>' + nNew + '</b></button><button type="button" data-act="rq-filter" data-f="all" aria-pressed="' + (f === 'all') + '">Todos <b>' + all.length + '</b></button></div>';
+  const items = list.map(({ id, r, d }) => {
+    const st = REQ_ST[r.status] || REQ_ST.novo;
+    const stKey = REQ_ST[r.status] ? r.status : 'novo';
+    if (!d) return '<li class="rq" data-st="' + stKey + '"><span class="av" aria-hidden="true">?</span><div><div class="hd"><b>' + (S.reqBad[id] ? 'Pedido ilegível' : 'Abrindo pedido…') + '</b><small>' + ago(r.at) + '</small></div>' + (S.reqBad[id] ? '<p class="muted">Foi protegido com uma chave antiga.</p>' : '') + '</div></li>';
+    const a = [];
+    if (isNew(r)) {
+      a.push('<button class="btn sm pri" type="button" data-act="req-done" data-id="' + id + '">' + ic('folderok') + 'Confirmar: já está na pasta</button>');
+      if (can('cadastrar')) a.push('<button class="btn sm" type="button" data-act="req-register" data-id="' + id + '">Cadastrar na programateca</button>');
+    }
+    if (r.songId && S.songs[r.songId]) a.push('<button class="btn sm" type="button" data-act="go-song" data-id="' + r.songId + '">Abrir música</button>');
+    if (r.status !== 'recusada') a.push('<button class="btn sm ghost" type="button" data-act="req-status" data-id="' + id + '" data-s="recusada">Recusar</button>');
+    else a.push('<button class="btn sm ghost" type="button" data-act="req-status" data-id="' + id + '" data-s="novo">Reabrir</button>');
+    const done = r.doneBy && (r.status === 'programateca' || r.status === 'programada') ? '<p class="doneby">' + ic('check') + 'Confirmado por ' + esc(nm(r.doneBy)) + (r.doneAt ? ' ' + ago(r.doneAt) : '') + '</p>' : '';
+    return '<li class="rq" data-st="' + stKey + '">' + avatar(d.by) + '<div style="min-width:0"><div class="hd"><b>' + esc(d.by ? nm(d.by) : 'Ouvinte') + '</b><small>pediu ' + ago(r.at) + '</small><span class="chip ' + st[1] + '">' + st[0] + '</span></div>' +
+      '<p class="song-t">' + esc(d.title) + '</p>' + (d.artist ? '<p class="song-a">' + esc(d.artist) + '</p>' : '') +
+      (d.msg ? '<p class="quote">' + esc(d.msg) + '</p>' : '') + done + '<div class="acts" style="justify-content:flex-start">' + a.join('') + '</div></div></li>';
+  }).join('');
+  const body = list.length ? '<ul class="panel rqs">' + items + '</ul>' : '<div class="panel empty"><span class="bigic">' + ic('check') + '</span><h3>' + (f === 'all' ? 'Nenhum pedido ainda' : 'Nenhum pedido novo') + '</h3><p>Os pedidos dos ouvintes aparecem aqui, do mais novo para o mais antigo.</p></div>';
+  return '<div class="rq-head">' + tabs + '</div>' + body;
+}
+
+function vOuv() {
+  const L = Object.entries(S.listeners).map(([id, v]) => Object.assign({ id }, v));
+  const total = L.reduce((a, x) => a + (x.sec || 0), 0);
+  const nowMs = Date.now();
+  const online = L.filter((x) => x.ls && nowMs - x.ls < 75000).length;
+  const avg = L.length ? total / L.length : 0;
+  const styles = {};
+  L.forEach((x) => Object.entries(x.styles || {}).forEach(([k, v]) => { styles[k] = (styles[k] || 0) + v; }));
+  const bars = Object.entries(styles).filter((e) => e[1] > 0).sort((a, b) => b[1] - a[1]);
+  const max = bars.length ? bars[0][1] : 1;
+  const chart = bars.length ? '<div class="bars" role="list">' + bars.map(([k, v]) => '<div class="bar" role="listitem" title="' + esc(folderName(k) + ': ' + hm(v)) + '"><span class="n">' + esc(folderName(k)) + '</span><span class="tr"><i style="width:' + (v / max * 100).toFixed(1) + '%"></i></span><span class="v">' + hm(v) + '</span></div>').join('') + '</div>' : '<div class="empty" style="padding:24px 0"><p>O gráfico aparece quando alguém ouvir a rádio. Os estilos vêm das músicas que estavam no ar.</p></div>';
+  const q = fold(val('pq', ''));
+  const roleOf = (id) => (S.isOwner && id === S.uid) ? 'dono' : ROLES[(S.roles[id] || {}).role] ? S.roles[id].role : 'ouvinte';
+  const cnt = { todos: L.length, online, ouvinte: 0, produtor: 0, programador: 0, dono: 0 };
+  L.forEach((x) => { cnt[roleOf(x.id)]++; });
+  const flt = val('pflt', 'todos'), srt = val('psrt', 'tempo');
+  const chips = [['todos', 'Todos'], ['online', 'Ouvindo agora'], ['ouvinte', 'Ouvintes'], ['produtor', 'Produtores'], ['programador', 'Programadores'], ['dono', 'Donos']].map(([k, n]) => '<button type="button" class="fc" data-act="p-filter" data-k="' + k + '" aria-pressed="' + (flt === k) + '">' + n + ' <b>' + cnt[k] + '</b></button>').join('');
+  const SORTS = { tempo: 'Mais tempo ouvido', recente: 'Mais recentes', nome: 'Nome (A–Z)', cargo: 'Cargo' };
+  const RK = { dono: 0, programador: 1, produtor: 2, ouvinte: 3 };
+  let rows = L.slice().sort((a, b) => srt === 'nome' ? fold(nm(a.id)).localeCompare(fold(nm(b.id))) : srt === 'recente' ? (b.last || 0) - (a.last || 0) : srt === 'cargo' ? RK[roleOf(a.id)] - RK[roleOf(b.id)] || (b.sec || 0) - (a.sec || 0) : (b.sec || 0) - (a.sec || 0) || (b.last || 0) - (a.last || 0));
+  if (flt === 'online') rows = rows.filter((x) => x.ls && nowMs - x.ls < 75000);
+  else if (flt !== 'todos') rows = rows.filter((x) => roleOf(x.id) === flt);
+  const showPh = isDono() && !S.as;
+  const qd = q.replace(/\D/g, '');
+  if (q) rows = rows.filter((x) => fold(nm(x.id)).includes(q) || fold((S.prof[x.id] || {}).name || '').includes(q) || (showPh && qd.length > 1 && String((S.people[x.id] || {}).tel || '').includes(qd)));
+  const edit = can('cargos');
+  const cols = showPh ? 7 : 5;
+  const tr = rows.map((x) => {
+    const meOwner = x.id === S.uid;
+    const r = meOwner ? 'dono' : ROLES[(S.roles[x.id] || {}).role] ? S.roles[x.id].role : 'ouvinte';
+    const reg = S.names[x.id], pe = S.people[x.id] || {}, acct = (S.prof[x.id] || {}).name;
+    const cell = '<span class="rb r-' + r + '">' + esc(ROLES[r]) + '</span>' + (edit && !meOwner ? ' <button type="button" class="btn sm" data-act="role-open" data-uid="' + esc(x.id) + '" aria-label="Dar cargo a ' + esc(nm(x.id)) + '">' + ic('key') + 'Dar cargo</button>' : '');
+    const sub2 = !reg ? '<span class="who2">Sem cadastro</span>' : showPh && acct && fold(acct) !== fold(reg.nome) ? '<span class="who2">Conta: ' + esc(acct) + '</span>' : '';
+    const del = !showPh ? '' : '<td>' + (x.id === S.uid || !reg ? '' : S.confirmReg === x.id ? '<span style="display:flex;gap:6px"><button class="btn sm danger" type="button" data-act="reg-ok" data-uid="' + esc(x.id) + '">Confirmar</button><button class="btn sm ghost" type="button" data-act="reg-no">Cancelar</button></span>' : '<button class="btn sm ghost" type="button" data-act="reg-ask" data-uid="' + esc(x.id) + '">Remover cadastro</button>') + '</td>';
+    return '<tr><td><span class="pp">' + avatar(x.id) + '<span style="min-width:0;overflow:hidden;text-overflow:ellipsis">' + esc(nm(x.id)) + (x.id === S.uid ? ' <span class="chip">você</span>' : '') + sub2 + '</span></span></td>' + (showPh ? '<td class="tel">' + esc(pe.tel ? fmtPhone(pe.tel) : '—') + '</td>' : '') + '<td>' + cell + '</td><td class="num">' + (x.visits || 0) + '</td><td class="num">' + hm(x.sec || 0) + '</td><td class="num">' + (x.ls && nowMs - x.ls < 75000 ? '<span class="chip ok">ouvindo</span>' : ago(x.last)) + '</td>' + del + '</tr>';
+  }).join('');
+  const table = L.length ? '<div class="tw"><table><thead><tr><th>Pessoa</th>' + (showPh ? '<th>Telefone</th>' : '') + '<th>Cargo</th><th class="num">Visitas</th><th class="num">Tempo ouvido</th><th class="num">Última vez</th>' + (showPh ? '<th></th>' : '') + '</tr></thead><tbody>' + (tr || '<tr><td colspan="' + cols + '" class="muted">Ninguém encontrado.</td></tr>') + '</tbody></table></div>' : '<div class="empty" style="padding:24px 0"><p>Ninguém entrou ainda.</p></div>';
+  return '<div class="wrap"><div class="ph"><div><h1>Ouvintes</h1><p>Quem entrou na rádio, por quanto tempo ouviu e quais estilos mais tocam nos ouvidos do público.</p></div></div>' +
+    '<div class="panel stats"><div><div class="n">' + L.length + '</div><div class="l">Pessoas que já entraram</div></div>' + (showPh ? '<div><div class="n">' + Object.keys(S.names).length + '</div><div class="l">Cadastros feitos</div></div>' : '') + '<div><div class="n">' + hm(total) + '</div><div class="l">Tempo total ouvido</div></div><div><div class="n">' + online + '</div><div class="l">Ouvindo agora</div></div><div><div class="n">' + hm(avg) + '</div><div class="l">Média por pessoa</div></div></div>' +
+    '<section class="panel sec2"><div><h2>Estilos mais ouvidos</h2><p class="muted">Tempo de escuta por estilo, somando todos os ouvintes.</p></div>' + chart + '</section>' +
+    '<section class="panel sec2"><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between"><div><h2>Pessoas</h2><p class="muted">' + (showPh ? 'Todos que já entraram, com nome e telefone cadastrados. Use “Dar cargo” para promover ou tirar o cargo de alguém, ou remova um cadastro suspeito.' : edit ? 'Defina o cargo de cada pessoa.' : 'Só o dono altera cargos e vê telefones.') + '</p></div>' + (S.isOwner && !S.as ? '<button class="btn sm ghost" type="button" data-act="rotate-keys" title="Troca a chave que protege os pedidos. A equipe recebe a nova sozinha.">' + ic('key') + 'Trocar chave dos pedidos</button>' : '') + '<div class="fld" style="min-width:170px"><label for="psrt">Ordenar por</label><select id="psrt" data-d="psrt" data-re="1">' + Object.entries(SORTS).map(([k, n]) => '<option value="' + k + '"' + (k === srt ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></div><div class="fld" style="min-width:240px"><label for="pq">Buscar pessoa</label><input id="pq" type="search" data-d="pq" data-re="1" value="' + esc(val('pq', '')) + '" placeholder="' + (showPh ? 'Nome ou telefone' : 'Nome') + '" autocomplete="off"></div></div><div class="fchips" style="margin:12px 0">' + chips + '</div>' + table + '</section></div>';
+}
+
+
+
+/* ---------- Estúdio ---------- */
+const E = { sector: null, sel: null, q: '', folder: '', zoom: 10, scroll: null, drag: null };
+function estSector() {
+  if (E.sector) return E.sector;
+  const free = SECT.find((x) => !isPast(S.date, x.id));
+  E.sector = (free || SECT[SECT.length - 1]).id;
+  return E.sector;
+}
+function estHTML() {
+  const date = S.date, today = nowSP().date, n = nowSP(), sid = estSector(), edit = can('programar');
+  const z = E.zoom, W6 = 360 * z;
+  const sect = SECT.find((x) => x.id === sid);
+  const ws = weekStart(date);
+  const chips = Array.from({ length: 7 }, (_, k) => {
+    const d = addDays(ws, k), pp = pd(d);
+    return '<button type="button" data-act="date-set" data-date="' + d + '" aria-pressed="' + (d === date) + '" class="' + (d === today ? 'hoje ' : '') + (dayCount(d) ? 'tem' : '') + '" aria-label="' + esc(longDate(d)) + '"><b>' + pp.getUTCDate() + '</b><span>' + DOWS[pp.getUTCDay()] + '</span></button>';
+  }).join('');
+  const bar = '<div class="est-bar"><div><h1>Estúdio</h1><p class="muted">Monte a grade arrastando músicas da biblioteca. Solte em qualquer ponto da faixa para fixar o horário; sem horário, a música entra logo após a anterior.</p></div><div class="dayhead" style="gap:10px"><div class="wk" role="group" aria-label="Dias da semana">' + chips + '</div><div class="tools"><button class="ib" type="button" data-act="date-prev" aria-label="Dia anterior">' + ic('back') + '</button><input type="date" id="planDate" data-act="date-input" value="' + date + '" aria-label="Ir para o dia"><button class="ib" type="button" data-act="date-next" aria-label="Próximo dia" style="transform:scaleX(-1)">' + ic('back') + '</button><button class="btn sm" type="button" data-act="date-today">Hoje</button>' + (can('programar') ? '<button class="btn sm" type="button" data-act="copy-open">Copiar este dia</button>' : '') + '</div></div></div>';
+
+  // biblioteca
+  const used = dayUsedMap(date);
+  const q = fold(val('eq', ''));
+  const fl = allFolders();
+  const counts = {};
+  Object.values(S.songs).forEach((x) => { counts[x.style] = (counts[x.style] || 0) + 1; });
+  let ls = Object.values(S.songs).sort((a, b) => fold(a.title).localeCompare(fold(b.title)));
+  if (E.folder) ls = ls.filter((x) => x.style === E.folder);
+  if (q) ls = ls.filter((x) => fold(x.title).includes(q) || fold(x.artist).includes(q));
+  const fch = '<div class="fchips"><button type="button" data-act="est-folder" data-id="" aria-pressed="' + !E.folder + '">Todas</button>' + fl.filter((f) => counts[f.id]).map((f) => '<button type="button" data-act="est-folder" data-id="' + esc(f.id) + '" aria-pressed="' + (E.folder === f.id) + '">' + esc(f.nome) + ' ' + counts[f.id] + '</button>').join('') + '</div>';
+  const rowsL = ls.slice(0, 300).map((x) => {
+    const u = used[x.id];
+    return '<div class="ls" draggable="' + (edit && !u ? 'true' : 'false') + '" data-song="' + x.id + '" data-used="' + (u ? 1 : 0) + '"><span class="dot" style="background:' + sColor(x.style) + '"></span><span style="min-width:0"><b>' + esc(x.title) + '</b><small>' + esc(x.artist) + (u ? ' · já toca hoje (' + esc(sectName(u)) + ')' : '') + '</small></span><span class="d">' + mmss(+x.dur || 0) + '</span><button class="ib" type="button" data-act="est-add" data-id="' + x.id + '" aria-label="Adicionar ' + esc(x.title) + ' ao setor ' + esc(sect.nome) + '" ' + (edit && !u ? '' : 'disabled') + '>' + ic('plus') + '</button></div>';
+  }).join('');
+  const lib = '<section class="dock lib" aria-label="Biblioteca"><h3 class="dh"><span>Biblioteca</span><span>' + Object.keys(S.songs).length + '</span></h3><div class="lib-tools"><input type="search" data-d="eq" data-re="1" value="' + esc(val('eq', '')) + '" placeholder="Buscar música ou artista" autocomplete="off" aria-label="Buscar na biblioteca"><label class="esttime">Começar às <input type="time" step="1" data-d="estTime" value="' + esc(val('estTime', '')) + '" aria-label="Horário de início (opcional)"></label>' + fch + '</div><div class="lsongs">' + (rowsL || '<div class="empty" style="padding:28px 14px"><p>' + (Object.keys(S.songs).length ? 'Nada encontrado.' : 'A programateca está vazia. O produtor cadastra as músicas nas pastas.') + '</p></div>') + '</div></section>';
+
+  // monitores
+  const cur = AIR.cur;
+  const nxt = AIR.list.find((e) => e.song && e.dur > 0 && e.abs > n.sec);
+  const pct = cur ? Math.min(100, Math.max(0, (n.sec - cur.abs) / cur.dur * 100)) : 0;
+  const pgm = '<div class="mon1 pgm"><span class="tag">● No ar</span>' + (cur ? '<h3>' + esc(cur.song.title) + '</h3><p>' + esc(cur.song.artist) + ' · setor ' + esc(sectName(cur.sector)) + '</p><div class="prog"><i id="estBar" style="width:' + pct.toFixed(2) + '%"></i></div><div class="times"><span id="estEl">' + mmss(n.sec - cur.abs) + '</span><span>' + mmss(cur.dur) + '</span></div>' : '<h3>Fora do ar</h3><p>Nada tocando neste momento.</p>') + '</div>';
+  const pvw = '<div class="mon1 pvw"><span class="tag">▶ A seguir</span>' + (nxt ? '<h3>' + esc(nxt.song.title) + '</h3><p>' + esc(nxt.song.artist) + '</p><p class="mono">às ' + hh(nxt.start) + (nxt.abs >= 86400 ? ' de amanhã' : '') + ' · ' + mmss(nxt.dur) + '</p>' : '<h3>Nada programado</h3><p>Sem músicas à frente.</p>') + '</div>';
+  const mon = '<section class="dock mon" aria-label="Monitores"><h3 class="dh"><span>Monitor</span><span class="mono" id="estClock">' + hhmmss(n.sec) + '</span></h3><div class="mons">' + pgm + pvw + '</div></section>';
+
+  // linha do tempo
+  const ticks = [];
+  for (let m = 0; m <= 360; m += 10) ticks.push(m);
+  const ruler = '<div class="ruler" style="width:' + W6 + 'px">' + ticks.map((m) => { const hr = m % 60 === 0, hf = m % 30 === 0; return '<i class="' + (hr ? 'M' : hf ? 'H' : 'm') + '" style="left:' + m * z + 'px"></i>' + (hf && (hr || z >= 8) ? '<span style="left:' + m * z + 'px">' + (m === 0 ? 'início' : '+' + Math.floor(m / 60) + 'h' + (m % 60 ? '30' : '')) + '</span>' : ''); }).join('') + '</div>';
+  const lanes = SECT.map((x) => {
+    const items = layout(date, x.id), past = isPast(date, x.id);
+    const blocks = items.map((e, i) => {
+      if (!e.song || e.dur <= 0) return '';
+      const isNow = cur && cur.date === date && cur.sector === x.id && cur.id === e.id;
+      const left = (e.start - x.ini * 3600) / 60 * z, wd = Math.max(8, e.dur / 60 * z - 2);
+      return '<button type="button" class="blk' + (isNow ? ' now' : '') + '" draggable="' + (edit && !past ? 'true' : 'false') + '" data-act="est-sel" data-sector="' + x.id + '" data-i="' + i + '" aria-pressed="' + (E.sel === x.id + ':' + i) + '" style="left:' + left.toFixed(1) + 'px;width:' + wd.toFixed(1) + 'px;background:' + sColor(e.song.style) + '" title="' + esc(hh(e.start) + ' · ' + e.song.title + ' — ' + e.song.artist) + '"><b>' + esc(e.song.title) + '</b><small>' + hh(e.start) + (e.pin != null ? ' · fixo' : '') + '</small></button>';
+    }).join('');
+    const hrs = Array.from({ length: x.fim - x.ini }, (_, k) => '<em class="hl" style="left:' + (k * 60 * z) + 'px">' + p2(x.ini + k) + 'h</em>').join('');
+    const ph = date === today && n.sec >= x.ini * 3600 && n.sec < x.fim * 3600 ? '<i class="ph-line" style="left:' + ((n.sec - x.ini * 3600) / 60 * z).toFixed(1) + 'px"></i>' : '';
+    return '<div class="lane' + (x.id === sid ? ' act' : '') + (past ? ' past' : '') + (edit && !past ? '' : ' ro') + '"><button type="button" class="lh" data-act="est-sector" data-id="' + x.id + '"><b>' + x.nome + '</b><small>' + p2(x.ini) + ':00–' + p2(x.fim) + ':00</small></button><div class="ltrack" data-lane="' + x.id + '">' + hrs + blocks + ph + '</div></div>';
+  }).join('');
+  const tl = '<section class="dock tl" aria-label="Linha do tempo"><h3 class="dh"><span>Linha do tempo · ' + esc(longDate(date)) + '</span><span>' + dayCount(date) + ' músicas</span></h3><div class="tlbar"><label style="display:flex;align-items:center;gap:8px">Zoom <input type="range" min="3" max="40" step="1" value="' + z + '" data-act="est-zoom" aria-label="Zoom da linha do tempo"></label><span>Arraste a música para o horário desejado na faixa (ela fica fixa ali), ou use o botão +. O vazio entre as músicas é silêncio.</span></div><div class="tlscroll" id="tlscroll"><div class="tlin" style="--w:' + W6 + 'px;--z:' + z + 'px">' + ruler + lanes + '</div></div></section>';
+
+  // setores e fila
+  const scenes = SECT.map((x) => {
+    const u = usedSec(date, x.id), c = (((S.plan[date + '_' + x.id] || {}).items) || []).length;
+    return '<button type="button" class="sc" data-sec="' + x.id + '" data-act="est-sector" data-id="' + x.id + '" aria-pressed="' + (x.id === sid) + '"><span class="sh"><b>' + sectIc(x.id) + x.nome + '</b><span class="hrs">' + p2(x.ini) + ':00–' + p2(x.fim) + ':00</span></span><span class="meter" style="margin:0"><b style="width:' + Math.min(100, u / CAP * 100).toFixed(1) + '%"></b></span><span class="mt"><span>' + c + (c === 1 ? ' música' : ' músicas') + ' · ' + hm(u) + '</span><span>' + (CAP - u > 0 ? hm(CAP - u) + ' livres' : 'Completo') + '</span></span></button>';
+  }).join('');
+  const qi = layout(date, sid), pastS = isPast(date, sid);
+  const qrows = qi.map((e, i) => {
+    const isSel = E.sel === sid + ':' + i;
+    const ctl = edit && !pastS ? '<span class="cc"><button class="ib" type="button" data-act="up" data-sector="' + sid + '" data-i="' + i + '" aria-label="Subir" ' + (i === 0 ? 'disabled' : '') + '>' + ic('up') + '</button><button class="ib" type="button" data-act="down" data-sector="' + sid + '" data-i="' + i + '" aria-label="Descer" ' + (i === qi.length - 1 ? 'disabled' : '') + '>' + ic('down') + '</button><button class="ib" type="button" data-act="rm" data-sector="' + sid + '" data-i="' + i + '" aria-label="Retirar da grade">' + ic('x') + '</button></span>' : '';
+    return '<div class="q" ' + (isSel ? 'aria-current="true"' : '') + ' data-act="est-sel" data-sector="' + sid + '" data-i="' + i + '" style="cursor:pointer"><span class="t">' + hh(e.start) + '</span><span style="min-width:0"><b>' + (e.song ? esc(e.song.title) : 'Música removida') + (e.pin != null ? ' <span class="fixo">fixo</span>' : '') + '</b><small>' + (e.song ? esc(e.song.artist) + ' · ' + mmss(e.dur) : '') + '</small></span>' + ctl + '</div>';
+  }).join('');
+  const scn = '<section class="dock scn" aria-label="Setores"><h3 class="dh"><span>Setores</span></h3><div>' + scenes + '</div><h3 class="dh"><span>Fila · ' + esc(sect.nome) + '</span><span>' + qi.length + '</span></h3><div class="qlist">' + (qrows || '<div class="empty" style="padding:24px 14px"><p>Setor vazio. Adicione músicas da biblioteca.</p></div>') + '</div></section>';
+
+  // barra de estado
+  const tot = SECT.reduce((a, x) => a + usedSec(date, x.id), 0);
+  const stat = '<div class="statusbar"><span><b>' + dayCount(date) + '</b> músicas</span><span><b>' + hm(tot) + '</b> programados</span><span>Setor ativo: <b>' + esc(sect.nome) + '</b> · <b>' + hm(Math.max(0, CAP - usedSec(date, sid))) + '</b> livres</span><span>' + (pastS ? 'Setor já foi ao ar: somente leitura' : edit ? 'Edição liberada' : 'Somente leitura') + '</span></div>';
+  return '<div class="wrap est" style="max-width:1500px">' + bar + '<div class="est-grid">' + lib + mon + tl + scn + '</div>' + stat + '</div>';
+}
+const vEstudio = () => estHTML();
+async function estDropSong(id, date, sid, sec) {
+  const r = await addToPlan(id, date, sid, sec);
+  if (!r.ok) { if (r.msg) toast(r.msg); return; }
+  E.sector = sid;
+  if (r.pinned) toast('Tocará às ' + clk(r.start) + '.');
+  const list = layout(date, sid);
+  E.sel = sid + ':' + Math.max(0, list.findIndex((e) => e.id === id));
+  S.flash = null;
+  render();
+}
+async function estDropBlock(date, from, i, to, sec) {
+  if (isPast(date, from) || isPast(date, to)) { toast('Esse horário já passou.'); return; }
+  const id = ((S.plan[date + '_' + from] || {}).items || [])[i];
+  if (!id) return;
+  const song = S.songs[id], d = song ? (+song.dur || 0) : 0;
+  if (from !== to && d > CAP - usedSec(date, to)) { toast('Não cabe no setor ' + sectName(to) + '.'); return; }
+  const pl = planPlace(date, to, id, sec);
+  if (pl.err) { toast(pl.err); return; }
+  if (from === to) { await savePlan(date, to, pl.items, pl.pins); }
+  else {
+    const sd = S.plan[date + '_' + from] || {};
+    const sp = Object.assign({}, sd.pins || {}); delete sp[id];
+    const dd = S.plan[date + '_' + to] || {};
+    const dpl = planPlace(date, to, id, sec);
+    await W(async () => {
+      await S.db.doc('plan/' + date + '_' + to).set({ date, sector: to, items: dpl.items, pins: dpl.pins });
+      await S.db.doc('plan/' + date + '_' + from).set({ date, sector: from, items: (sd.items || []).filter((x) => x !== id), pins: sp });
+    });
+  }
+  E.sector = to;
+  toast('Tocará às ' + clk(pl.start) + '.');
+}
+function secAtX(track, x) {
+  const sc = SECT.find((q) => q.id === track.dataset.lane);
+  const r = track.getBoundingClientRect();
+  return Math.round((sc.ini * 3600 + (x - r.left) / E.zoom * 60) / 5) * 5;
+}
+
+const views = { estudio: vEstudio, aovivo: vAoVivo, programacao: vProg, pedidos: vPed, programateca: vLib, ouvintes: vOuv };
+
+const navOk = (n) => n.roles.includes(role()) && (!n.owner || (S.isOwner && !S.as));
+function teamBtn() { return ''; }
+function sideHTML() {
+  const r = role();
+  const items = NAV.filter(navOk);
+  const sel = S.isOwner ? '<label>Ver como<select data-act="view-as" aria-label="Ver a rádio como">' + Object.entries(ROLES).map(([k, v]) => '<option value="' + k + '"' + (k === r ? ' selected' : '') + '>' + v + (k === 'dono' ? ' (você)' : '') + '</option>').join('') + '</select></label>' : '';
+  return '<div class="brand">' + emblem() + '<div><div class="mark">Paris <em>Cast</em></div><small>Programação própria</small></div></div>' +
+    '<nav class="nav" aria-label="Seções">' + items.map((n) => '<button type="button" data-act="nav" data-v="' + n.id + '"' + (S.view === n.id ? ' aria-current="page"' : '') + '>' + ic(n.ic) + '<span class="lg">' + esc(typeof n.nome === 'function' ? n.nome(r) : n.nome) + '</span><span class="sh">' + esc(n.curto || (typeof n.nome === 'function' ? n.nome(r) : n.nome)) + '</span>' + (n.id === 'pedidos' ? pendBadge() : '') + '</button>').join('') + '</nav>' +
+    '<div class="who"><div class="cargo">Seu cargo<b>' + ROLES[r] + '</b></div>' + sel + teamBtn() +'<div class="credit">Paris Cast · rádio da escola</div><div class="clk">Horário de Brasília · <span id="sideClock">' + hhmmss(AIR.n.sec) + '</span></div></div>';
+}
+function mheadHTML() {
+  const r = role();
+  const sel = S.isOwner ? '<select data-act="view-as" aria-label="Ver a rádio como">' + Object.entries(ROLES).map(([k, v]) => '<option value="' + k + '"' + (k === r ? ' selected' : '') + '>' + v + '</option>').join('') + '</select>' : '<span class="chip">' + ROLES[r] + '</span>' + teamBtn();
+  return '<div class="mhead"><div class="mark">Paris <em>Cast</em></div><div class="rp">' + sel + '</div>' + '</div>';
+}
+
+/* ---------- Render ---------- */
+let rafId = 0;
+function scheduleRender() { if (!rafId) rafId = requestAnimationFrame(() => { rafId = 0; render(); }); }
+function allowed(v) { return NAV.some((n) => n.id === v && navOk(n)); }
+function render() {
+  AIR = onAir();
+  const gate = needsReg();
+  document.querySelector('.app').classList.toggle('gate', gate);
+  if (gate) { if (!$('#regNome')) $('#main').innerHTML = regHTML(); return; }
+  if (!allowed(S.view)) S.view = LAND[role()];
+  const ae = document.activeElement, main = $('#main');
+  const keep = ae && main.contains(ae) && ae.dataset && ae.dataset.d ? { k: ae.dataset.d, s: ae.selectionStart, e: ae.selectionEnd } : null;
+  const tls = $('#tlscroll');
+  if (tls) E.scroll = tls.scrollLeft;
+  $('#side').innerHTML = sideHTML();
+  main.innerHTML = mheadHTML() + stripHTML() + (views[S.view] || vAoVivo)();
+  if (S.fade) { S.fade = 0; const w0 = main.querySelector('.wrap'); if (w0) w0.classList.add('enter'); }
+  if (keep) {
+    const el = main.querySelector('[data-d="' + keep.k + '"]');
+    if (el) { el.focus(); try { if (keep.s != null) el.setSelectionRange(keep.s, keep.e); } catch (e) { /* tipo sem seleção */ } }
+  }
+  const tl2 = $('#tlscroll');
+  if (tl2) {
+    if (E.scroll == null) {
+      const n = nowSP(), x = SECT.find((q) => q.id === estSector());
+      E.scroll = S.date === n.date && n.sec >= x.ini * 3600 && n.sec < x.fim * 3600 ? Math.max(0, (n.sec - x.ini * 3600) / 60 * E.zoom - 180) : 0;
+    }
+    tl2.scrollLeft = E.scroll;
+  }
+  if (P) renderPicker();
+}
+function toast(t) {
+  const el = $('#toast');
+  el.textContent = t;
+  el.classList.add('show');
+  clearTimeout(toast.t);
+  toast.t = setTimeout(() => el.classList.remove('show'), 4200);
+}
+
+/* ---------- Janelas ---------- */
+function openModal(html) {
+  const m = $('#modal');
+  m.innerHTML = '<div class="scrim" data-act="close-modal"></div><div class="sheet" role="dialog" aria-modal="true">' + html + '</div>';
+  m.hidden = false;
+  document.body.classList.add('lock');
+  const f = m.querySelector('input,select,button.btn');
+  if (f) f.focus();
+}
+function closeModal() {
+  const m = $('#modal');
+  m.hidden = true; m.innerHTML = '';
+  document.body.classList.remove('lock');
+  P = null; M = null;
+}
+function openPicker(date, sid) {
+  P = { date, sector: sid, q: '' };
+  openModal('<div><h2>Adicionar ao setor ' + esc(sectName(sid)) + '</h2><p class="muted">' + esc(longDate(date)) + '. Clique em uma música para colocá-la no fim do setor.</p></div><div class="fld"><label for="pkq">Buscar na programateca</label><input type="search" id="pkq" data-pk="1" placeholder="Nome, cantor ou banda" autocomplete="off"></div><p class="hint" id="pkInfo"></p><div class="pk" id="pkList"></div><p class="msg" id="pkMsg" role="status"></p><div class="acts"><button class="btn pri" type="button" data-act="close-modal">Concluir</button></div>');
+  renderPicker();
+}
+function renderPicker() {
+  const list = $('#pkList');
+  if (!P || !list) return;
+  const q = fold(P.q), used = dayUsedMap(P.date), free = CAP - usedSec(P.date, P.sector);
+  $('#pkInfo').textContent = 'Restam ' + hm(free) + ' no setor ' + sectName(P.sector) + '.';
+  const res = Object.values(S.songs).filter((s) => !q || fold(s.title + ' ' + s.artist + ' ' + folderName(s.style)).includes(q)).sort((a, b) => fold(a.title).localeCompare(fold(b.title)));
+  if (!Object.keys(S.songs).length) { list.innerHTML = '<div class="empty"><h3>Programateca vazia</h3><p>O produtor ainda não cadastrou músicas.</p></div>'; return; }
+  list.innerHTML = res.length ? res.map((s) => {
+    const u = used[s.id], off = !!u || !(+s.dur > 0) || +s.dur > free;
+    const why = u ? 'Já toca hoje (' + sectName(u) + ')' : !(+s.dur > 0) ? 'Sem duração' : +s.dur > free ? 'Não cabe' : '';
+    return '<div class="song" data-off="' + (off ? 1 : 0) + '"><span style="min-width:0"><b>' + esc(s.title) + '</b><small>' + esc(s.artist) + ' · ' + dotFor(s.style) + ' ' + esc(folderName(s.style)) + '</small></span><span class="d">' + mmss(+s.dur || 0) + '</span>' + (off ? '<span class="chip">' + why + '</span>' : '<button class="btn sm pri" type="button" data-act="pick-add" data-id="' + s.id + '">Adicionar</button>') + '</div>';
+  }).join('') : '<div class="empty"><p>Nenhuma música encontrada.</p></div>';
+}
+function songModal(opts) {
+  opts = opts || {};
+  const s = opts.song, edit = !!s, pre = opts.prefill || {};
+  M = { id: s && s.id, reqId: opts.reqId || null };
+  const fl = allFolders(), cur = s ? s.style : (pre.style || S.folder || 'outros');
+  const canUp = !!S.assets && !edit;
+  openModal('<div><h2>' + (edit ? 'Editar música' : 'Adicionar música') + '</h2><p class="muted">' + (edit ? 'Alterar a duração muda os horários da grade.' : 'Informe os dados da música. O arquivo de áudio é opcional.') + '</p></div>' +
+    '<div class="fld"><label for="sfTitle">Nome da música</label><input id="sfTitle" type="text" value="' + esc(s ? s.title : pre.title || '') + '" autocomplete="off"></div>' +
+    '<div class="fld"><label for="sfArtist">Cantor, cantora ou banda</label><input id="sfArtist" type="text" value="' + esc(s ? s.artist : pre.artist || '') + '" autocomplete="off"></div>' +
+    '<div class="two"><div class="fld"><label for="sfStyle">Estilo (pasta)</label><select id="sfStyle">' + fl.map((f) => '<option value="' + esc(f.id) + '"' + (f.id === cur ? ' selected' : '') + '>' + esc(f.nome) + '</option>').join('') + '</select></div><div class="fld"><label for="sfDur">Duração (mm:ss)</label><input id="sfDur" type="text" inputmode="numeric" placeholder="3:45" value="' + (s ? mmss(+s.dur || 0) : '') + '" autocomplete="off"></div></div>' +
+    (edit ? '' : '<div class="fld"><label for="sfFile">Arquivo de áudio</label><input id="sfFile" type="file" accept=".m4a,.mp4,.webm,audio/mp4,audio/webm" ' + (canUp ? '' : 'disabled') + '><p class="hint">' + (canUp ? 'Aceita M4A, MP4 ou WebM. Ao escolher o arquivo, o nome e a duração são preenchidos e os dados são buscados.' : 'O envio de áudio está indisponível para o seu acesso. A música fica só cadastrada.') + '</p></div>') +
+    '<div class="acts" style="justify-content:flex-start"><button class="btn sm" type="button" data-act="lookup-song">Buscar cantor e duração na internet</button></div>' +
+    '<p class="msg" id="sfMsg" role="status"></p><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" id="sfSave" data-act="save-song">Salvar</button></div>');
+}
+const ROLE_INFO = {
+  ouvinte: ['Ouvinte', 'Escuta a rádio, vê a programação e pede músicas. Escolha este para tirar o cargo da pessoa.'],
+  produtor: ['Produtor', 'Cadastra músicas nas pastas da programateca e vê os pedidos.'],
+  programador: ['Programador', 'Monta a grade no Estúdio, escolhe os horários e vê os pedidos.'],
+  dono: ['Dono', window.__setAdmin ? 'Faz tudo, como você: dá cargos, vê telefones e remove cadastros.' : 'Faz tudo, como você: dá cargos, vê telefones e remove cadastros. Para valer de verdade, dê também acesso de Editor em Compartilhar, na página.']
+};
+function roleModal(uid) {
+  const cur = (S.roles[uid] || {}).role || 'ouvinte';
+  openModal('<div><h2>Dar cargo a ' + esc(nm(uid)) + '</h2><p class="muted">Cargo atual: <b>' + esc(ROLES[ROLES[cur] ? cur : 'ouvinte']) + '</b>. A mudança vale na hora.</p></div><div class="rolepick">' + Object.entries(ROLE_INFO).filter(([k]) => k !== 'dono' || S.isOwner).map(([k, [n, d]]) => '<button type="button" class="rp-opt r-' + k + '" data-act="role-pick" data-uid="' + esc(uid) + '" data-r="' + k + '" aria-pressed="' + (k === cur) + '"><b>' + n + '</b><span>' + d + '</span></button>').join('') + '</div><p class="hint">' + (S.keys && S.keys[uid] ? 'A chave dos pedidos é liberada sozinha em alguns segundos.' : 'Essa pessoa ainda não abriu a rádio na versão nova. A chave dos pedidos é liberada assim que ela abrir.') + '</p><p class="msg" id="rlMsg" role="status"></p><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Fechar</button></div>');
+}
+async function setRole(uid, r) {
+  if (!ROLE_INFO[r] || uid === S.uid || (r === 'dono' && !S.isOwner)) return;
+  const was = (S.roles[uid] || {}).role;
+  const ok = r === 'ouvinte' ? await W(() => S.db.doc('roles/' + uid).delete()) : await W(() => S.db.doc('roles/' + uid).set({ role: r, via: 'dono', at: Date.now() }));
+  if (ok && window.__setAdmin && (r === 'dono' || was === 'dono')) { try { await window.__setAdmin(uid, r === 'dono'); } catch (e) { console.warn(e); } }
+  if (ok) { if (r === 'ouvinte') delete S.roles[uid]; else S.roles[uid] = { role: r, via: 'dono' }; if (S.isOwner && was && STAFF.includes(was) && r === 'ouvinte' && S.reqPriv) setTimeout(rotateKeys, 300); closeModal(); toast(nm(uid) + ': ' + (r === 'ouvinte' ? 'cargo removido.' : 'agora é ' + ROLES[r] + '.')); render(); }
+  else { const m = $('#rlMsg'); if (m) { m.className = 'msg'; m.textContent = 'Não foi possível alterar. Tente de novo.'; } }
+}
+const GENRE_MAP = [['hip hop','rap'],['rap','rap'],['trap','trap'],['sertanejo','sertanejo'],['country','sertanejo'],['forro','forro'],['piseiro','piseiro'],['funk','funk'],['pagode','pagode'],['samba','samba'],['mpb','mpb'],['bossa','mpb'],['rock','rock'],['metal','rock'],['pop','pop'],['danca','eletronica'],['electronic','eletronica'],['eletron','eletronica'],['dance','eletronica'],['gospel','gospel'],['crista','gospel'],['christian','gospel'],['reggae','reggae'],['axe','axe']];
+function folderForGenre(g) {
+  g = fold(g || '');
+  if (!g) return 'outros';
+  const fl = allFolders();
+  const direct = fl.find((f) => f.id !== 'outros' && (g.includes(fold(f.nome)) || fold(f.nome).includes(g)));
+  if (direct) return direct.id;
+  for (const [k, id] of GENRE_MAP) if (g.includes(k) && fl.some((f) => f.id === id)) return id;
+  return 'outros';
+}
+async function webMeta(t, a) {
+  let hit = null;
+  try {
+    const c = new AbortController(); const to = setTimeout(() => c.abort(), 7000);
+    const r = await fetch('https://itunes.apple.com/search?media=music&entity=song&limit=8&country=BR&term=' + encodeURIComponent((a + ' ' + t).trim()), { signal: c.signal });
+    clearTimeout(to);
+    const j = await r.json();
+    const ft = fold(t);
+    const h = (j.results || []).find((x) => fold(x.trackName || '').includes(ft) || ft.includes(fold(x.trackName || ''))) || (j.results || [])[0];
+    if (h) hit = { artist: h.artistName, dur: Math.round((h.trackTimeMillis || 0) / 1000), genre: h.primaryGenreName };
+  } catch (e) { hit = null; }
+  if (!hit && SMP) {
+    try {
+      const o = await SMP.json('Música: "' + t + '"' + (a ? ', artista: "' + a + '"' : '') + '. Responda só JSON {"artist":"cantor ou banda","dur":duração em segundos,"genre":"estilo musical"}; use null se não souber.', { modelTier: 'quick' });
+      if (j0(o) && (o.artist || o.genre)) hit = { artist: o.artist, dur: Math.round(+o.dur || 0), genre: o.genre };
+    } catch (e) { hit = null; }
+  }
+  return hit;
+}
+let BK = null;
+function bulkModal() {
+  BK = { busy: false };
+  const canUp = !!S.assets;
+  openModal('<div><h2>Enviar várias músicas</h2><p class="muted">Escolha ou arraste vários arquivos M4A, MP4 ou WebM. Cada um é lido, procurado na internet e colocado na pasta do estilo. Se o estilo não for achado, vai para a pasta <b>Outros</b>.</p></div>' +
+    '<label class="bkdrop" id="bkDrop" for="bkFile">' + ic('plus') + '<b>Toque para escolher ou solte os arquivos aqui</b><span>Até 20 MB por arquivo</span></label><input id="bkFile" type="file" multiple accept=".m4a,.mp4,.webm,audio/mp4,audio/webm" hidden ' + (canUp ? '' : 'disabled') + '>' +
+    '<div class="bklist" id="bkList"></div><p class="msg" id="bkMsg" role="status"></p><div class="acts"><button class="btn pri" type="button" data-act="close-modal">Fechar</button></div>');
+}
+async function bulkRun(files) {
+  if (!BK || BK.busy || !files.length) return;
+  BK.busy = true;
+  const list = $('#bkList'), sum = $('#bkMsg');
+  list.innerHTML = files.map((f, i) => '<div class="bkrow" id="bk' + i + '"><b>' + esc(f.name) + '</b><span class="bks">Na fila</span></div>').join('');
+  const set = (i, txt, cls) => { const r = $('#bk' + i + ' .bks'); if (r) { r.textContent = txt; r.className = 'bks ' + (cls || ''); } };
+  const seen = new Set();
+  let ok = 0, skip = 0, out = 0;
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    try {
+      const type = audioType(f.name);
+      if (!type) { set(i, 'Formato não aceito (converta para M4A)', 'bad'); skip++; continue; }
+      set(i, 'Lendo…');
+      const base = cleanName(f.name.replace(/\.[^.]+$/, ''));
+      const parts = base.split(' - ');
+      let title = (parts.length >= 2 ? parts.slice(1).join(' - ') : base).trim(), artist = parts.length >= 2 ? parts[0].trim() : '';
+      let dur = await probe(f);
+      set(i, 'Buscando na internet…');
+      const meta = await webMeta(title, artist);
+      if (!artist && meta && meta.artist) artist = meta.artist;
+      if (dur <= 0 && meta && meta.dur > 0) dur = meta.dur;
+      if (dur <= 0) { set(i, 'Sem duração: cadastre pelo botão Adicionar música', 'bad'); skip++; continue; }
+      if (dur > CAP) { set(i, 'Passa de 6 horas', 'bad'); skip++; continue; }
+      if (!artist) artist = 'Artista desconhecido';
+      const key = fold(title).replace(/[^a-z0-9]/g, '') + '|' + fold(artist).replace(/[^a-z0-9]/g, '');
+      const dup = findDup(title, artist, null);
+      if (dup || seen.has(key)) { set(i, 'Já existe' + (dup ? ' na pasta ' + folderName(dup.style) : ' neste envio') + ': ignorada', 'bad'); skip++; continue; }
+      seen.add(key);
+      const style = folderForGenre(meta && meta.genre);
+      set(i, 'Enviando…');
+      let assetId;
+      try { assetId = (await S.assets.upload(f, { type })).id; } catch (e) { set(i, e && e.code === 'too_large' ? 'Passa de 20 MB' : 'Falha no envio', 'bad'); skip++; continue; }
+      const ref = S.db.collection('songs').doc();
+      const saved = await W(() => ref.set({ title, artist, style, dur, by: S.uid || null, at: Date.now(), assetId }));
+      if (!saved) { set(i, 'Não foi possível salvar', 'bad'); skip++; continue; }
+      ok++; if (style === 'outros') out++;
+      set(i, '✓ ' + title + ' — ' + artist + ' → ' + folderName(style) + (style === 'outros' ? ' (estilo não achado)' : ''), 'good');
+    } catch (e) { set(i, 'Erro inesperado', 'bad'); skip++; }
+  }
+  BK.busy = false;
+  sum.className = 'msg okm';
+  sum.textContent = ok + (ok === 1 ? ' música salva' : ' músicas salvas') + (out ? ' (' + out + ' em Outros)' : '') + (skip ? ', ' + skip + ' não entraram' : '') + '. Confira e mova o que estiver na pasta errada em Editar.';
+  scheduleRender();
+}
+function copyModal() {
+  const src = S.date, dayN = SECT.reduce((a, x) => a + ((((S.plan[src + '_' + x.id] || {}).items) || []).length), 0);
+  if (!dayN) { toast('Este dia está vazio. Monte a grade antes de copiar.'); return; }
+  CP = { src, sel: new Set() };
+  const days = Array.from({ length: 21 }, (_, k) => addDays(src, k + 1));
+  openModal('<div><h2>Copiar a grade de ' + esc(shortDate(src)) + '</h2><p class="muted">' + dayN + (dayN === 1 ? ' música' : ' músicas') + ' (com os horários fixos). Escolha os dias que vão receber a mesma grade. A grade que já existir neles será substituída.</p></div>' +
+    '<div class="cpdays" role="group" aria-label="Dias de destino">' + days.map((d) => { const has = SECT.some((x) => (((S.plan[d + '_' + x.id] || {}).items) || []).length); return '<button type="button" class="cpd' + (has ? ' has' : '') + '" data-act="cp-day" data-d="' + d + '" aria-pressed="false"><b>' + pd(d).getUTCDate() + '</b><span>' + DOWS[pd(d).getUTCDay()] + '</span>' + (has ? '<i title="Já tem grade">•</i>' : '') + '</button>'; }).join('') + '</div>' +
+    '<div class="acts" style="justify-content:flex-start"><button class="btn sm ghost" type="button" data-act="cp-week">Próximos 7 dias</button><button class="btn sm ghost" type="button" data-act="cp-clear">Limpar</button></div>' +
+    '<p class="hint">Ponto = esse dia já tem grade e será substituída.</p><p class="msg" id="cpMsg" role="status"></p><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="cp-go">Copiar</button></div>');
+}
+let CP = null;
+function cpPaint() { document.querySelectorAll('.cpd').forEach((b) => b.setAttribute('aria-pressed', String(CP.sel.has(b.dataset.d)))); const m = $('#cpMsg'); if (m) { m.className = 'msg okm'; m.textContent = CP.sel.size ? CP.sel.size + (CP.sel.size === 1 ? ' dia escolhido.' : ' dias escolhidos.') : ''; } }
+async function copyDay() {
+  if (!CP || !CP.sel.size) { const m = $('#cpMsg'); if (m) { m.className = 'msg'; m.textContent = 'Escolha ao menos um dia.'; } return; }
+  const src = CP.src, targets = Array.from(CP.sel).sort();
+  const ok = await W(async () => {
+    for (const d of targets) for (const x of SECT) {
+      const sd = S.plan[src + '_' + x.id] || {};
+      const items = (sd.items || []).slice(), pins = Object.assign({}, sd.pins || {});
+      const has = !!((S.plan[d + '_' + x.id] || {}).items || []).length;
+      if (!items.length && !has) continue;
+      await S.db.doc('plan/' + d + '_' + x.id).set({ date: d, sector: x.id, items, pins });
+    }
+  });
+  if (ok) { closeModal(); toast('Grade copiada para ' + targets.length + (targets.length === 1 ? ' dia.' : ' dias.')); render(); }
+}
+function folderModal() {
+  openModal('<div><h2>Nova pasta</h2><p class="muted">Crie uma pasta para outro estilo musical.</p></div><div class="fld"><label for="nfName">Nome do estilo</label><input id="nfName" type="text" placeholder="Ex.: Brega" autocomplete="off"></div><p class="msg" id="nfMsg" role="status"></p><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="save-folder">Criar pasta</button></div>');
+}
+
+function probe(file) {
+  return new Promise((res) => {
+    let url;
+    try { url = URL.createObjectURL(file); } catch (e) { res(0); return; }
+    const a = new Audio();
+    let done = false;
+    const end = (v) => { if (done) return; done = true; try { URL.revokeObjectURL(url); } catch (e) { /* ok */ } res(v); };
+    a.preload = 'metadata';
+    a.onloadedmetadata = () => end(isFinite(a.duration) ? Math.round(a.duration) : 0);
+    a.onerror = () => end(0);
+    a.src = url;
+    setTimeout(() => end(0), 6000);
+  });
+}
+let SMP = null;
+function cleanName(base) {
+  return base.replace(/[_]+/g, ' ').replace(/\s*[\(\[][^\)\]]*(official|oficial|video|vídeo|clipe|audio|áudio|lyric|letra|ao vivo|hd|4k)[^\)\]]*[\)\]]/gi, '').replace(/^\s*\d{1,3}\s*[-.)]\s+/, '').replace(/\s{2,}/g, ' ').trim();
+}
+async function lookupSong() {
+  const m = $('#sfMsg'), ti = $('#sfTitle'), ar = $('#sfArtist'), du = $('#sfDur');
+  if (!m || !ti) return;
+  const t = ti.value.trim(), a = ar.value.trim();
+  if (!t) { m.className = 'msg'; m.textContent = 'Escreva o nome da música (ou escolha o arquivo) para buscar.'; return; }
+  m.className = 'msg okm'; m.textContent = 'Buscando na internet…';
+  let hit = null;
+  try {
+    const c = new AbortController(); const to = setTimeout(() => c.abort(), 7000);
+    const r = await fetch('https://itunes.apple.com/search?media=music&entity=song&limit=8&country=BR&term=' + encodeURIComponent((a + ' ' + t).trim()), { signal: c.signal });
+    clearTimeout(to);
+    const j = await r.json();
+    const ft = fold(t);
+    hit = (j.results || []).find((x) => fold(x.trackName || '').includes(ft) || ft.includes(fold(x.trackName || ''))) || (j.results || [])[0] || null;
+    if (hit) hit = { title: hit.trackName, artist: hit.artistName, dur: Math.round((hit.trackTimeMillis || 0) / 1000), genre: hit.primaryGenreName, src: 'internet' };
+  } catch (e) { hit = null; }
+  if (!hit && SMP) {
+    try {
+      const o = await SMP.json('Música: "' + t + '"' + (a ? ', artista: "' + a + '"' : '') + '. Responda só JSON {"title":"nome correto da música","artist":"cantor ou banda","dur":duração em segundos (número),"genre":"estilo em português"} com o que você sabe. Se não souber, use null nos campos.', { modelTier: 'quick' });
+      if (j0(o) && (o.artist || o.dur)) hit = { title: o.title, artist: o.artist, dur: Math.round(+o.dur || 0), genre: o.genre, src: 'Claude' };
+      else hit = null;
+    } catch (e) { hit = null; }
+  }
+  if (!hit || (!hit.artist && !hit.dur)) { m.className = 'msg'; m.textContent = 'Não encontrei. Preencha o cantor e a duração à mão.'; return; }
+  const got = [];
+  if (hit.artist && !a) { ar.value = hit.artist; got.push('cantor'); }
+  if (hit.title && hit.title.length < 90 && !t) { ti.value = hit.title; }
+  if (hit.dur > 0 && !parseDur(du.value)) { du.value = mmss(hit.dur); got.push('duração'); }
+  if (hit.genre) {
+    const g = fold(hit.genre), f = allFolders().find((x) => g.includes(fold(x.nome)) || fold(x.nome).includes(g));
+    if (f && $('#sfStyle')) { $('#sfStyle').value = f.id; got.push('estilo'); }
+  }
+  const d2 = findDup(hit.title || t, hit.artist || a, M && M.id);
+  if (d2) { m.className = 'msg'; m.textContent = 'Atenção: “' + d2.title + '” de ' + d2.artist + ' já está na pasta ' + folderName(d2.style) + '.'; return; }
+  m.className = 'msg okm';
+  m.textContent = 'Encontrado: ' + (hit.title || t) + ' — ' + (hit.artist || a) + (hit.src === 'Claude' ? ' (palpite do Claude, confira)' : '') + '. ' + (got.length ? 'Preenchi: ' + got.join(', ') + '.' : 'Nada novo para preencher.') + ' Confira antes de salvar.';
+}
+const j0 = (o) => !!o && typeof o === 'object';
+const audioType = (name) => { const e = String(name).split('.').pop().toLowerCase(); return e === 'm4a' || e === 'mp4' ? 'video/mp4' : e === 'webm' ? 'video/webm' : null; };
+
+function findDup(title, artist, selfId) {
+  const t = fold(title).replace(/[^a-z0-9]/g, ''), a = fold(artist).replace(/[^a-z0-9]/g, '');
+  if (!t) return null;
+  return Object.values(S.songs).find((x) => x.id !== selfId && fold(x.title || '').replace(/[^a-z0-9]/g, '') === t && (!a || !x.artist || fold(x.artist).replace(/[^a-z0-9]/g, '') === a || fold(x.artist).includes(a) || a.includes(fold(x.artist).replace(/[^a-z0-9]/g, '')))) || null;
+}
+async function saveSong() {
+  const msg = $('#sfMsg'), btn = $('#sfSave');
+  const title = $('#sfTitle').value.trim(), artist = $('#sfArtist').value.trim(), style = $('#sfStyle').value, dur = parseDur($('#sfDur').value);
+  const fileEl = $('#sfFile'), file = fileEl && fileEl.files && fileEl.files[0];
+  const mid = M && M.id, reqId = M && M.reqId;
+  msg.className = 'msg';
+  if (!title) { msg.textContent = 'Informe o nome da música.'; return; }
+  if (!artist) { msg.textContent = 'Informe o cantor, cantora ou banda.'; return; }
+  if (dur <= 0) { msg.textContent = 'Informe a duração, por exemplo 3:45.'; return; }
+  if (dur > CAP) { msg.textContent = 'A duração passa de 6 horas, o tamanho de um setor.'; return; }
+  const dup = findDup(title, artist, mid);
+  if (dup && !(M && M.dupOk === dup.id)) {
+    M.dupOk = dup.id;
+    msg.className = 'msg';
+    msg.textContent = 'Atenção: “' + dup.title + '” de ' + dup.artist + ' já está na pasta ' + folderName(dup.style) + '. Clique em Salvar de novo se quiser cadastrar mesmo assim.';
+    return;
+  }
+  btn.disabled = true;
+  let assetId = null;
+  if (file) {
+    const type = audioType(file.name);
+    if (!type) { msg.textContent = 'A nuvem do site só aceita áudio em M4A, MP4 ou WebM. Converta o arquivo ou salve a música sem arquivo.'; btn.disabled = false; return; }
+    msg.className = 'msg okm'; msg.textContent = 'Enviando o áudio…';
+    try { assetId = (await S.assets.upload(file, { type })).id; } catch (e) {
+      console.warn(e);
+      msg.className = 'msg';
+      msg.textContent = e && e.code === 'too_large' ? 'O arquivo passa de 20 MB.' : 'Não foi possível enviar o áudio. Tente de novo ou salve sem arquivo.';
+      btn.disabled = false; return;
+    }
+  }
+  let ok;
+  if (mid) {
+    ok = await W(() => S.db.doc('songs/' + mid).update({ title, artist, style, dur }));
+  } else {
+    const ref = S.db ? S.db.collection('songs').doc() : null;
+    const body = { title, artist, style, dur, by: S.uid || null, at: Date.now() };
+    if (assetId) body.assetId = assetId;
+    ok = ref ? await W(() => ref.set(body)) : await W(() => { throw new Error('sem db'); });
+    if (ok && reqId) W(() => S.db.doc('requests/' + reqId).update({ status: 'programateca', songId: ref.id }));
+    if (ok) { S.folder = style; S.libq = ''; D.libq = ''; }
+  }
+  btn.disabled = false;
+  if (ok) { closeModal(); toast(mid ? 'Música atualizada.' : 'Música salva na pasta ' + folderName(style) + '.'); scheduleRender(); }
+  else { msg.className = 'msg'; msg.textContent = 'Não foi possível salvar. Tente de novo.'; }
+}
+
+/* ---------- Cadastro ---------- */
+const RESERVED = ['paris cast', 'dono', 'admin', 'administrador', 'administradora', 'produtor', 'programador', 'moderador', 'oficial', 'staff'];
+const needsReg = () => !!(S.db && S.uid && S.canWrite !== false && S.namesLoaded && !(S.names[S.uid] && S.names[S.uid].nome));
+function normPhone(v) {
+  let d = String(v || '').replace(/\D/g, '');
+  if ((d.length === 12 || d.length === 13) && d.startsWith('55')) d = d.slice(2);
+  if (d.length < 10 || d.length > 11) return '';
+  if (!/^[1-9][1-9]/.test(d) || /^(\d)\1+$/.test(d)) return '';
+  if (d.length === 11 && d[2] !== '9') return '';
+  return d;
+}
+const fmtPhone = (d) => { d = String(d || ''); return d.length === 11 ? '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7) : d.length === 10 ? '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6) : d || '—'; };
+async function phoneKey(tel) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', enc.encode(tel), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: enc.encode('radioparis:tel'), iterations: 100000 }, key, 128);
+  return 'p_' + Array.from(new Uint8Array(bits)).map((x) => x.toString(16).padStart(2, '0')).join('');
+}
+const nameKey = (nome) => 'n_' + slug(nome);
+function regHTML() {
+  const pre = S.isOwner && S.me && S.me.name ? S.me.name : '';
+  return '<div class="wrap"><section class="panel reg2" aria-label="Cadastro"><div class="reg-art">' + emblem('big') + '<div><div class="mark">Paris <em>Cast</em></div><p>A rádio da nossa escola, com programação própria todos os dias.</p></div><ul class="reg-pts"><li>' + ic('cal') + '<span>Grade fixa de manhã, tarde e noite</span></li><li>' + ic('radio') + '<span>Todos ouvem a mesma música ao mesmo tempo</span></li><li>' + ic('lock') + '<span>Seus pedidos de música são anônimos</span></li></ul></div>' +
+    '<div class="reg-form"><div><h1>Entrar na rádio</h1><p class="muted" style="margin-top:8px">Informe seu nome e seu telefone. Cada nome e cada telefone só podem ser usados por uma pessoa, e o telefone fica visível só para o dono da rádio.</p></div>' +
+    '<form class="fmod" data-act="do-reg" novalidate><div class="fld"><label for="regNome">Nome</label><input id="regNome" type="text" data-d="regNome" value="' + esc(val('regNome', pre)) + '" maxlength="40" autocomplete="name" placeholder="Seu nome e sobrenome"></div>' +
+    '<div class="fld"><label for="regTel">Telefone com DDD</label><input id="regTel" type="text" inputmode="tel" data-d="regTel" value="' + esc(val('regTel', '')) + '" maxlength="20" autocomplete="tel" placeholder="(11) 91234-5678"></div>' +
+    '<p class="msg" id="regOut" role="status"></p><button class="btn pri lg" id="regBtn" type="submit">Cadastrar e entrar</button></form></div></section></div>';
+}
+async function doReg() {
+  const out = $('#regOut'), btn = $('#regBtn');
+  const nome = String(val('regNome', '')).trim().replace(/\s+/g, ' ');
+  const tel = normPhone(val('regTel', ''));
+  out.className = 'msg';
+  const words = nome.split(' ').filter((w) => /[A-Za-zÀ-ÿ]{2}/.test(w));
+  if (!/^[A-Za-zÀ-ÿ' .-]+$/.test(nome)) { out.textContent = 'Use só letras no nome, sem números nem símbolos.'; return; }
+  if (words.length < 2) { out.textContent = 'Escreva o nome e o sobrenome, como na escola. Exemplo: Maria Souza.'; return; }
+  if (!tel) { out.textContent = 'Telefone inválido. Digite com DDD, por exemplo (11) 91234-5678.'; return; }
+  if (!S.isOwner) {
+    const w = ' ' + fold(nome).replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
+    if (RESERVED.some((x) => w.includes(' ' + x + ' ')) || w.includes(' radio paris ')) { out.textContent = 'Esse nome é reservado à equipe da rádio. Use o seu nome verdadeiro.'; return; }
+  }
+  btn.disabled = true;
+  try {
+    const nk = nameKey(nome), pk = await phoneKey(tel);
+    const taken = async (k) => {
+      const sn = await S.db.doc('claims/' + k).get();
+      if (!sn.exists) return false;
+      const c = sn.data() || {};
+      return c.uid !== S.uid && !!(S.names[c.uid] && S.names[c.uid].nome);
+    };
+    if (await taken(pk)) { out.textContent = 'Esse telefone já está cadastrado por outra pessoa.'; return; }
+    if (await taken(nk)) { out.textContent = 'Já existe alguém com esse nome. Escreva nome e sobrenome.'; return; }
+    await S.db.doc('claims/' + pk).set({ uid: S.uid, at: Date.now() });
+    await S.db.doc('claims/' + nk).set({ uid: S.uid, at: Date.now() });
+    const a = await S.db.doc('claims/' + pk).get(), b = await S.db.doc('claims/' + nk).get();
+    if (!a.exists || !b.exists || (a.data() || {}).uid !== S.uid || (b.data() || {}).uid !== S.uid) {
+      out.textContent = 'Esse nome ou telefone acabou de ser cadastrado por outra pessoa. Tente de novo.';
+      return;
+    }
+    const at = Date.now();
+    await S.db.doc('people/' + S.uid).set({ nome, tel, pk, nk, at });
+    await S.db.doc('names/' + S.uid).set({ nome, at });
+    S.people[S.uid] = { nome, tel, pk, nk, at };
+    S.names[S.uid] = { nome, at };
+    S.view = LAND[role()]; S.landed = true;
+    toast('Cadastro feito. Bem-vindo(a), ' + nome.split(' ')[0] + '.');
+    render(); window.scrollTo(0, 0);
+  } catch (e) {
+    console.warn(e);
+    out.textContent = e && e.code === 'invalid_argument' ? 'Sem permissão para cadastrar. Peça ao dono acesso de colaborador.' : 'Não foi possível cadastrar agora. Tente de novo.';
+  } finally { btn.disabled = false; }
+}
+async function removeReg(uid) {
+  const n = S.names[uid], pe = S.people[uid] || {};
+  const keys = [pe.pk, pe.nk || (n && n.nome ? nameKey(n.nome) : null)].filter(Boolean);
+  S.confirmReg = null;
+  const ok = await W(async () => {
+    for (const k of keys) await S.db.doc('claims/' + k).delete();
+    await S.db.doc('people/' + uid).delete();
+    await S.db.doc('names/' + uid).delete();
+    await S.db.doc('roles/' + uid).delete();
+  });
+  if (ok) { toast('Cadastro removido. A pessoa precisa se cadastrar de novo.'); }
+  scheduleRender();
+}
+
+/* ---------- Ações ---------- */
+async function act(a, el) {
+  switch (a) {
+    case 'nav': S.fade = 1; S.view = el.dataset.v; S.sel = null; render(); window.scrollTo(0, 0); break;
+    case 'play': S.tuned = true; userPaused = false; loadedKey = null; S.audioMsg = ''; AIR = onAir(); syncAudio(AIR); render(); break;
+    case 'stop': S.tuned = false; pauseQuiet(audio); stopKeep(); loadedKey = null; S.audioMsg = ''; flush(); render(); break;
+    case 'view-as': break;
+    case 'date-set': S.date = el.dataset.date; render(); break;
+    case 'date-prev': S.date = addDays(S.date, -1); render(); break;
+    case 'date-next': S.date = addDays(S.date, 1); render(); break;
+    case 'date-today': S.date = nowSP().date; render(); break;
+    case 'date-input': if (el.value) { S.date = el.value; render(); } break;
+    case 'up': moveItem(S.date, el.dataset.sector, +el.dataset.i, -1); break;
+    case 'down': moveItem(S.date, el.dataset.sector, +el.dataset.i, 1); break;
+    case 'rm': removeItem(S.date, el.dataset.sector, +el.dataset.i); break;
+    case 'open-picker': if (can('programar')) openPicker(S.date, el.dataset.sector); break;
+    case 'pick-add': {
+      const r = await addToPlan(el.dataset.id, P.date, P.sector);
+      const m = $('#pkMsg');
+      if (m) { m.className = r.ok ? 'msg okm' : 'msg'; m.textContent = r.ok ? 'Adicionada ao fim do setor.' : r.msg; }
+      renderPicker();
+      break;
+    }
+    case 'close-modal': closeModal(); break;
+    case 'open-folder': S.folder = el.dataset.id; S.sel = null; S.libq = ''; D.libq = ''; render(); break;
+    case 'back': S.folder = null; S.sel = null; render(); break;
+    case 'new-folder': if (can('cadastrar')) folderModal(); break;
+    case 'save-folder': {
+      const name = $('#nfName').value.trim(), id = slug(name);
+      if (!name) { $('#nfMsg').textContent = 'Informe o nome do estilo.'; break; }
+      if (allFolders().some((f) => f.id === id)) { $('#nfMsg').textContent = 'Já existe uma pasta com esse nome.'; break; }
+      if (await W(() => S.db.doc('folders/' + id).set({ nome: name }))) { closeModal(); S.folder = id; toast('Pasta criada.'); render(); }
+      break;
+    }
+    case 'add-song': if (can('cadastrar')) songModal({ prefill: { style: S.folder } }); break;
+    case 'edit-song': if (S.songs[S.sel]) songModal({ song: S.songs[S.sel] }); break;
+    case 'save-song': saveSong(); break;
+    case 'lookup-song': lookupSong(); break;
+    case 'bulk-open': if (can('cadastrar')) bulkModal(); break;
+    case 'copy-open': if (can('programar')) copyModal(); break;
+    case 'cp-day': if (CP) { const d = el.dataset.d; CP.sel.has(d) ? CP.sel.delete(d) : CP.sel.add(d); cpPaint(); } break;
+    case 'cp-week': if (CP) { for (let k = 1; k <= 7; k++) CP.sel.add(addDays(CP.src, k)); cpPaint(); } break;
+    case 'cp-clear': if (CP) { CP.sel.clear(); cpPaint(); } break;
+    case 'cp-go': copyDay(); break;
+    case 'p-filter': D.pflt = el.dataset.k; render(); break;
+    case 'role-open': if (can('cargos')) roleModal(el.dataset.uid); break;
+    case 'role-pick': if (can('cargos')) setRole(el.dataset.uid, el.dataset.r); break;
+    case 'sel-song': S.sel = el.dataset.id; S.confirmDel = null; render(); break;
+    case 'close-song': S.sel = null; render(); break;
+    case 'del-ask': S.confirmDel = S.sel; render(); break;
+    case 'del-no': S.confirmDel = null; render(); break;
+    case 'del-yes': {
+      const s = S.songs[S.sel];
+      if (!s) break;
+      if (plannedWhere(s.id).length) { render(); break; }
+      if (await W(() => S.db.doc('songs/' + s.id).delete())) {
+        if (s.assetId && S.assets) { try { await S.assets.delete(s.assetId); } catch (e) { /* arquivo fica órfão */ } }
+        S.sel = null; S.confirmDel = null; toast('Música excluída.'); render();
+      }
+      break;
+    }
+    case 'to-plan': {
+      const s = S.songs[S.sel];
+      if (!s) break;
+      const date = val('tpDate', S.date); let sid = val('tpSector', 'dia');
+      const tsec = parseClk(val('tpTime', ''));
+      let sid2 = sid;
+      if (tsec != null) { const sc = sectAt(tsec); if (!sc) { toast('Horário fora da programação (06:00 às 24:00).'); break; } sid2 = sc.id; }
+      const r = await addToPlan(s.id, date, sid2, tsec);
+      if (!r.ok) { if (r.msg) toast(r.msg); break; }
+      sid = sid2;
+      S.date = date; S.view = 'programacao'; S.flash = { date, sector: sid, id: s.id };
+      setTimeout(() => { S.flash = null; }, 3000);
+      toast('Adicionada em ' + shortDate(date) + ', setor ' + sectName(sid) + '.');
+      render(); window.scrollTo(0, 0);
+      break;
+    }
+    case 'send-request': {
+      const title = (D.rqTitle || '').trim(), artist = (D.rqArtist || '').trim(), msg = (D.rqMsg || '').trim();
+      const out = $('#rqMsgOut');
+      if (!title) { out.textContent = 'Informe o nome da música.'; break; }
+      const rk = S.config.reqkeys;
+      if (!rk || !rk.pub) { out.textContent = 'Os pedidos ainda não foram ativados. Tente de novo em instantes.'; break; }
+      out.textContent = '';
+      let enc;
+      try { enc = await encReq({ title: title.slice(0, 120), artist: artist.slice(0, 120), msg: msg.slice(0, 400), by: S.uid || null }); } catch (e) { out.textContent = 'Este navegador não conseguiu proteger o pedido.'; break; }
+      if (await W(() => S.db.collection('requests').add({ enc, kid: rk.kid || null, at: Date.now(), status: 'novo' }))) { D.rqTitle = ''; D.rqArtist = ''; D.rqMsg = ''; toast('Pedido enviado de forma anônima.'); render(); }
+      break;
+    }
+    case 'req-done': {
+      if (!isStaff()) break;
+      if (await W(() => S.db.doc('requests/' + el.dataset.id).update({ status: 'programateca', doneBy: S.uid, doneAt: Date.now() }))) toast('Pedido confirmado: a música já está na pasta.');
+      break;
+    }
+    case 'rq-filter': D.rqf = el.dataset.f; render(); break;
+    case 'unlock-req': await restoreKey(); toast(S.reqPriv ? 'Pedidos liberados neste aparelho.' : 'Ainda não liberado. O dono precisa estar com a rádio aberta por alguns segundos.'); render(); break;
+    case 'rotate-keys': rotateKeys(); break;
+    case 'req-status': W(() => S.db.doc('requests/' + el.dataset.id).update({ status: el.dataset.s })); break;
+    case 'req-register': {
+      const r = reqData(el.dataset.id);
+      if (r) songModal({ reqId: el.dataset.id, prefill: { title: r.title, artist: r.artist } });
+      break;
+    }
+    case 'go-song': { const s = S.songs[el.dataset.id]; if (s) { S.view = 'programateca'; S.folder = s.style; S.sel = s.id; render(); window.scrollTo(0, 0); } break; }
+    case 'do-reg': doReg(); break;
+    case 'est-sector': E.sector = el.dataset.id; E.sel = null; render(); break;
+    case 'est-folder': E.folder = el.dataset.id; render(); break;
+    case 'est-sel': E.sector = el.dataset.sector; E.sel = el.dataset.sector + ':' + el.dataset.i; render(); break;
+    case 'est-add': if (can('programar')) {
+      const tv = (D.estTime || '').trim();
+      if (!tv) { estDropSong(el.dataset.id, S.date, estSector()); break; }
+      const sec = parseClk(tv), sc = sec != null && sectAt(sec);
+      if (!sc) { toast('Horário fora da programação (06:00 às 24:00).'); break; }
+      estDropSong(el.dataset.id, S.date, sc.id, sec);
+    } break;
+    case 'reg-ask': S.confirmReg = el.dataset.uid; render(); break;
+    case 'reg-no': S.confirmReg = null; render(); break;
+    case 'reg-ok': if (isDono() && !S.as) removeReg(el.dataset.uid); break;
+    default: break;
+  }
+}
+document.addEventListener('dragstart', (e) => {
+  const ls = e.target.closest && e.target.closest('.ls[data-song]'), bk = e.target.closest && e.target.closest('.blk[data-sector]');
+  if (ls && ls.getAttribute('draggable') === 'true') { E.drag = { type: 'song', id: ls.dataset.song }; }
+  else if (bk && bk.getAttribute('draggable') === 'true') { E.drag = { type: 'blk', sector: bk.dataset.sector, i: +bk.dataset.i, grab: e.clientX - bk.getBoundingClientRect().left }; }
+  else { E.drag = null; return; }
+  try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', 'rp'); } catch (x) { /* ok */ }
+});
+document.addEventListener('dragover', (e) => {
+  const tr = e.target.closest && e.target.closest('.ltrack');
+  document.querySelectorAll('.ltrack.over').forEach((x) => { if (x !== tr) x.classList.remove('over'); });
+  if (!tr || !E.drag || !can('programar') || isPast(S.date, tr.dataset.lane)) return;
+  e.preventDefault();
+  tr.classList.add('over');
+});
+document.addEventListener('dragend', () => { E.drag = null; document.querySelectorAll('.ltrack.over').forEach((x) => x.classList.remove('over')); });
+document.addEventListener('dragover', (e) => { if (e.target.closest && e.target.closest('#bkDrop')) { e.preventDefault(); e.target.closest('#bkDrop').classList.add('over'); } });
+document.addEventListener('dragleave', (e) => { const z = e.target.closest && e.target.closest('#bkDrop'); if (z) z.classList.remove('over'); });
+document.addEventListener('drop', (e) => {
+  const z = e.target.closest && e.target.closest('#bkDrop');
+  if (z) { e.preventDefault(); z.classList.remove('over'); const fs = Array.from((e.dataTransfer && e.dataTransfer.files) || []); if (fs.length) bulkRun(fs); return; }
+  const tr = e.target.closest && e.target.closest('.ltrack');
+  const d = E.drag; E.drag = null;
+  document.querySelectorAll('.ltrack.over').forEach((x) => x.classList.remove('over'));
+  if (!tr || !d || !can('programar')) return;
+  e.preventDefault();
+  const sid = tr.dataset.lane;
+  if (isPast(S.date, sid)) { toast('Esse horário já passou.'); return; }
+  const at = secAtX(tr, e.clientX - (d.grab || 0));
+  if (d.type === 'song') { estDropSong(d.id, S.date, sid, at); return; }
+  estDropBlock(S.date, d.sector, d.i, sid, at);
+});
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-act]');
+  if (!t || /^(SELECT|INPUT|FORM)$/.test(t.tagName)) return;
+  act(t.dataset.act, t);
+});
+document.addEventListener('submit', (e) => {
+  const f = e.target.closest('[data-act]');
+  if (!f) return;
+  e.preventDefault();
+  act(f.dataset.act, f);
+});
+document.addEventListener('input', (e) => {
+  const t = e.target;
+  if (t.id === 'vol') { S.vol = t.value / 100; audio.volume = S.vol; return; }
+  if (t.dataset && t.dataset.pk) { if (P) { P.q = t.value; renderPicker(); } return; }
+  if (t.dataset && t.dataset.d) {
+    D[t.dataset.d] = t.value;
+    if (t.dataset.d === 'libq') S.libq = t.value;
+    if (t.dataset.re) render();
+  }
+});
+document.addEventListener('change', async (e) => {
+  const t = e.target;
+  if (t.id === 'bkFile' && t.files && t.files.length) { bulkRun(Array.from(t.files)); t.value = ''; return; }
+  if (t.id === 'sfFile' && t.files && t.files[0]) {
+    const f = t.files[0], m = $('#sfMsg');
+    const base = cleanName(f.name.replace(/\.[^.]+$/, ''));
+    const ti = $('#sfTitle'), ar = $('#sfArtist');
+    const parts = base.split(' - ');
+    if (parts.length >= 2) { if (!ar.value) ar.value = parts[0].trim(); if (!ti.value) ti.value = parts.slice(1).join(' - ').trim(); }
+    else if (!ti.value) ti.value = base.trim();
+    if (!audioType(f.name)) { m.className = 'msg'; m.textContent = 'A nuvem do site só aceita M4A, MP4 ou WebM.'; return; }
+    m.className = 'msg okm'; m.textContent = 'Lendo a duração…';
+    const d = await probe(f);
+    if (d > 0) { $('#sfDur').value = mmss(d); m.textContent = ''; } else { m.className = 'msg'; m.textContent = 'Não consegui ler a duração. Digite em mm:ss.'; }
+    if (!ar.value.trim() || d <= 0) lookupSong();
+    return;
+  }
+  if (t.dataset && t.dataset.act === 'view-as') { S.as = t.value === 'dono' ? null : t.value; S.view = LAND[role()]; S.folder = null; S.sel = null; render(); return; }
+  if (t.dataset && t.dataset.act === 'date-input') { act('date-input', t); return; }
+  if (t.dataset && t.dataset.act === 'est-zoom') { const n = nowSP(), x = SECT.find((q) => q.id === estSector()), old = E.zoom; E.zoom = +t.value; const tls = $('#tlscroll'); if (tls) E.scroll = tls.scrollLeft * E.zoom / old; render(); return; }
+  if (t.dataset && t.dataset.act === 'role-set') {
+    const uid = t.dataset.uid;
+    if (t.value === 'ouvinte') W(() => S.db.doc('roles/' + uid).delete());
+    else W(() => S.db.doc('roles/' + uid).set({ role: t.value }));
+    return;
+  }
+  if (t.dataset && t.dataset.d) { D[t.dataset.d] = t.value; if (t.dataset.re) render(); }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !$('#modal').hidden) closeModal();
+});
+window.addEventListener('pagehide', flush);
+
+/* ---------- Relógio da rádio ---------- */
+function tick() {
+  const prev = curKey;
+  AIR = onAir();
+  const cur = AIR.cur;
+  curKey = cur ? cur.date + cur.sector + cur.id : null;
+  syncAudio(AIR);
+  if (S.tuned && cur) {
+    acc.sec++;
+    const st = cur.song.style || 'outros';
+    acc.styles[st] = (acc.styles[st] || 0) + 1;
+    if (++sinceFlush >= 30) { sinceFlush = 0; flush(); }
+  }
+  const clk = $('#sideClock');
+  if (clk) clk.textContent = hhmmss(AIR.n.sec);
+  if (curKey !== prev) { render(); return; }
+  if (cur) {
+    const pb = $('#progBar'), te = $('#tEl');
+    if (pb) pb.style.width = Math.min(100, Math.max(0, (AIR.n.sec - cur.abs) / cur.dur * 100)).toFixed(2) + '%';
+    if (te) te.textContent = mmss(AIR.n.sec - cur.abs);
+  }
+  const ec = $('#estClock');
+  if (ec) {
+    ec.textContent = hhmmss(AIR.n.sec);
+    if (cur) {
+      const eb = $('#estBar'), ee = $('#estEl');
+      if (eb) eb.style.width = Math.min(100, Math.max(0, (AIR.n.sec - cur.abs) / cur.dur * 100)).toFixed(2) + '%';
+      if (ee) ee.textContent = mmss(AIR.n.sec - cur.abs);
+    }
+    document.querySelectorAll('.ltrack').forEach((tr) => {
+      const x = SECT.find((q) => q.id === tr.dataset.lane), l = tr.querySelector('.ph-line');
+      if (l && x) l.style.left = ((AIR.n.sec - x.ini * 3600) / 60 * E.zoom).toFixed(1) + 'px';
+    });
+  }
+  const cdn = $('#cdNext');
+  if (cdn) { const nx = AIR.list.find((e) => e.song && e.dur > 0 && e.abs > AIR.n.sec); if (nx) cdn.textContent = cdFmt(nx.abs - AIR.n.sec); }
+  const nd = $('#needle');
+  if (nd) nd.style.left = ((AIR.n.sec - 6 * 3600) / (18 * 3600) * 100).toFixed(3) + '%';
+}
+
+/* ---------- Inicialização ---------- */
+function sub(path, key, build, first) {
+  S.db.collection(path).onSnapshot((snap) => {
+    const o = {};
+    snap.docs.forEach((d) => { o[d.id] = build ? build(d) : d.data(); });
+    S[key] = o;
+    if (first) first();
+    scheduleNames();
+    scheduleRender();
+  }, (e) => console.warn(path, e));
+}
+async function use(name) { try { return window.claude && window.claude.use ? await window.claude.use(name) : null; } catch (e) { return null; } }
+
+async function boot() {
+  AIR = onAir();
+  render();
+  setInterval(tick, 1000);
+  const [db, user, assets] = await Promise.all([use('db'), use('user'), use('assets')]);
+  S.db = db; S.user = user; S.assets = assets;
+  use('sample').then((x) => { SMP = x; });
+  if (user) {
+    try {
+      S.uid = await user.id();
+      S.isOwner = await user.isOwner();
+      S.canEdit = await user.canEdit();
+      S.canWrite = await user.can('data.write');
+      S.me = await user.me();
+    } catch (e) { console.warn(e); }
+  }
+  if (db) {
+    const land = () => { if (!S.landed) { S.landed = true; S.view = LAND[role()]; } };
+    sub('roles', 'roles', null, () => {
+      land();
+      if (!S.isOwner && S.reqPriv && !(S.roles[S.uid] && STAFF.includes(S.roles[S.uid].role))) clearKey();
+      if (isDono() && !S.peopleSub) { S.peopleSub = true; sub('people', 'people'); }
+      restoreKey(); ensureGrants();
+    });
+    sub('grants', 'grants', null, () => { restoreKey(); ensureGrants(); });
+    if (S.canEdit) sub('keys', 'keys', null, () => { S.keysLoaded = true; publishDevKey(); restoreKey(); ensureGrants(); });
+    if (S.uid) S.db.doc('keys/' + S.uid).onSnapshot((d) => { S.myKey = d.exists ? d.data() : null; S.keysLoaded = true; publishDevKey(); restoreKey(); }, () => { S.keysLoaded = true; });
+    sub('folders', 'folders');
+    sub('names', 'names', null, () => { S.namesLoaded = true; land(); });
+    if (isDono()) { S.peopleSub = true; sub('people', 'people'); }
+    else if (S.uid) S.db.doc('people/' + S.uid).onSnapshot((d) => { S.people = d.exists ? { [S.uid]: d.data() } : {}; scheduleRender(); }, () => {});
+    sub('songs', 'songs', (d) => Object.assign({}, d.data(), { id: d.id }));
+    sub('plan', 'plan');
+    sub('requests', 'requests', null, () => { decryptAll(); });
+    sub('listeners', 'listeners');
+    sub('config', 'config', null, () => {
+      S.cfgLoaded = true;
+      const rk = S.config.reqkeys;
+      if (!S.isOwner && S.reqPriv && rk && rk.kid && S.reqKid !== rk.kid) clearKey();
+      restoreKey();
+      ensureReqKeys();
+      ensureGrants();
+    });
+    if (S.isOwner && S.uid) {
+      S.db.doc('data/users/' + S.uid + '/reqkey').onSnapshot((d) => { S.ownerPriv = d.exists ? ((d.data() || {}).priv || null) : null; S.keyLoaded = true; ensureReqKeys(); }, () => { S.keyLoaded = true; });
+    }
+    setTimeout(() => { land(); scheduleRender(); }, 2500);
+    registerVisit();
+  } else {
+    S.landed = true;
+    render();
+  }
+}
+boot();
+})();
+</script>
+
+<script>if("serviceWorker"in navigator){navigator.serviceWorker.register("sw.js").catch(function(){});}</script>
+</body>
+</html>
