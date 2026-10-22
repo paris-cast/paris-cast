@@ -475,6 +475,7 @@ body {
 .today h3 { font: 600 20px var(--f-display); }
 
 /* Programação e setores */
+.sector[data-sec="madrugada"], .sc[data-sec="madrugada"] { --tint: 222 38% 62%; }
 .sector[data-sec="dia"], .sc[data-sec="dia"] { --tint: 38 78% 58%; }
 .sector[data-sec="tarde"], .sc[data-sec="tarde"] { --tint: 17 72% 58%; }
 .sector[data-sec="noite"], .sc[data-sec="noite"] { --tint: 262 34% 70%; }
@@ -714,6 +715,7 @@ body { background-image: radial-gradient(1200px 520px at 85% -8%, color-mix(in s
 
 /* ---------- Constantes ---------- */
 const SECT = [
+  { id: 'madrugada', nome: 'Madrugada', ini: 0, fim: 6 },
   { id: 'dia', nome: 'Dia', ini: 6, fim: 12 },
   { id: 'tarde', nome: 'Tarde', ini: 12, fim: 18 },
   { id: 'noite', nome: 'Noite', ini: 18, fim: 24 }
@@ -735,7 +737,8 @@ const NAV = [
   { id: 'estudio', nome: 'Estúdio', ic: 'studio', roles: ['programador', 'dono'] },
   { id: 'pedidos', nome: (r) => (r === 'ouvinte' ? 'Pedir música' : 'Pedidos'), curto: 'Pedidos', ic: 'chat', roles: ALL },
   { id: 'programateca', nome: 'Programateca', curto: 'Pastas', ic: 'folder', roles: STAFF },
-  { id: 'ouvintes', nome: 'Ouvintes', ic: 'people', roles: STAFF }
+  { id: 'ouvintes', nome: 'Ouvintes', ic: 'people', roles: STAFF },
+  { id: 'radialistas', nome: 'Radialistas', ic: 'key', roles: ['dono'], dono: true }
 ];
 const ICON = {
   radio: '<rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8l9-4.5"/><circle cx="9" cy="14" r="2.6"/><path d="M15 12.5h3M15 16h3"/>',
@@ -758,12 +761,13 @@ Object.assign(ICON, {
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>',
   sunset: '<path d="M6.5 16a5.5 5.5 0 0 1 11 0M3 16h18M12 6v2M5 9.2l1.4 1.4M19 9.2l-1.4 1.4M8 20h8"/>',
   moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+  stars: '<path d="M10 4l1.9 4.6L16.5 10.5l-4.6 1.9L10 17l-1.9-4.6L3.5 10.5l4.6-1.9z"/><path d="M18.5 3.5v3M17 5h3M18.5 15v4M16.5 17h4"/>',
   lock: '<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
   folderok: '<path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v8.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><path d="m9 13.2 2.2 2.2L15.5 11"/>'
 });
 const emblem = (cls) => '<svg class="emb ' + (cls || '') + '" viewBox="0 0 64 72" aria-hidden="true"><path d="M5 68V31a27 27 0 0 1 54 0v37z"/><path d="M32 13 22.5 60M32 13 41.5 60M26.5 40h11M28.8 29h6.4M22.5 60h19"/><path d="M26.5 60q5.5-10 11 0"/><path d="M26 11a6 6 0 0 0 0 6M22.5 9a10 10 0 0 0 0 10M38 11a6 6 0 0 1 0 6M41.5 9a10 10 0 0 1 0 10"/><path d="M5 68h54"/></svg>';
-const SECT_IC = { dia: 'sun', tarde: 'sunset', noite: 'moon' };
+const SECT_IC = { madrugada: 'stars', dia: 'sun', tarde: 'sunset', noite: 'moon' };
 const sectIc = (id) => ic(SECT_IC[id] || 'sun');
 const ic = (n) => '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + (ICON[n] || '') + '</svg>';
 
@@ -1150,7 +1154,7 @@ function vAoVivo() {
     const nx = nextList[0];
     hero = vinylHTML(nx.song, false) + '<div class="hinfo"><div class="onair"><span class="lamp"></span>' + (a.sector ? 'Intervalo' : 'Madrugada') + '</div>' +
       '<div><h2>' + (a.sector ? 'Sem música agora' : 'A rádio volta às 06:00') + '</h2><p class="art">Próxima: ' + esc(nx.song.title) + ' — ' + esc(nx.song.artist) + ', às ' + hh(nx.start) + (nx.abs >= 86400 ? ' de amanhã' : '') + '.</p></div>' +
-      '<div class="cd"><span class="eyebrow">Próxima música em</span><b id="cdNext">' + cdFmt(nx.abs - n.sec) + '</b></div><p class="hint">Dia 06:00–12:00 · Tarde 12:00–18:00 · Noite 18:00–24:00. De madrugada a rádio fica em pausa.</p></div>';
+      '<div class="cd"><span class="eyebrow">Próxima música em</span><b id="cdNext">' + cdFmt(nx.abs - n.sec) + '</b></div><p class="hint">Madrugada 00:00–06:00 · Dia 06:00–12:00 · Tarde 12:00–18:00 · Noite 18:00–24:00.</p></div>';
   }
   const ctl = '<div class="ctl">' + (S.tuned
     ? '<button class="btn pri lg" type="button" data-act="stop">' + ic('stop') + 'Parar</button>'
@@ -1168,12 +1172,12 @@ function vAoVivo() {
 
 function reguaHTML(date, lays) {
   const today = nowSP().date, n = nowSP();
-  const R0 = 6 * 3600, RL = 18 * 3600;
+  const R0 = 0, RL = 24 * 3600;
   const segs = lays.map((l) => l.items.filter((e) => e.song && e.dur > 0).map((e) => '<i class="seg" style="left:' + ((e.start - R0) / RL * 100).toFixed(3) + '%;width:' + (e.dur / RL * 100).toFixed(3) + '%;background:' + sColor(e.song.style) + '" title="' + esc(hh(e.start) + ' · ' + e.song.title + ' — ' + e.song.artist) + '"></i>').join('')).join('');
-  const ticks = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24].map((h) => '<span class="tk" style="left:' + ((h * 3600 - R0) / RL * 100) + '%">' + p2(h) + '</span>').join('');
-  const seps = [12, 18].map((h) => '<i class="sep" style="left:' + ((h * 3600 - R0) / RL * 100) + '%"></i>').join('');
+  const ticks = [0, 3, 6, 9, 12, 15, 18, 21, 24].map((h) => '<span class="tk" style="left:' + ((h * 3600 - R0) / RL * 100) + '%">' + p2(h) + '</span>').join('');
+  const seps = [6, 12, 18].map((h) => '<i class="sep" style="left:' + ((h * 3600 - R0) / RL * 100) + '%"></i>').join('');
   const needle = date === today && n.sec >= R0 ? '<i class="nd" id="needle" style="left:' + ((n.sec - R0) / RL * 100).toFixed(3) + '%"></i>' : '';
-  return '<div class="regua" aria-label="Régua do dia, das 06:00 às 24:00">' + ticks + '<div class="track">' + segs + '</div>' + seps + needle + '</div>';
+  return '<div class="regua" aria-label="Régua do dia, das 00:00 às 24:00">' + ticks + '<div class="track">' + segs + '</div>' + seps + needle + '</div>';
 }
 
 function vProg() {
@@ -1512,7 +1516,7 @@ function vOuv() {
   return '<div class="wrap"><div class="ph"><div><h1>Ouvintes</h1><p>Quem entrou na rádio, por quanto tempo ouviu e quais estilos mais tocam nos ouvidos do público.</p></div></div>' +
     '<div class="panel stats"><div><div class="n">' + L.length + '</div><div class="l">Pessoas que já entraram</div></div>' + (showPh ? '<div><div class="n">' + Object.keys(S.names).length + '</div><div class="l">Cadastros feitos</div></div>' : '') + '<div><div class="n">' + hm(total) + '</div><div class="l">Tempo total ouvido</div></div><div><div class="n">' + online + '</div><div class="l">Ouvindo agora</div></div><div><div class="n">' + hm(avg) + '</div><div class="l">Média por pessoa</div></div></div>' +
     '<section class="panel sec2"><div><h2>Estilos mais ouvidos</h2><p class="muted">Tempo de escuta por estilo, somando todos os ouvintes.</p></div>' + chart + '</section>' +
-    '<section class="panel sec2"><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between"><div><h2>Pessoas</h2><p class="muted">' + (showPh ? 'Todos que já entraram, com nome e telefone cadastrados. Use “Dar cargo” para promover ou tirar o cargo de alguém, ou remova um cadastro suspeito.' : edit ? 'Defina o cargo de cada pessoa.' : 'Só o dono altera cargos e vê telefones.') + '</p></div>' + (S.isOwner && !S.as && window.__staff ? '<button class="btn sm" type="button" data-act="rad-new">' + ic('plus') + 'Criar radialista</button>' : '') + (S.isOwner && !S.as ? '<button class="btn sm ghost" type="button" data-act="rotate-keys" title="Troca a chave que protege os pedidos. A equipe recebe a nova sozinha.">' + ic('key') + 'Trocar chave dos pedidos</button>' : '') + '<div class="fld" style="min-width:170px"><label for="psrt">Ordenar por</label><select id="psrt" data-d="psrt" data-re="1">' + Object.entries(SORTS).map(([k, n]) => '<option value="' + k + '"' + (k === srt ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></div><div class="fld" style="min-width:240px"><label for="pq">Buscar pessoa</label><input id="pq" type="search" data-d="pq" data-re="1" value="' + esc(val('pq', '')) + '" placeholder="' + (showPh ? 'Nome ou telefone' : 'Nome') + '" autocomplete="off"></div></div><div class="fchips" style="margin:12px 0">' + chips + '</div>' + table + '</section></div>';
+    '<section class="panel sec2"><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between"><div><h2>Pessoas</h2><p class="muted">' + (showPh ? 'Todos que já entraram, com nome e telefone cadastrados. Use “Dar cargo” para promover ou tirar o cargo de alguém, ou remova um cadastro suspeito.' : edit ? 'Defina o cargo de cada pessoa.' : 'Só o dono altera cargos e vê telefones.') + '</p></div>' + (S.isOwner && !S.as ? '<button class="btn sm ghost" type="button" data-act="rotate-keys" title="Troca a chave que protege os pedidos. A equipe recebe a nova sozinha.">' + ic('key') + 'Trocar chave dos pedidos</button>' : '') + '<div class="fld" style="min-width:170px"><label for="psrt">Ordenar por</label><select id="psrt" data-d="psrt" data-re="1">' + Object.entries(SORTS).map(([k, n]) => '<option value="' + k + '"' + (k === srt ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></div><div class="fld" style="min-width:240px"><label for="pq">Buscar pessoa</label><input id="pq" type="search" data-d="pq" data-re="1" value="' + esc(val('pq', '')) + '" placeholder="' + (showPh ? 'Nome ou telefone' : 'Nome') + '" autocomplete="off"></div></div><div class="fchips" style="margin:12px 0">' + chips + '</div>' + table + '</section></div>';
 }
 
 
@@ -1521,8 +1525,8 @@ function vOuv() {
 const E = { sector: null, sel: null, q: '', folder: '', zoom: 10, scroll: null, drag: null };
 function estSector() {
   if (E.sector) return E.sector;
-  const free = SECT.find((x) => !isPast(S.date, x.id));
-  E.sector = (free || SECT[SECT.length - 1]).id;
+  const n0 = nowSP(), cur0 = S.date === n0.date ? sectAt(n0.sec) : null;
+  E.sector = (cur0 || SECT.find((x) => x.id === 'dia')).id;
   return E.sector;
 }
 function estHTML() {
@@ -1534,7 +1538,7 @@ function estHTML() {
     const d = addDays(ws, k), pp = pd(d);
     return '<button type="button" data-act="date-set" data-date="' + d + '" aria-pressed="' + (d === date) + '" class="' + (d === today ? 'hoje ' : '') + (dayCount(d) ? 'tem' : '') + '" aria-label="' + esc(longDate(d)) + '"><b>' + pp.getUTCDate() + '</b><span>' + DOWS[pp.getUTCDay()] + '</span></button>';
   }).join('');
-  const bar = '<div class="est-bar"><div><h1>Estúdio</h1><p class="muted">Monte a grade arrastando músicas da biblioteca. Solte em qualquer ponto da faixa para fixar o horário; sem horário, a música entra logo após a anterior.</p></div><div class="dayhead" style="gap:10px"><div class="wk" role="group" aria-label="Dias da semana">' + chips + '</div><div class="tools"><button class="ib" type="button" data-act="date-prev" aria-label="Dia anterior">' + ic('back') + '</button><input type="date" id="planDate" data-act="date-input" value="' + date + '" aria-label="Ir para o dia"><button class="ib" type="button" data-act="date-next" aria-label="Próximo dia" style="transform:scaleX(-1)">' + ic('back') + '</button><button class="btn sm" type="button" data-act="date-today">Hoje</button>' + (can('programar') ? '<button class="btn sm" type="button" data-act="copy-open">Copiar este dia</button>' : '') + '</div></div></div>';
+  const bar = '<div class="est-bar"><div><h1>Estúdio</h1><p class="muted">Monte a grade arrastando músicas da biblioteca. Solte em qualquer ponto da faixa para fixar o horário; sem horário, a música entra logo após a anterior.</p></div><div class="dayhead" style="gap:10px"><div class="wk" role="group" aria-label="Dias da semana">' + chips + '</div><div class="tools"><button class="ib" type="button" data-act="date-prev" aria-label="Dia anterior">' + ic('back') + '</button><input type="date" id="planDate" data-act="date-input" value="' + date + '" aria-label="Ir para o dia"><button class="ib" type="button" data-act="date-next" aria-label="Próximo dia" style="transform:scaleX(-1)">' + ic('back') + '</button><button class="btn sm" type="button" data-act="date-today">Hoje</button>' + (can('programar') ? '<button class="btn sm" type="button" data-act="copy-open">Copiar este dia</button><button class="btn sm" type="button" data-act="cs-open">Copiar setor</button><button class="btn sm" type="button" data-act="auto-open">' + ic('plus') + 'Preencher automático</button>' : '') + '</div></div></div>';
 
   // biblioteca
   const used = dayUsedMap(date);
@@ -1635,9 +1639,9 @@ function secAtX(track, x) {
   return Math.round((sc.ini * 3600 + (x - r.left) / E.zoom * 60) / 5) * 5;
 }
 
-const views = { estudio: vEstudio, aovivo: vAoVivo, programacao: vProg, pedidos: vPed, programateca: vLib, ouvintes: vOuv };
+const views = { estudio: vEstudio, aovivo: vAoVivo, programacao: vProg, pedidos: vPed, programateca: vLib, ouvintes: vOuv, radialistas: vRad };
 
-const navOk = (n) => n.roles.includes(role()) && (!n.owner || (S.isOwner && !S.as));
+const navOk = (n) => n.roles.includes(role()) && (!n.owner || (S.isOwner && !S.as)) && (!n.dono || (window.__staff && isDono() && !S.as));
 function teamBtn() { return !window.__staff || !S.uid ? '' : window.__staff.isAnon() ? '<button class="btn sm ghost" type="button" data-act="rad-enter">Entrar como radialista</button>' : '<button class="btn sm ghost" type="button" data-act="rad-out">Sair da conta</button>'; }
 function sideHTML() {
   const r = role();
@@ -1654,7 +1658,7 @@ function mheadHTML() {
 }
 
 /* ---------- Render ---------- */
-let rafId = 0;
+let rafId = 0, RV = null;
 function scheduleRender() { if (!rafId) rafId = requestAnimationFrame(() => { rafId = 0; render(); }); }
 function allowed(v) { return NAV.some((n) => n.id === v && navOk(n)); }
 function render() {
@@ -1676,8 +1680,16 @@ function render() {
   const keep = ae && main.contains(ae) && ae.dataset && ae.dataset.d ? { k: ae.dataset.d, s: ae.selectionStart, e: ae.selectionEnd } : null;
   const tls = $('#tlscroll');
   if (tls) E.scroll = tls.scrollLeft;
+  const sameView = RV === S.view && !S.noKeep;
+  S.noKeep = false; RV = S.view;
+  const sv = {}, wy = window.scrollY;
+  if (sameView) ['.qlist', '.lsongs', '.bklist'].forEach((q) => { const el = main.querySelector(q); if (el) sv[q] = el.scrollTop; });
   $('#side').innerHTML = sideHTML();
   main.innerHTML = mheadHTML() + stripHTML() + (views[S.view] || vAoVivo)();
+  if (sameView) {
+    Object.entries(sv).forEach(([q, t]) => { const el = main.querySelector(q); if (el) el.scrollTop = t; });
+    if (window.scrollY !== wy) window.scrollTo(0, wy);
+  }
   if (S.fade) { S.fade = 0; const w0 = main.querySelector('.wrap'); if (w0) w0.classList.add('enter'); }
   if (keep) {
     const el = main.querySelector('[data-d="' + keep.k + '"]');
@@ -1873,6 +1885,88 @@ async function copyDay() {
     }
   });
   if (ok) { closeModal(); toast('Grade copiada para ' + targets.length + (targets.length === 1 ? ' dia.' : ' dias.')); render(); }
+}
+/* ----- Preencher automático: uma música de cada pasta, a partir de 5 minutos depois do relógio ----- */
+function autoModal() {
+  const date = S.date, n = nowSP(), sid = estSector(), sc = SECT.find((x) => x.id === sid);
+  const isToday = date === n.date;
+  const start = isToday ? Math.ceil((n.sec + 300) / 60) * 60 : sc.ini * 3600;
+  const sd = val('afScope', 'sector');
+  const free = Object.values(S.songs).filter((x) => +x.dur > 0 && !dayUsedMap(date)[x.id]).length;
+  openModal('<div><h2>Preencher automático</h2><p class="muted">Adiciona as músicas que ainda não tocam em ' + esc(shortDate(date)) + ', alternando <b>uma de cada pasta</b>. Quando sobrar só uma pasta, entram todas as músicas dela. Nada é apagado e nada se sobrepõe.</p></div>' +
+    '<p class="hint">' + (isToday ? 'Começa às <b>' + hh(Math.max(start, sc.ini * 3600)) + '</b>, 5 minutos depois do relógio agora.' : 'Começa no início do setor, depois do que já estiver programado.') + ' Há <b>' + free + '</b> ' + (free === 1 ? 'música disponível' : 'músicas disponíveis') + '.</p>' +
+    '<div class="rolepick"><label class="rp-opt" style="cursor:pointer"><b><input type="radio" name="afs" data-d="afScope" value="sector"' + (sd === 'sector' ? ' checked' : '') + '> Só o setor ' + esc(sc.nome) + '</b><span>Preenche até as ' + p2(sc.fim) + 'h.</span></label>' +
+    '<label class="rp-opt" style="cursor:pointer"><b><input type="radio" name="afs" data-d="afScope" value="day"' + (sd === 'day' ? ' checked' : '') + '> Do setor ' + esc(sc.nome) + ' até o fim do dia</b><span>Continua nos setores seguintes enquanto houver música.</span></label></div>' +
+    '<p class="msg" id="afMsg" role="status"></p><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="auto-go">Preencher</button></div>');
+}
+async function autoFill() {
+  const date = S.date, n = nowSP(), isToday = date === n.date, sid0 = estSector(), scope = val('afScope', 'sector');
+  const startNow = isToday ? Math.ceil((n.sec + 300) / 60) * 60 : 0;
+  const used = dayUsedMap(date), byF = {};
+  Object.values(S.songs).forEach((x) => { if (+x.dur > 0 && !used[x.id]) (byF[x.style || ''] = byF[x.style || ''] || []).push(x); });
+  const fids = allFolders().map((f) => f.id).concat(Object.keys(byF)).filter((v, i, a) => a.indexOf(v) === i && byF[v] && byF[v].length);
+  const queues = fids.map((f) => byF[f].slice().sort((a, b) => fold(a.title).localeCompare(fold(b.title))));
+  const m = $('#afMsg');
+  if (!queues.length) { if (m) { m.className = 'msg'; m.textContent = 'Não há músicas novas para este dia.'; } return; }
+  const i0 = SECT.findIndex((x) => x.id === sid0), secs = scope === 'day' ? SECT.slice(i0) : [SECT[i0]];
+  const saves = []; let added = 0, firstAt = null;
+  for (const sc of secs) {
+    const doc = S.plan[date + '_' + sc.id] || {};
+    const items = (doc.items || []).slice(), pins = Object.assign({}, doc.pins || {});
+    const L = layoutOf(sc.id, items, pins);
+    const natural = L.length ? L[L.length - 1].end : sc.ini * 3600;
+    let cur = Math.max(natural, sc.ini * 3600, isToday ? startNow : 0);
+    if (cur >= sc.fim * 3600) continue;
+    const placed = [];
+    let moved = true;
+    while (moved && queues.some((q) => q.length)) {
+      moved = false;
+      for (const q of queues) {
+        if (!q.length) continue;
+        const j = q.findIndex((x) => cur + (+x.dur) <= sc.fim * 3600);
+        if (j < 0) continue;
+        const x = q.splice(j, 1)[0];
+        placed.push({ x, start: cur }); cur += +x.dur; moved = true;
+      }
+    }
+    if (!placed.length) continue;
+    if (placed[0].start > natural) pins[placed[0].x.id] = placed[0].start;
+    placed.forEach((e) => items.push(e.x.id));
+    if (firstAt == null) firstAt = placed[0].start;
+    added += placed.length;
+    saves.push([sc.id, items, pins]);
+  }
+  if (!added) { if (m) { m.className = 'msg'; m.textContent = isToday ? 'Nada coube depois das ' + hh(startNow) + '. Escolha outro setor ou dia.' : 'Nada coube neste setor.'; } return; }
+  const ok = await W(async () => { for (const [sid, items, pins] of saves) await S.db.doc('plan/' + date + '_' + sid).set({ date, sector: sid, items, pins }); });
+  if (ok) { closeModal(); toast(added + (added === 1 ? ' música adicionada' : ' músicas adicionadas') + ', a partir das ' + hh(firstAt) + '.'); render(); }
+}
+
+/* ----- Copiar um setor (Dia, Tarde ou Noite) para os outros ----- */
+let CS = null;
+function csModal() {
+  const date = S.date, cnt = (id) => (((S.plan[date + '_' + id] || {}).items) || []).length;
+  if (!CS) CS = { src: estSector(), sel: new Set() };
+  CS.sel.delete(CS.src);
+  const src = SECT.find((x) => x.id === CS.src);
+  openModal('<div><h2>Copiar um setor</h2><p class="muted">Copia a programação de um setor de ' + esc(shortDate(date)) + ' para outro, mantendo a ordem e os horários fixos (ajustados para o novo setor). O que já estiver no destino é substituído.</p></div>' +
+    '<div class="fld"><label>Copiar de</label><div class="fchips" role="group">' + SECT.map((x) => '<button type="button" data-act="cs-src" data-id="' + x.id + '" aria-pressed="' + (CS.src === x.id) + '">' + esc(x.nome) + ' (' + cnt(x.id) + ')</button>').join('') + '</div></div>' +
+    '<div class="fld"><label>Para</label><div class="fchips" role="group">' + SECT.filter((x) => x.id !== CS.src).map((x) => '<button type="button" data-act="cs-dst" data-id="' + x.id + '" aria-pressed="' + CS.sel.has(x.id) + '">' + esc(x.nome) + (cnt(x.id) ? ' · já tem ' + cnt(x.id) : '') + '</button>').join('') + '</div></div>' +
+    '<p class="hint">' + (cnt(CS.src) ? esc(src.nome) + ' tem ' + cnt(CS.src) + (cnt(CS.src) === 1 ? ' música.' : ' músicas.') : esc(src.nome) + ' está vazio. Escolha outro setor.') + '</p><p class="msg" id="csMsg" role="status"></p>' +
+    '<div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="cs-go">Copiar</button></div>');
+}
+async function copySector() {
+  const date = S.date, m = $('#csMsg'), sd = S.plan[date + '_' + CS.src] || {}, items = sd.items || [];
+  if (!items.length) { m.className = 'msg'; m.textContent = 'Esse setor está vazio.'; return; }
+  if (!CS.sel.size) { m.className = 'msg'; m.textContent = 'Escolha para onde copiar.'; return; }
+  const a = SECT.find((x) => x.id === CS.src), dests = SECT.filter((x) => CS.sel.has(x.id));
+  const ok = await W(async () => {
+    for (const b of dests) {
+      const shift = (b.ini - a.ini) * 3600, pins = {};
+      Object.entries(sd.pins || {}).forEach(([k, v]) => { pins[k] = +v + shift; });
+      await S.db.doc('plan/' + date + '_' + b.id).set({ date, sector: b.id, items: items.slice(), pins });
+    }
+  });
+  if (ok) { closeModal(); toast(a.nome + ' copiado para ' + dests.map((x) => x.nome).join(' e ') + '.'); CS = null; render(); }
 }
 function folderModal() {
   openModal('<div><h2>Nova pasta</h2><p class="muted">Crie uma pasta para outro estilo musical.</p></div><div class="fld"><label for="nfName">Nome do estilo</label><input id="nfName" type="text" placeholder="Ex.: Brega" autocomplete="off"></div><p class="msg" id="nfMsg" role="status"></p><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="save-folder">Criar pasta</button></div>');
@@ -2127,17 +2221,26 @@ async function doRad() {
     btn.disabled = false;
   }
 }
-function radNewModal() {
-  openModal('<div><h2>Criar radialista</h2><p class="muted">Você escolhe o telefone e a senha. Depois é só passar os dois para a pessoa: ela toca em <b>Entrar como radialista</b> e já entra com o cargo.</p></div>' +
-    '<form class="fmod" data-act="do-rad-new" novalidate><div class="fld"><label for="nrNome">Nome e sobrenome</label><input id="nrNome" type="text" data-d="nrNome" maxlength="40" autocomplete="off" placeholder="Maria Souza"></div>' +
-    '<div class="fld"><label for="nrTel">Telefone com DDD</label><input id="nrTel" type="text" inputmode="tel" data-d="nrTel" maxlength="20" autocomplete="off" placeholder="(11) 91234-5678"></div>' +
-    '<div class="fld"><label for="nrPw">Senha</label><input id="nrPw" type="text" data-d="nrPw" maxlength="64" autocomplete="off" placeholder="Letra, número e símbolo. Ex.: Radio@2026"></div>' +
-    '<div class="fld"><label for="nrRole">Cargo</label><select id="nrRole" data-d="nrRole"><option value="produtor">Produtor</option><option value="programador">Programador</option><option value="dono">Dono</option></select></div>' +
-    '<p class="msg" id="nrOut" role="status"></p><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" id="nrBtn" type="submit">Criar</button></div></form>');
-  delete D.nrNome; delete D.nrTel; delete D.nrPw; D.nrRole = 'produtor';
+function vRad() {
+  const team = Object.keys(S.roles).filter((id) => STAFF.includes((S.roles[id] || {}).role) && id !== S.uid).map((id) => ({ id, r: S.roles[id].role }));
+  if (isDono()) team.unshift({ id: S.uid, r: 'dono', me: true });
+  const RK = { dono: 0, programador: 1, produtor: 2 };
+  team.sort((a, b) => RK[a.r] - RK[b.r] || fold(nm(a.id)).localeCompare(fold(nm(b.id))));
+  const rows = team.map((x) => {
+    const pe = S.people[x.id] || {};
+    return '<tr><td><b>' + esc(nm(x.id)) + '</b>' + (x.me ? ' <span class="who2">você</span>' : '') + '</td><td>' + esc(pe.tel ? fmtPhone(pe.tel) : '—') + '</td><td><span class="rb r-' + x.r + '">' + esc(ROLES[x.r]) + '</span>' + (!x.me && can('cargos') ? ' <button type="button" class="btn sm" data-act="role-open" data-uid="' + esc(x.id) + '">' + ic('key') + 'Mudar cargo</button>' : '') + '</td></tr>';
+  }).join('');
+  const cur = val('nrRole', 'produtor');
+  const form = '<form class="fmod rad-new" data-act="do-rad-new" novalidate><div class="fld"><label for="nrNome">Nome e sobrenome</label><input id="nrNome" type="text" data-d="nrNome" value="' + esc(val('nrNome', '')) + '" maxlength="40" autocomplete="off" placeholder="Maria Souza"></div>' +
+    '<div class="fld"><label for="nrTel">Telefone com DDD</label><input id="nrTel" type="text" inputmode="tel" data-d="nrTel" value="' + esc(val('nrTel', '')) + '" maxlength="20" autocomplete="off" placeholder="(11) 91234-5678"></div>' +
+    '<div class="fld"><label for="nrPw">Senha</label><input id="nrPw" type="text" data-d="nrPw" value="' + esc(val('nrPw', '')) + '" maxlength="64" autocomplete="off" placeholder="Ex.: Radio@2026"></div>' +
+    '<div class="fld"><label for="nrRole">Cargo</label><select id="nrRole" data-d="nrRole"><option value="produtor"' + (cur === 'produtor' ? ' selected' : '') + '>Produtor</option><option value="programador"' + (cur === 'programador' ? ' selected' : '') + '>Programador</option>' + (S.isOwner ? '<option value="dono"' + (cur === 'dono' ? ' selected' : '') + '>Dono</option>' : '') + '</select></div>' +
+    '<button class="btn pri" id="nrBtn" type="submit">' + ic('plus') + 'Criar radialista</button></form><p class="msg" id="nrOut" role="status"></p><p class="hint">A senha precisa ter mais de 5 caracteres, com letra, número e caractere especial. Você escolhe e passa o telefone e a senha para a pessoa, que toca em <b>Entrar como radialista</b>.</p>';
+  return '<div class="wrap"><section class="panel sec2"><h2>Novo radialista</h2><p class="muted">Crie a conta da equipe. Só o dono vê esta área.</p>' + form + '</section>' +
+    '<section class="panel sec2"><h2>Equipe</h2>' + (team.length ? '<div class="tw"><table><thead><tr><th>Pessoa</th><th>Telefone</th><th>Cargo</th></tr></thead><tbody>' + rows + '</tbody></table></div>' : '<div class="empty" style="padding:24px 0"><p>Ainda não há radialistas.</p></div>') + '</section></div>';
 }
 async function doRadNew() {
-  if (!S.isOwner || !window.__staff) return;
+  if (!isDono() || !window.__staff) return;
   const out = $('#nrOut'), btn = $('#nrBtn');
   out.className = 'msg';
   const nome = String(val('nrNome', '')).trim().replace(/\s+/g, ' '), tel = normPhone(val('nrTel', '')), pw = String(val('nrPw', '')), r = val('nrRole', 'produtor');
@@ -2146,7 +2249,7 @@ async function doRadNew() {
   if (!tel) { out.textContent = 'Telefone inválido. Digite com DDD.'; return; }
   const bad = pwProblems(pw);
   if (bad.length) { out.textContent = 'Falta na senha: ' + bad.join(', ') + '.'; return; }
-  if (!['produtor', 'programador', 'dono'].includes(r)) return;
+  if (!['produtor', 'programador', 'dono'].includes(r) || (r === 'dono' && !S.isOwner)) return;
   btn.disabled = true; out.textContent = 'Criando…';
   try {
     const nk = nameKey(nome), pk = await phoneKey(tel);
@@ -2170,7 +2273,7 @@ async function doRadNew() {
     if (r === 'dono' && window.__setAdmin) await window.__setAdmin(uid, true);
     S.people[uid] = { nome, tel, pk, nk, at }; S.names[uid] = { nome, at }; S.roles[uid] = { role: r, via: 'dono' };
     openModal('<div><h2>Radialista criado</h2><p class="muted">Passe estes dados para <b>' + esc(nome) + '</b>. A senha não aparece de novo.</p></div><div class="rad-card"><div><span>Telefone</span><b>' + esc(fmtPhone(tel)) + '</b></div><div><span>Senha</span><b>' + esc(pw) + '</b></div><div><span>Cargo</span><b>' + esc(ROLES[r]) + '</b></div></div><p class="hint">Ela abre o site, toca em <b>Entrar como radialista</b> e digita o telefone e a senha.</p><div class="acts"><button class="btn pri" type="button" data-act="close-modal">Fechar</button></div>');
-    delete D.nrPw;
+    delete D.nrPw; delete D.nrNome; delete D.nrTel;
     render();
   } catch (e) {
     console.warn(e);
@@ -2232,6 +2335,12 @@ async function act(a, el) {
     case 'lookup-song': lookupSong(); break;
     case 'bulk-open': if (can('cadastrar')) bulkModal(); break;
     case 'copy-open': if (can('programar')) copyModal(); break;
+    case 'auto-open': if (can('programar')) autoModal(); break;
+    case 'auto-go': if (can('programar')) autoFill(); break;
+    case 'cs-open': if (can('programar')) { CS = null; csModal(); } break;
+    case 'cs-src': if (CS) { CS.src = el.dataset.id; csModal(); } break;
+    case 'cs-dst': if (CS) { CS.sel.has(el.dataset.id) ? CS.sel.delete(el.dataset.id) : CS.sel.add(el.dataset.id); csModal(); } break;
+    case 'cs-go': if (CS && can('programar')) copySector(); break;
     case 'cp-day': if (CP) { const d = el.dataset.d; CP.sel.has(d) ? CP.sel.delete(d) : CP.sel.add(d); cpPaint(); } break;
     case 'cp-week': if (CP) { for (let k = 1; k <= 7; k++) CP.sel.add(addDays(CP.src, k)); cpPaint(); } break;
     case 'cp-clear': if (CP) { CP.sel.clear(); cpPaint(); } break;
@@ -2259,7 +2368,7 @@ async function act(a, el) {
       const date = val('tpDate', S.date); let sid = val('tpSector', 'dia');
       const tsec = parseClk(val('tpTime', ''));
       let sid2 = sid;
-      if (tsec != null) { const sc = sectAt(tsec); if (!sc) { toast('Horário fora da programação (06:00 às 24:00).'); break; } sid2 = sc.id; }
+      if (tsec != null) { const sc = sectAt(tsec); if (!sc) { toast('Horário fora da programação.'); break; } sid2 = sc.id; }
       const r = await addToPlan(s.id, date, sid2, tsec);
       if (!r.ok) { if (r.msg) toast(r.msg); break; }
       sid = sid2;
@@ -2289,7 +2398,6 @@ async function act(a, el) {
     case 'rq-filter': D.rqf = el.dataset.f; render(); break;
     case 'unlock-req': await restoreKey(); toast(S.reqPriv ? 'Pedidos liberados neste aparelho.' : 'Ainda não liberado. O dono precisa estar com a rádio aberta por alguns segundos.'); render(); break;
     case 'rotate-keys': rotateKeys(); break;
-    case 'rad-new': radNewModal(); break;
     case 'do-rad-new': doRadNew(); break;
     case 'req-status': W(() => S.db.doc('requests/' + el.dataset.id).update({ status: el.dataset.s })); break;
     case 'req-register': {
@@ -2305,13 +2413,13 @@ async function act(a, el) {
     case 'rad-back': S.rad = null; S.radDirty = true; render(); break;
     case 'rad-out': if (window.__staff) { await window.__staff.logout(); location.reload(); } break;
     case 'est-sector': E.sector = el.dataset.id; E.sel = null; render(); break;
-    case 'est-folder': E.folder = el.dataset.id; render(); break;
+    case 'est-folder': E.folder = el.dataset.id; S.noKeep = true; render(); break;
     case 'est-sel': E.sector = el.dataset.sector; E.sel = el.dataset.sector + ':' + el.dataset.i; render(); break;
     case 'est-add': if (can('programar')) {
       const tv = (D.estTime || '').trim();
       if (!tv) { estDropSong(el.dataset.id, S.date, estSector()); break; }
       const sec = parseClk(tv), sc = sec != null && sectAt(sec);
-      if (!sc) { toast('Horário fora da programação (06:00 às 24:00).'); break; }
+      if (!sc) { toast('Horário fora da programação.'); break; }
       estDropSong(el.dataset.id, S.date, sc.id, sec);
     } break;
     case 'reg-ask': S.confirmReg = el.dataset.uid; render(); break;
@@ -2369,7 +2477,7 @@ document.addEventListener('input', (e) => {
   if (t.dataset && t.dataset.d) {
     D[t.dataset.d] = t.value;
     if (t.dataset.d === 'libq') S.libq = t.value;
-    if (t.dataset.re) render();
+    if (t.dataset.re) { S.noKeep = true; render(); }
   }
 });
 document.addEventListener('change', async (e) => {
@@ -2442,7 +2550,7 @@ function tick() {
   const cdn = $('#cdNext');
   if (cdn) { const nx = AIR.list.find((e) => e.song && e.dur > 0 && e.abs > AIR.n.sec); if (nx) cdn.textContent = cdFmt(nx.abs - AIR.n.sec); }
   const nd = $('#needle');
-  if (nd) nd.style.left = ((AIR.n.sec - 6 * 3600) / (18 * 3600) * 100).toFixed(3) + '%';
+  if (nd) nd.style.left = ((AIR.n.sec - 0) / (24 * 3600) * 100).toFixed(3) + '%';
 }
 
 /* ---------- Inicialização ---------- */
