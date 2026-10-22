@@ -121,7 +121,7 @@ svg.i { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor;
 .ib svg.i { width: 18px; height: 18px; }
 .fld { display: grid; gap: 6px; min-width: 0; }
 .fld > label { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
-input[type="text"], input[type="search"], input[type="date"], select, textarea { width: 100%; min-height: 42px; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--ground); color: var(--ink); }
+input[type="text"], input[type="password"], input[type="search"], input[type="date"], select, textarea { width: 100%; min-height: 42px; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--ground); color: var(--ink); }
 textarea { min-height: 76px; resize: vertical; }
 input[type="range"] { width: 100%; accent-color: var(--accent); }
 .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
@@ -547,6 +547,11 @@ tbody tr:hover td { background: var(--panel-2); }
 .reg-pts svg.i { color: var(--side-accent); }
 .reg-form { display: grid; align-content: center; gap: 22px; padding: clamp(24px, 4vw, 40px); }
 .reg-form h1 { font: 600 clamp(28px, 4vw, 36px) / 1.05 var(--f-display); }
+
+/* Radialistas */
+.rad-tel { padding: 11px 13px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2, var(--panel)); font-weight: 600; letter-spacing: .02em; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.linkbtn:hover { filter: brightness(1.15); }
 
 /* Janelas e avisos */
 .sheet { border-top: 2px solid var(--accent); }
@@ -1626,7 +1631,7 @@ function secAtX(track, x) {
 const views = { estudio: vEstudio, aovivo: vAoVivo, programacao: vProg, pedidos: vPed, programateca: vLib, ouvintes: vOuv };
 
 const navOk = (n) => n.roles.includes(role()) && (!n.owner || (S.isOwner && !S.as));
-function teamBtn() { return ''; }
+function teamBtn() { return window.__staff && S.uid && !window.__staff.isAnon() ? '<button class="btn sm ghost" type="button" data-act="rad-out">Sair da conta</button>' : ''; }
 function sideHTML() {
   const r = role();
   const items = NAV.filter(navOk);
@@ -1647,6 +1652,15 @@ function scheduleRender() { if (!rafId) rafId = requestAnimationFrame(() => { ra
 function allowed(v) { return NAV.some((n) => n.id === v && navOk(n)); }
 function render() {
   AIR = onAir();
+  if (window.__staff) {
+    if (!S.rad && needsPw()) { S.rad = { mode: 'create', ctx: 'staff', tel: (S.people[S.uid] || {}).tel || '' }; S.radDirty = true; }
+    if (S.rad && S.rad.ctx === 'staff' && S.rad.mode === 'create' && !needsPw()) { S.rad = null; }
+    if (S.rad) {
+      document.querySelector('.app').classList.add('gate');
+      if (S.radDirty || !$('.rad2')) { S.radDirty = false; $('#main').innerHTML = radHTML(); }
+      return;
+    }
+  }
   const gate = needsReg();
   document.querySelector('.app').classList.toggle('gate', gate);
   if (gate) { if (!$('#regNome')) $('#main').innerHTML = regHTML(); return; }
@@ -1991,7 +2005,7 @@ function regHTML() {
     '<div class="reg-form"><div><h1>Entrar na rádio</h1><p class="muted" style="margin-top:8px">Informe seu nome e seu telefone. Cada nome e cada telefone só podem ser usados por uma pessoa, e o telefone fica visível só para o dono da rádio.</p></div>' +
     '<form class="fmod" data-act="do-reg" novalidate><div class="fld"><label for="regNome">Nome</label><input id="regNome" type="text" data-d="regNome" value="' + esc(val('regNome', pre)) + '" maxlength="40" autocomplete="name" placeholder="Seu nome e sobrenome"></div>' +
     '<div class="fld"><label for="regTel">Telefone com DDD</label><input id="regTel" type="text" inputmode="tel" data-d="regTel" value="' + esc(val('regTel', '')) + '" maxlength="20" autocomplete="tel" placeholder="(11) 91234-5678"></div>' +
-    '<p class="msg" id="regOut" role="status"></p><button class="btn pri lg" id="regBtn" type="submit">Cadastrar e entrar</button></form></div></section></div>';
+    '<p class="msg" id="regOut" role="status"></p><button class="btn pri lg" id="regBtn" type="submit">Cadastrar e entrar</button></form>' + (window.__staff ? '<p class="muted" style="margin:0">Faz parte da equipe? <button class="linkbtn" type="button" data-act="rad-login">Entrar como radialista</button></p>' : '') + '</div></section></div>';
 }
 async function doReg() {
   const out = $('#regOut'), btn = $('#regBtn');
@@ -2006,6 +2020,7 @@ async function doReg() {
     const w = ' ' + fold(nome).replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
     if (RESERVED.some((x) => w.includes(' ' + x + ' ')) || w.includes(' radio paris ')) { out.textContent = 'Esse nome é reservado à equipe da rádio. Use o seu nome verdadeiro.'; return; }
   }
+  if (window.__staff && tel === window.__staff.ownerPhone && !S.isOwner) { S.rad = { mode: 'create', ctx: 'owner', tel, nome }; S.radDirty = true; render(); return; }
   btn.disabled = true;
   try {
     const nk = nameKey(nome), pk = await phoneKey(tel);
@@ -2015,7 +2030,7 @@ async function doReg() {
       const c = sn.data() || {};
       return c.uid !== S.uid && !!(S.names[c.uid] && S.names[c.uid].nome);
     };
-    if (await taken(pk)) { out.textContent = 'Esse telefone já está cadastrado por outra pessoa.'; return; }
+    if (await taken(pk)) { out.textContent = 'Esse telefone já está cadastrado.' + (window.__staff ? ' Se é você e faz parte da equipe, toque em “Entrar como radialista”.' : ' Use outro telefone.'); return; }
     if (await taken(nk)) { out.textContent = 'Já existe alguém com esse nome. Escreva nome e sobrenome.'; return; }
     await S.db.doc('claims/' + pk).set({ uid: S.uid, at: Date.now() });
     await S.db.doc('claims/' + nk).set({ uid: S.uid, at: Date.now() });
@@ -2036,6 +2051,69 @@ async function doReg() {
     console.warn(e);
     out.textContent = e && e.code === 'invalid_argument' ? 'Sem permissão para cadastrar. Peça ao dono acesso de colaborador.' : 'Não foi possível cadastrar agora. Tente de novo.';
   } finally { btn.disabled = false; }
+}
+/* ---------- Radialistas (painel da equipe, com senha) ---------- */
+const needsPw = () => !!(window.__staff && S.uid && !S.isOwner && !S.as && S.roles[S.uid] && STAFF.includes(S.roles[S.uid].role) && window.__staff.isAnon());
+const pwProblems = (p) => {
+  const bad = [];
+  if (p.length < 6) bad.push('mais de 5 caracteres');
+  if (!/[A-Za-zÀ-ÿ]/.test(p)) bad.push('uma letra');
+  if (!/\d/.test(p)) bad.push('um número');
+  if (!/[^A-Za-zÀ-ÿ0-9\s]/.test(p)) bad.push('um caractere especial (como @ # ! ? $ %)');
+  return bad;
+};
+function radHTML() {
+  const r = S.rad, login = r.mode === 'login';
+  const cargo = S.roles[S.uid] && ROLES[S.roles[S.uid].role];
+  const sub = login ? 'Entre com o telefone e a senha que você criou. Serve para voltar à equipe em outro aparelho.'
+    : r.ctx === 'owner' ? 'Painel do dono. Crie a senha que protege o comando da rádio. Você só faz isso uma vez.'
+    : 'Você agora é ' + (cargo || 'da equipe') + '. Crie sua senha de radialista para liberar o painel. Você só faz isso uma vez.';
+  const telF = !login && r.tel
+    ? '<div class="fld"><label>Telefone</label><div class="rad-tel">' + esc(fmtPhone(r.tel)) + '</div></div>'
+    : '<div class="fld"><label for="radTel">Telefone com DDD</label><input id="radTel" type="text" inputmode="tel" data-d="radTel" value="' + esc(val('radTel', r.tel || '')) + '" maxlength="20" autocomplete="username" placeholder="(11) 91234-5678"></div>';
+  return '<div class="wrap"><section class="panel reg2 rad2" aria-label="Radialistas"><div class="reg-art">' + emblem('big') + '<div><div class="mark">Radialistas</div><p>Painel da equipe da Paris Cast.</p></div><ul class="reg-pts"><li>' + ic('lock') + '<span>Entrada protegida por senha pessoal</span></li><li>' + ic('radio') + '<span>Comando da programação e das músicas</span></li><li>' + ic('key') + '<span>Os pedidos de música continuam anônimos</span></li></ul></div>' +
+    '<div class="reg-form"><div><h1>' + (login ? 'Entrar como radialista' : 'Criar senha') + '</h1><p class="muted" style="margin-top:8px">' + sub + '</p></div>' +
+    '<form class="fmod" data-act="do-rad" novalidate>' + telF +
+    '<div class="fld"><label for="radPw">Senha</label><input id="radPw" type="password" data-d="radPw" value="' + esc(val('radPw', '')) + '" maxlength="64" autocomplete="' + (login ? 'current-password' : 'new-password') + '" placeholder="' + (login ? 'Sua senha' : 'Letra, número e símbolo') + '"></div>' +
+    (login ? '' : '<div class="fld"><label for="radPw2">Repetir a senha</label><input id="radPw2" type="password" data-d="radPw2" value="' + esc(val('radPw2', '')) + '" maxlength="64" autocomplete="new-password"></div><p class="hint">A senha precisa ter mais de 5 caracteres, com pelo menos uma letra, um número e um caractere especial. Exemplo: <b>Radio@2026</b></p>') +
+    '<p class="msg" id="radOut" role="status"></p><button class="btn pri lg" id="radBtn" type="submit">' + (login ? 'Entrar' : 'Criar senha e entrar') + '</button></form>' +
+    '<p class="muted" style="margin:0">' + (login ? '' : 'Já criou sua senha antes? <button class="linkbtn" type="button" data-act="rad-login">Entrar com senha</button>') + (r.ctx === 'staff' && !login ? '' : (login ? '' : ' · ') + '<button class="linkbtn" type="button" data-act="rad-back">Voltar</button>') + '</p></div></section></div>';
+}
+async function doRad() {
+  const out = $('#radOut'), btn = $('#radBtn'), r = S.rad;
+  if (!out || !r) return;
+  out.className = 'msg';
+  const pw = String(val('radPw', '')), login = r.mode === 'login';
+  let tel = r.tel;
+  if (login || !tel) { tel = normPhone(val('radTel', '')); if (!tel) { out.textContent = 'Telefone inválido. Digite com DDD.'; return; } }
+  if (login) { if (!pw) { out.textContent = 'Digite a sua senha.'; return; } }
+  else {
+    const bad = pwProblems(pw);
+    if (bad.length) { out.textContent = 'Falta na senha: ' + bad.join(', ') + '.'; return; }
+    if (pw !== String(val('radPw2', ''))) { out.textContent = 'As duas senhas não são iguais.'; return; }
+  }
+  btn.disabled = true; out.textContent = login ? 'Entrando…' : 'Criando…';
+  try {
+    if (login) await window.__staff.login(tel, pw);
+    else {
+      const res = await window.__staff.create(tel, pw);
+      if (r.ctx === 'owner') {
+        if (!res.owner) { out.textContent = 'Conta criada, mas já existe um dono nesta rádio.'; }
+        try { sessionStorage.setItem('pc_reg', JSON.stringify({ nome: r.nome, tel: val('regTel', '') })); } catch (e) { /* sem armazenamento */ }
+      }
+    }
+    delete D.radPw; delete D.radPw2;
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* ok */ }
+    location.reload();
+  } catch (e) {
+    console.warn(e);
+    const m = String((e && e.message) || '');
+    out.textContent = /invalid login/i.test(m) ? 'Telefone ou senha incorretos.'
+      : /already|registered|exists/i.test(m) ? 'Esse telefone já tem uma senha de radialista. Toque em “Entrar com senha”.'
+      : /ativ/i.test(m) ? m
+      : 'Não foi possível agora. ' + m;
+    btn.disabled = false;
+  }
 }
 async function removeReg(uid) {
   const n = S.names[uid], pe = S.people[uid] || {};
@@ -2156,6 +2234,10 @@ async function act(a, el) {
     }
     case 'go-song': { const s = S.songs[el.dataset.id]; if (s) { S.view = 'programateca'; S.folder = s.style; S.sel = s.id; render(); window.scrollTo(0, 0); } break; }
     case 'do-reg': doReg(); break;
+    case 'do-rad': doRad(); break;
+    case 'rad-login': S.rad = { mode: 'login', ctx: S.rad && S.rad.ctx, tel: '', nome: S.rad && S.rad.nome }; S.radDirty = true; render(); break;
+    case 'rad-back': S.rad = null; S.radDirty = true; render(); break;
+    case 'rad-out': if (window.__staff) { await window.__staff.logout(); location.reload(); } break;
     case 'est-sector': E.sector = el.dataset.id; E.sel = null; render(); break;
     case 'est-folder': E.folder = el.dataset.id; render(); break;
     case 'est-sel': E.sector = el.dataset.sector; E.sel = el.dataset.sector + ':' + el.dataset.i; render(); break;
@@ -2311,6 +2393,11 @@ function sub(path, key, build, first) {
 async function use(name) { try { return window.claude && window.claude.use ? await window.claude.use(name) : null; } catch (e) { return null; } }
 
 async function boot() {
+  try {
+    const dr = JSON.parse(sessionStorage.getItem('pc_reg') || 'null');
+    if (dr) { D.regNome = dr.nome || ''; D.regTel = dr.tel || ''; sessionStorage.removeItem('pc_reg'); }
+  } catch (e) { /* sem armazenamento */ }
+  if (window.__staff && /^#(dono|radialista)/.test(location.hash)) { S.rad = { mode: 'login', tel: '' }; S.radDirty = true; }
   AIR = onAir();
   render();
   setInterval(tick, 1000);

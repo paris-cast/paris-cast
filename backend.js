@@ -188,6 +188,37 @@
   window.__assetUrl = function (id) { return sb ? sb.storage.from('audio').getPublicUrl(id).data.publicUrl : '/_blob/' + id; };
   window.__setAdmin = async function (uid, on) { await init(); var r = await sb.rpc('set_admin', { target: uid, on_: !!on }); if (r.error) throw r.error; };
 
+  /* ---------- Radialistas: senha para dono e equipe ---------- */
+  var OWNER_PHONE = '38999232546';
+  var mailOf = function (tel) { return String(tel).replace(/\D/g, '') + '@radialistas.pariscast.app'; };
+  window.__staff = sb ? {
+    ownerPhone: OWNER_PHONE,
+    isAnon: function () { var u = session && session.user; return !u || !!u.is_anonymous; },
+    /* transforma esta conta (anonima) em conta com telefone + senha, mantendo tudo o que ja e dela */
+    create: async function (tel, password) {
+      await init();
+      if (!session) throw new Error('Sem conexão com o servidor.');
+      if (!session.user.is_anonymous) throw new Error('Esta conta já tem senha.');
+      var r = await sb.auth.updateUser({ email: mailOf(tel), password: password });
+      if (r.error) throw r.error;
+      var s2 = await sb.auth.refreshSession();
+      if (s2.error || !s2.data || !s2.data.session) throw new Error('Não consegui ativar a conta. Confira se "Confirm email" está desligado no Supabase.');
+      session = s2.data.session;
+      if (session.user.is_anonymous) throw new Error('Não consegui ativar a conta. Confira se "Confirm email" está desligado no Supabase (ativação).');
+      var owner = false;
+      if (String(tel).replace(/\D/g, '') === OWNER_PHONE) { var c = await sb.rpc('claim_owner'); owner = !!c.data; }
+      return { owner: owner };
+    },
+    login: async function (tel, password) {
+      await init();
+      var r = await sb.auth.signInWithPassword({ email: mailOf(tel), password: password });
+      if (r.error) throw r.error;
+      session = r.data.session;
+      return true;
+    },
+    logout: async function () { await sb.auth.signOut(); }
+  } : null;
+
   window.claude = {
     use: async function (name) {
       if (name === 'sample' || !sb) return null;
@@ -197,52 +228,4 @@
     }
   };
 
-  /* ---------- acesso do dono (abra o site com #dono no fim do endereco) ---------- */
-  function ownerPanel() {
-    if (!sb) return;
-    var isEmail = false;
-    init().then(function () { isEmail = !!(session && session.user && session.user.email); if (isEmail || location.hash === '#dono') mount(); });
-    window.addEventListener('hashchange', function () { if (location.hash === '#dono') mount(); });
-    function mount() {
-      if (document.getElementById('ownerBtn')) return;
-      var b = document.createElement('button');
-      b.id = 'ownerBtn'; b.type = 'button';
-      b.textContent = isEmail ? (who.owner ? 'Dono · sair' : 'Conta · sair') : 'Acesso do dono';
-      b.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:60;padding:7px 12px;border-radius:999px;border:1px solid var(--line,#6b5646);background:var(--panel,#2a1e17);color:var(--ink-2,#cbb8a4);font:600 12px var(--f-body,system-ui);cursor:pointer;opacity:.9';
-      b.onclick = function () { if (isEmail) { sb.auth.signOut().then(function () { location.hash = ''; location.reload(); }); } else open(); };
-      document.body.appendChild(b);
-    }
-    function open() {
-      var w = document.createElement('div');
-      w.style.cssText = 'position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(10,6,4,.7);padding:16px';
-      w.innerHTML = '<form style="width:min(380px,100%);display:grid;gap:12px;padding:22px;border-radius:14px;background:var(--panel,#2a1e17);color:var(--ink,#f3e6d6);border:1px solid var(--line,#6b5646);font:15px var(--f-body,system-ui)">' +
-        '<h2 style="margin:0;font:600 24px var(--f-display,serif)">Acesso do dono</h2>' +
-        '<p style="margin:0;color:var(--ink-2,#cbb8a4);font-size:13px">Primeira vez: escolha e-mail e senha e toque em <b>Criar conta de dono</b>. Depois use <b>Entrar</b>.</p>' +
-        '<input id="oe" type="email" placeholder="E-mail" autocomplete="username" required style="padding:11px;border-radius:9px;border:1px solid var(--line,#6b5646);background:var(--ground,#1a120d);color:inherit">' +
-        '<input id="op" type="password" placeholder="Senha (6 ou mais caracteres)" autocomplete="current-password" required minlength="6" style="padding:11px;border-radius:9px;border:1px solid var(--line,#6b5646);background:var(--ground,#1a120d);color:inherit">' +
-        '<div id="om" role="status" style="min-height:18px;font-size:13px;color:#e8a07a"></div>' +
-        '<div style="display:flex;gap:8px;flex-wrap:wrap"><button id="oin" class="btn pri" type="submit">Entrar</button><button id="ocr" class="btn" type="button">Criar conta de dono</button><button id="oc" class="btn ghost" type="button">Fechar</button></div></form>';
-      document.body.appendChild(w);
-      var f = w.querySelector('form'), m = w.querySelector('#om');
-      var say = function (t) { m.textContent = t; };
-      w.querySelector('#oc').onclick = function () { w.remove(); };
-      f.onsubmit = async function (e) {
-        e.preventDefault(); say('Entrando…');
-        var r = await sb.auth.signInWithPassword({ email: f.oe.value.trim(), password: f.op.value });
-        if (r.error) { say('Não deu certo: ' + r.error.message); return; }
-        var c = await sb.rpc('claim_owner');
-        location.hash = ''; location.reload();
-      };
-      w.querySelector('#ocr').onclick = async function () {
-        say('Criando…');
-        var r = await sb.auth.signUp({ email: f.oe.value.trim(), password: f.op.value });
-        if (r.error) { say('Não deu certo: ' + r.error.message); return; }
-        if (!r.data.session) { say('Conta criada. Confirme o e-mail que chegou e depois toque em Entrar. (Dica: desligue "Confirm email" no Supabase.)'); return; }
-        var c = await sb.rpc('claim_owner');
-        say(c.data ? 'Pronto! Você é o dono.' : 'Conta criada, mas já existe um dono.');
-        setTimeout(function () { location.hash = ''; location.reload(); }, 900);
-      };
-    }
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ownerPanel); else ownerPanel();
 })();

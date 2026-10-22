@@ -33,11 +33,17 @@ create table if not exists public.admins (
 );
 alter table public.admins enable row level security;
 
--- 3) Quem e quem
+-- 3) Quem e quem. Conta anonima (sem senha de radialista) nunca tem poder de equipe.
+create or replace function public.app_is_anon() returns boolean
+language sql stable as $$
+  select coalesce((auth.jwt() ->> 'is_anonymous')::boolean, false)
+$$;
+
 create or replace function public.app_level() returns int
 language sql stable security definer set search_path = public as $$
   select case
     when auth.uid() is null then 0
+    when public.app_is_anon() then 2
     when exists (select 1 from public.admins a where a.uid = auth.uid() and a.is_owner) then 4
     when exists (select 1 from public.admins a where a.uid = auth.uid()) then 3
     else 2 end
@@ -45,7 +51,8 @@ $$;
 
 create or replace function public.app_role() returns text
 language sql stable security definer set search_path = public as $$
-  select coalesce((select d.data->>'role' from public.docs d where d.path = 'roles/' || auth.uid()::text), 'ouvinte')
+  select case when public.app_is_anon() then 'ouvinte'
+    else coalesce((select d.data->>'role' from public.docs d where d.path = 'roles/' || auth.uid()::text), 'ouvinte') end
 $$;
 
 -- 4) Regras de leitura
@@ -106,12 +113,13 @@ language sql stable security definer set search_path = public as $$
   select json_build_object('level', public.app_level(), 'owner', public.app_level() >= 4, 'admin', public.app_level() >= 3)
 $$;
 
--- O primeiro usuario COM E-MAIL que chamar isto vira o dono. Depois disso ninguem mais consegue.
+-- So a conta do telefone do dono (38999232546), ja com senha criada, vira dono. Depois disso ninguem mais consegue.
 create or replace function public.claim_owner() returns boolean
 language plpgsql security definer set search_path = public as $$
 begin
   if auth.uid() is null then return false; end if;
-  if coalesce((auth.jwt() ->> 'is_anonymous')::boolean, false) then return false; end if;
+  if public.app_is_anon() then return false; end if;
+  if lower(coalesce(auth.jwt() ->> 'email', '')) <> '38999232546@radialistas.pariscast.app' then return false; end if;
   if exists (select 1 from public.admins where is_owner) then return false; end if;
   insert into public.admins (uid, is_owner) values (auth.uid(), true) on conflict (uid) do update set is_owner = true;
   return true;
@@ -141,8 +149,8 @@ end $$;
 
 revoke all on function public.whoami(), public.claim_owner(), public.set_admin(uuid, boolean), public.doc_merge(text, jsonb) from public, anon;
 grant execute on function public.whoami(), public.claim_owner(), public.set_admin(uuid, boolean), public.doc_merge(text, jsonb) to authenticated;
-revoke all on function public.app_level(), public.app_role(), public.app_can_read(text), public.app_can_write(text, jsonb, jsonb) from public, anon;
-grant execute on function public.app_level(), public.app_role(), public.app_can_read(text), public.app_can_write(text, jsonb, jsonb) to authenticated;
+revoke all on function public.app_is_anon(), public.app_level(), public.app_role(), public.app_can_read(text), public.app_can_write(text, jsonb, jsonb) from public, anon;
+grant execute on function public.app_is_anon(), public.app_level(), public.app_role(), public.app_can_read(text), public.app_can_write(text, jsonb, jsonb) to authenticated;
 
 -- 7) Tempo real
 do $$ begin
