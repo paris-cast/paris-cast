@@ -823,7 +823,9 @@ let AIR = null, curKey = null, loadedKey = null, P = null, M = null, acc = { sec
 const myRole = () => {
   if (S.isOwner) return 'dono';
   const r = S.roles[S.uid];
-  return r && ROLES[r.role] ? r.role : 'ouvinte';
+  const rr = r && ROLES[r.role] ? r.role : 'ouvinte';
+  if (rr !== 'ouvinte' && window.__staff && window.__staff.isAnon()) return 'ouvinte';
+  return rr;
 };
 const role = () => S.as || myRole();
 const isStaff = () => role() !== 'ouvinte';
@@ -1631,7 +1633,7 @@ function secAtX(track, x) {
 const views = { estudio: vEstudio, aovivo: vAoVivo, programacao: vProg, pedidos: vPed, programateca: vLib, ouvintes: vOuv };
 
 const navOk = (n) => n.roles.includes(role()) && (!n.owner || (S.isOwner && !S.as));
-function teamBtn() { return window.__staff && S.uid && !window.__staff.isAnon() ? '<button class="btn sm ghost" type="button" data-act="rad-out">Sair da conta</button>' : ''; }
+function teamBtn() { return !window.__staff || !S.uid ? '' : window.__staff.isAnon() ? '<button class="btn sm ghost" type="button" data-act="rad-enter">Entrar como radialista</button>' : '<button class="btn sm ghost" type="button" data-act="rad-out">Sair da conta</button>'; }
 function sideHTML() {
   const r = role();
   const items = NAV.filter(navOk);
@@ -1654,7 +1656,7 @@ function render() {
   AIR = onAir();
   if (window.__staff) {
     if (!S.rad && needsPw()) { S.rad = { mode: 'create', ctx: isOwnerTel() ? 'owner' : 'staff', tel: (S.people[S.uid] || {}).tel || '' }; S.radDirty = true; }
-    if (S.rad && S.rad.mode === 'create' && !S.rad.nome && !needsPw()) { S.rad = null; }
+    if (S.rad && S.rad.mode === 'create' && !S.rad.nome && !S.rad.manual && !needsPw()) { S.rad = null; }
     if (S.rad) {
       document.querySelector('.app').classList.add('gate');
       if (S.radDirty || !$('.rad2')) { S.radDirty = false; $('#main').innerHTML = radHTML(); }
@@ -2055,7 +2057,9 @@ async function doReg() {
 }
 /* ---------- Radialistas (painel da equipe, com senha) ---------- */
 const isOwnerTel = () => !!(window.__staff && S.uid && !S.isOwner && (S.people[S.uid] || {}).tel === window.__staff.ownerPhone);
-const needsPw = () => !!(window.__staff && S.uid && !S.isOwner && !S.as && window.__staff.isAnon() && (isOwnerTel() || (S.roles[S.uid] && STAFF.includes(S.roles[S.uid].role))));
+const hasStaffRole = () => !!(S.roles[S.uid] && STAFF.includes(S.roles[S.uid].role));
+const needsPw = () => !!(window.__staff && S.uid && !S.isOwner && !S.as && window.__staff.isAnon() && isOwnerTel());
+const canCreate = () => !!(window.__staff && S.uid && !S.isOwner && window.__staff.isAnon() && (isOwnerTel() || hasStaffRole()));
 const pwProblems = (p) => {
   const bad = [];
   if (p.length < 6) bad.push('mais de 5 caracteres');
@@ -2067,11 +2071,12 @@ const pwProblems = (p) => {
 function radHTML() {
   const r = S.rad, login = r.mode === 'login';
   const cargo = S.roles[S.uid] && ROLES[S.roles[S.uid].role];
-  const sub = login ? 'Entre com o telefone e a senha que você criou. Serve para voltar à equipe em outro aparelho.'
+  const auto = r.mode === 'create' && !r.manual && !r.nome;
+  const sub = login ? 'Entre com o telefone e a senha de radialista. Só quem recebeu cargo do dono consegue.'
     : r.ctx === 'owner' ? 'Painel do dono. Crie a senha que protege o comando da rádio. Você só faz isso uma vez.'
-    : 'Você agora é ' + (cargo || 'da equipe') + '. Crie sua senha de radialista para liberar o painel. Você só faz isso uma vez.';
+    : 'O dono te deu o cargo de ' + (cargo || 'equipe') + '. Confirme seu cadastro e crie sua senha de radialista. Você só faz isso uma vez; das próximas vezes basta telefone e senha.';
   const telF = !login && r.tel
-    ? '<div class="fld"><label>Telefone</label><div class="rad-tel">' + esc(fmtPhone(r.tel)) + '</div></div>'
+    ? (S.names[S.uid] && S.names[S.uid].nome ? '<div class="fld"><label>Nome</label><div class="rad-tel">' + esc(S.names[S.uid].nome) + '</div></div>' : '') + '<div class="fld"><label>Telefone</label><div class="rad-tel">' + esc(fmtPhone(r.tel)) + '</div></div>'
     : '<div class="fld"><label for="radTel">Telefone com DDD</label><input id="radTel" type="text" inputmode="tel" data-d="radTel" value="' + esc(val('radTel', r.tel || '')) + '" maxlength="20" autocomplete="username" placeholder="(11) 91234-5678"></div>';
   return '<div class="wrap"><section class="panel reg2 rad2" aria-label="Radialistas"><div class="reg-art">' + emblem('big') + '<div><div class="mark">Radialistas</div><p>Painel da equipe da Paris Cast.</p></div><ul class="reg-pts"><li>' + ic('lock') + '<span>Entrada protegida por senha pessoal</span></li><li>' + ic('radio') + '<span>Comando da programação e das músicas</span></li><li>' + ic('key') + '<span>Os pedidos de música continuam anônimos</span></li></ul></div>' +
     '<div class="reg-form"><div><h1>' + (login ? 'Entrar como radialista' : 'Criar senha') + '</h1><p class="muted" style="margin-top:8px">' + sub + '</p></div>' +
@@ -2079,7 +2084,7 @@ function radHTML() {
     '<div class="fld"><label for="radPw">Senha</label><input id="radPw" type="password" data-d="radPw" value="' + esc(val('radPw', '')) + '" maxlength="64" autocomplete="' + (login ? 'current-password' : 'new-password') + '" placeholder="' + (login ? 'Sua senha' : 'Letra, número e símbolo') + '"></div>' +
     (login ? '' : '<div class="fld"><label for="radPw2">Repetir a senha</label><input id="radPw2" type="password" data-d="radPw2" value="' + esc(val('radPw2', '')) + '" maxlength="64" autocomplete="new-password"></div><p class="hint">A senha precisa ter mais de 5 caracteres, com pelo menos uma letra, um número e um caractere especial. Exemplo: <b>Radio@2026</b></p>') +
     '<p class="msg" id="radOut" role="status"></p><button class="btn pri lg" id="radBtn" type="submit">' + (login ? 'Entrar' : 'Criar senha e entrar') + '</button></form>' +
-    '<p class="muted" style="margin:0">' + (login ? '' : 'Já criou sua senha antes? <button class="linkbtn" type="button" data-act="rad-login">Entrar com senha</button>') + (r.ctx === 'staff' && !login ? '' : (login ? '' : ' · ') + '<button class="linkbtn" type="button" data-act="rad-back">Voltar</button>') + '</p></div></section></div>';
+    '<p class="muted" style="margin:0">' + (login ? '' : 'Já criou sua senha antes? <button class="linkbtn" type="button" data-act="rad-login">Entrar com senha</button>') + (auto ? '' : (login ? '' : ' · ') + '<button class="linkbtn" type="button" data-act="rad-back">Voltar</button>') + '</p></div></section></div>';
 }
 async function doRad() {
   const out = $('#radOut'), btn = $('#radBtn'), r = S.rad;
@@ -2110,7 +2115,7 @@ async function doRad() {
   } catch (e) {
     console.warn(e);
     const m = String((e && e.message) || '');
-    out.textContent = /invalid login/i.test(m) ? 'Telefone ou senha incorretos.'
+    out.textContent = /invalid login/i.test(m) ? 'Telefone ou senha incorretos. Se o dono acabou de te dar o cargo, entre pelo mesmo aparelho e navegador em que você se cadastrou para criar a senha.'
       : /already|registered|exists/i.test(m) ? 'Esse telefone já tem uma senha de radialista. Toque em “Entrar com senha”.'
       : /ativ/i.test(m) ? m
       : 'Não foi possível agora. ' + m;
@@ -2238,6 +2243,7 @@ async function act(a, el) {
     case 'do-reg': doReg(); break;
     case 'do-rad': doRad(); break;
     case 'rad-login': S.rad = { mode: 'login', ctx: S.rad && S.rad.ctx, tel: '', nome: S.rad && S.rad.nome }; S.radDirty = true; render(); break;
+    case 'rad-enter': S.rad = canCreate() ? { mode: 'create', ctx: isOwnerTel() ? 'owner' : 'staff', tel: (S.people[S.uid] || {}).tel || '', manual: true } : { mode: 'login', tel: '', manual: true }; S.radDirty = true; render(); break;
     case 'rad-back': S.rad = null; S.radDirty = true; render(); break;
     case 'rad-out': if (window.__staff) { await window.__staff.logout(); location.reload(); } break;
     case 'est-sector': E.sector = el.dataset.id; E.sel = null; render(); break;
