@@ -553,6 +553,11 @@ tbody tr:hover td { background: var(--panel-2); }
 .linkbtn { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .linkbtn:hover { filter: brightness(1.15); }
 
+.rad-card { display: grid; gap: 8px; padding: 14px 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2, var(--panel)); }
+.rad-card > div { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.rad-card span { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.rad-card b { font-size: 16px; word-break: break-all; text-align: right; }
+
 /* Janelas e avisos */
 .sheet { border-top: 2px solid var(--accent); }
 .scrim { backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
@@ -1507,7 +1512,7 @@ function vOuv() {
   return '<div class="wrap"><div class="ph"><div><h1>Ouvintes</h1><p>Quem entrou na rádio, por quanto tempo ouviu e quais estilos mais tocam nos ouvidos do público.</p></div></div>' +
     '<div class="panel stats"><div><div class="n">' + L.length + '</div><div class="l">Pessoas que já entraram</div></div>' + (showPh ? '<div><div class="n">' + Object.keys(S.names).length + '</div><div class="l">Cadastros feitos</div></div>' : '') + '<div><div class="n">' + hm(total) + '</div><div class="l">Tempo total ouvido</div></div><div><div class="n">' + online + '</div><div class="l">Ouvindo agora</div></div><div><div class="n">' + hm(avg) + '</div><div class="l">Média por pessoa</div></div></div>' +
     '<section class="panel sec2"><div><h2>Estilos mais ouvidos</h2><p class="muted">Tempo de escuta por estilo, somando todos os ouvintes.</p></div>' + chart + '</section>' +
-    '<section class="panel sec2"><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between"><div><h2>Pessoas</h2><p class="muted">' + (showPh ? 'Todos que já entraram, com nome e telefone cadastrados. Use “Dar cargo” para promover ou tirar o cargo de alguém, ou remova um cadastro suspeito.' : edit ? 'Defina o cargo de cada pessoa.' : 'Só o dono altera cargos e vê telefones.') + '</p></div>' + (S.isOwner && !S.as ? '<button class="btn sm ghost" type="button" data-act="rotate-keys" title="Troca a chave que protege os pedidos. A equipe recebe a nova sozinha.">' + ic('key') + 'Trocar chave dos pedidos</button>' : '') + '<div class="fld" style="min-width:170px"><label for="psrt">Ordenar por</label><select id="psrt" data-d="psrt" data-re="1">' + Object.entries(SORTS).map(([k, n]) => '<option value="' + k + '"' + (k === srt ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></div><div class="fld" style="min-width:240px"><label for="pq">Buscar pessoa</label><input id="pq" type="search" data-d="pq" data-re="1" value="' + esc(val('pq', '')) + '" placeholder="' + (showPh ? 'Nome ou telefone' : 'Nome') + '" autocomplete="off"></div></div><div class="fchips" style="margin:12px 0">' + chips + '</div>' + table + '</section></div>';
+    '<section class="panel sec2"><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between"><div><h2>Pessoas</h2><p class="muted">' + (showPh ? 'Todos que já entraram, com nome e telefone cadastrados. Use “Dar cargo” para promover ou tirar o cargo de alguém, ou remova um cadastro suspeito.' : edit ? 'Defina o cargo de cada pessoa.' : 'Só o dono altera cargos e vê telefones.') + '</p></div>' + (S.isOwner && !S.as && window.__staff ? '<button class="btn sm" type="button" data-act="rad-new">' + ic('plus') + 'Criar radialista</button>' : '') + (S.isOwner && !S.as ? '<button class="btn sm ghost" type="button" data-act="rotate-keys" title="Troca a chave que protege os pedidos. A equipe recebe a nova sozinha.">' + ic('key') + 'Trocar chave dos pedidos</button>' : '') + '<div class="fld" style="min-width:170px"><label for="psrt">Ordenar por</label><select id="psrt" data-d="psrt" data-re="1">' + Object.entries(SORTS).map(([k, n]) => '<option value="' + k + '"' + (k === srt ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></div><div class="fld" style="min-width:240px"><label for="pq">Buscar pessoa</label><input id="pq" type="search" data-d="pq" data-re="1" value="' + esc(val('pq', '')) + '" placeholder="' + (showPh ? 'Nome ou telefone' : 'Nome') + '" autocomplete="off"></div></div><div class="fchips" style="margin:12px 0">' + chips + '</div>' + table + '</section></div>';
 }
 
 
@@ -2122,6 +2127,57 @@ async function doRad() {
     btn.disabled = false;
   }
 }
+function radNewModal() {
+  openModal('<div><h2>Criar radialista</h2><p class="muted">Você escolhe o telefone e a senha. Depois é só passar os dois para a pessoa: ela toca em <b>Entrar como radialista</b> e já entra com o cargo.</p></div>' +
+    '<form class="fmod" data-act="do-rad-new" novalidate><div class="fld"><label for="nrNome">Nome e sobrenome</label><input id="nrNome" type="text" data-d="nrNome" maxlength="40" autocomplete="off" placeholder="Maria Souza"></div>' +
+    '<div class="fld"><label for="nrTel">Telefone com DDD</label><input id="nrTel" type="text" inputmode="tel" data-d="nrTel" maxlength="20" autocomplete="off" placeholder="(11) 91234-5678"></div>' +
+    '<div class="fld"><label for="nrPw">Senha</label><input id="nrPw" type="text" data-d="nrPw" maxlength="64" autocomplete="off" placeholder="Letra, número e símbolo. Ex.: Radio@2026"></div>' +
+    '<div class="fld"><label for="nrRole">Cargo</label><select id="nrRole" data-d="nrRole"><option value="produtor">Produtor</option><option value="programador">Programador</option><option value="dono">Dono</option></select></div>' +
+    '<p class="msg" id="nrOut" role="status"></p><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" id="nrBtn" type="submit">Criar</button></div></form>');
+  delete D.nrNome; delete D.nrTel; delete D.nrPw; D.nrRole = 'produtor';
+}
+async function doRadNew() {
+  if (!S.isOwner || !window.__staff) return;
+  const out = $('#nrOut'), btn = $('#nrBtn');
+  out.className = 'msg';
+  const nome = String(val('nrNome', '')).trim().replace(/\s+/g, ' '), tel = normPhone(val('nrTel', '')), pw = String(val('nrPw', '')), r = val('nrRole', 'produtor');
+  const words = nome.split(' ').filter((w) => /[A-Za-zÀ-ÿ]{2}/.test(w));
+  if (!/^[A-Za-zÀ-ÿ' .-]+$/.test(nome) || words.length < 2) { out.textContent = 'Escreva o nome e o sobrenome, só com letras.'; return; }
+  if (!tel) { out.textContent = 'Telefone inválido. Digite com DDD.'; return; }
+  const bad = pwProblems(pw);
+  if (bad.length) { out.textContent = 'Falta na senha: ' + bad.join(', ') + '.'; return; }
+  if (!['produtor', 'programador', 'dono'].includes(r)) return;
+  btn.disabled = true; out.textContent = 'Criando…';
+  try {
+    const nk = nameKey(nome), pk = await phoneKey(tel);
+    for (const [k, msg] of [[pk, 'Esse telefone já está cadastrado.'], [nk, 'Já existe alguém com esse nome. Escreva nome e sobrenome.']]) {
+      const sn = await S.db.doc('claims/' + k).get();
+      if (sn.exists) { const c = sn.data() || {}; if (S.names[c.uid] && S.names[c.uid].nome) { out.textContent = msg; btn.disabled = false; return; } }
+    }
+    let uid;
+    try { uid = await window.__staff.createAccount(tel, pw); } catch (e) {
+      const m = String((e && e.message) || '');
+      out.textContent = /already|registered|exists/i.test(m) ? 'Esse telefone já tem uma conta de radialista.' : /ativ/i.test(m) ? m : 'Não foi possível criar a conta. ' + m;
+      btn.disabled = false; return;
+    }
+    const at = Date.now();
+    await S.db.doc('claims/' + pk).set({ uid, at });
+    await S.db.doc('claims/' + nk).set({ uid, at });
+    await S.db.doc('people/' + uid).set({ nome, tel, pk, nk, at });
+    await S.db.doc('names/' + uid).set({ nome, at });
+    await S.db.doc('listeners/' + uid).set({ first: at, last: at, ls: 0, visits: 0, sec: 0, styles: {} });
+    await S.db.doc('roles/' + uid).set({ role: r, via: 'dono', at });
+    if (r === 'dono' && window.__setAdmin) await window.__setAdmin(uid, true);
+    S.people[uid] = { nome, tel, pk, nk, at }; S.names[uid] = { nome, at }; S.roles[uid] = { role: r, via: 'dono' };
+    openModal('<div><h2>Radialista criado</h2><p class="muted">Passe estes dados para <b>' + esc(nome) + '</b>. A senha não aparece de novo.</p></div><div class="rad-card"><div><span>Telefone</span><b>' + esc(fmtPhone(tel)) + '</b></div><div><span>Senha</span><b>' + esc(pw) + '</b></div><div><span>Cargo</span><b>' + esc(ROLES[r]) + '</b></div></div><p class="hint">Ela abre o site, toca em <b>Entrar como radialista</b> e digita o telefone e a senha.</p><div class="acts"><button class="btn pri" type="button" data-act="close-modal">Fechar</button></div>');
+    delete D.nrPw;
+    render();
+  } catch (e) {
+    console.warn(e);
+    out.textContent = 'A conta foi criada, mas não deu para salvar o cadastro. Tente de novo ou remova a conta no Supabase.';
+    btn.disabled = false;
+  }
+}
 async function removeReg(uid) {
   const n = S.names[uid], pe = S.people[uid] || {};
   const keys = [pe.pk, pe.nk || (n && n.nome ? nameKey(n.nome) : null)].filter(Boolean);
@@ -2233,6 +2289,8 @@ async function act(a, el) {
     case 'rq-filter': D.rqf = el.dataset.f; render(); break;
     case 'unlock-req': await restoreKey(); toast(S.reqPriv ? 'Pedidos liberados neste aparelho.' : 'Ainda não liberado. O dono precisa estar com a rádio aberta por alguns segundos.'); render(); break;
     case 'rotate-keys': rotateKeys(); break;
+    case 'rad-new': radNewModal(); break;
+    case 'do-rad-new': doRadNew(); break;
     case 'req-status': W(() => S.db.doc('requests/' + el.dataset.id).update({ status: el.dataset.s })); break;
     case 'req-register': {
       const r = reqData(el.dataset.id);

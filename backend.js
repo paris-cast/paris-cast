@@ -216,6 +216,16 @@
       session = r.data.session;
       return true;
     },
+    /* o dono cria a conta de um radialista (telefone + senha escolhidos por ele) sem sair da propria conta */
+    createAccount: async function (tel, password) {
+      var c = window.supabase.createClient(cfg.url, cfg.anonKey, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false, storageKey: 'pc-tmp-' + Date.now() } });
+      var r = await c.auth.signUp({ email: mailOf(tel), password: password });
+      if (r.error) throw r.error;
+      var u = r.data && r.data.user;
+      if (!u || !u.identities || !u.identities.length) throw new Error('already registered');
+      if (!r.data.session) throw new Error('Não consegui ativar a conta. Confira se "Confirm email" está desligado no Supabase (ativação).');
+      return u.id;
+    },
     logout: async function () { await sb.auth.signOut(); }
   } : null;
 
