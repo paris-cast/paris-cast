@@ -1653,8 +1653,8 @@ function allowed(v) { return NAV.some((n) => n.id === v && navOk(n)); }
 function render() {
   AIR = onAir();
   if (window.__staff) {
-    if (!S.rad && needsPw()) { S.rad = { mode: 'create', ctx: 'staff', tel: (S.people[S.uid] || {}).tel || '' }; S.radDirty = true; }
-    if (S.rad && S.rad.ctx === 'staff' && S.rad.mode === 'create' && !needsPw()) { S.rad = null; }
+    if (!S.rad && needsPw()) { S.rad = { mode: 'create', ctx: isOwnerTel() ? 'owner' : 'staff', tel: (S.people[S.uid] || {}).tel || '' }; S.radDirty = true; }
+    if (S.rad && S.rad.mode === 'create' && !S.rad.nome && !needsPw()) { S.rad = null; }
     if (S.rad) {
       document.querySelector('.app').classList.add('gate');
       if (S.radDirty || !$('.rad2')) { S.radDirty = false; $('#main').innerHTML = radHTML(); }
@@ -2030,8 +2030,9 @@ async function doReg() {
       const c = sn.data() || {};
       return c.uid !== S.uid && !!(S.names[c.uid] && S.names[c.uid].nome);
     };
-    if (await taken(pk)) { out.textContent = 'Esse telefone já está cadastrado.' + (window.__staff ? ' Se é você e faz parte da equipe, toque em “Entrar como radialista”.' : ' Use outro telefone.'); return; }
-    if (await taken(nk)) { out.textContent = 'Já existe alguém com esse nome. Escreva nome e sobrenome.'; return; }
+    const ownerTel = !!(window.__staff && S.isOwner && tel === window.__staff.ownerPhone);
+    if (!ownerTel && await taken(pk)) { out.textContent = 'Esse telefone já está cadastrado.' + (window.__staff ? ' Se é você e faz parte da equipe, toque em “Entrar como radialista”.' : ' Use outro telefone.'); return; }
+    if (!ownerTel && await taken(nk)) { out.textContent = 'Já existe alguém com esse nome. Escreva nome e sobrenome.'; return; }
     await S.db.doc('claims/' + pk).set({ uid: S.uid, at: Date.now() });
     await S.db.doc('claims/' + nk).set({ uid: S.uid, at: Date.now() });
     const a = await S.db.doc('claims/' + pk).get(), b = await S.db.doc('claims/' + nk).get();
@@ -2053,7 +2054,8 @@ async function doReg() {
   } finally { btn.disabled = false; }
 }
 /* ---------- Radialistas (painel da equipe, com senha) ---------- */
-const needsPw = () => !!(window.__staff && S.uid && !S.isOwner && !S.as && S.roles[S.uid] && STAFF.includes(S.roles[S.uid].role) && window.__staff.isAnon());
+const isOwnerTel = () => !!(window.__staff && S.uid && !S.isOwner && (S.people[S.uid] || {}).tel === window.__staff.ownerPhone);
+const needsPw = () => !!(window.__staff && S.uid && !S.isOwner && !S.as && window.__staff.isAnon() && (isOwnerTel() || (S.roles[S.uid] && STAFF.includes(S.roles[S.uid].role))));
 const pwProblems = (p) => {
   const bad = [];
   if (p.length < 6) bad.push('mais de 5 caracteres');
