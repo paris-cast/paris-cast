@@ -716,7 +716,7 @@ body { background-image: radial-gradient(1200px 520px at 85% -8%, color-mix(in s
 /* ---------- Constantes ---------- */
 const SECT = [
   { id: 'madrugada', nome: 'Madrugada', ini: 0, fim: 6 },
-  { id: 'dia', nome: 'Dia', ini: 6, fim: 12 },
+  { id: 'dia', nome: 'Manhã', ini: 6, fim: 12 },
   { id: 'tarde', nome: 'Tarde', ini: 12, fim: 18 },
   { id: 'noite', nome: 'Noite', ini: 18, fim: 24 }
 ];
@@ -1154,7 +1154,7 @@ function vAoVivo() {
     const nx = nextList[0];
     hero = vinylHTML(nx.song, false) + '<div class="hinfo"><div class="onair"><span class="lamp"></span>' + (a.sector ? 'Intervalo' : 'Madrugada') + '</div>' +
       '<div><h2>' + (a.sector ? 'Sem música agora' : 'A rádio volta às 06:00') + '</h2><p class="art">Próxima: ' + esc(nx.song.title) + ' — ' + esc(nx.song.artist) + ', às ' + hh(nx.start) + (nx.abs >= 86400 ? ' de amanhã' : '') + '.</p></div>' +
-      '<div class="cd"><span class="eyebrow">Próxima música em</span><b id="cdNext">' + cdFmt(nx.abs - n.sec) + '</b></div><p class="hint">Madrugada 00:00–06:00 · Dia 06:00–12:00 · Tarde 12:00–18:00 · Noite 18:00–24:00.</p></div>';
+      '<div class="cd"><span class="eyebrow">Próxima música em</span><b id="cdNext">' + cdFmt(nx.abs - n.sec) + '</b></div><p class="hint">Madrugada 00:00–06:00 · Manhã 06:00–12:00 · Tarde 12:00–18:00 · Noite 18:00–24:00.</p></div>';
   }
   const ctl = '<div class="ctl">' + (S.tuned
     ? '<button class="btn pri lg" type="button" data-act="stop">' + ic('stop') + 'Parar</button>'
@@ -1477,7 +1477,7 @@ function pedBoard(ready) {
 }
 
 function vOuv() {
-  const L = Object.entries(S.listeners).map(([id, v]) => Object.assign({ id }, v));
+  const L = Object.entries(S.listeners).filter(([id]) => S.names[id] && S.names[id].nome).map(([id, v]) => Object.assign({ id }, v));
   const total = L.reduce((a, x) => a + (x.sec || 0), 0);
   const nowMs = Date.now();
   const online = L.filter((x) => x.ls && nowMs - x.ls < 75000).length;
@@ -1891,16 +1891,17 @@ function autoModal() {
   const date = S.date, n = nowSP(), sid = estSector(), sc = SECT.find((x) => x.id === sid);
   const isToday = date === n.date;
   const start = isToday ? Math.ceil((n.sec + 300) / 60) * 60 : sc.ini * 3600;
-  const sd = val('afScope', 'sector');
+  const sd = val('afScope', 'all');
   const free = Object.values(S.songs).filter((x) => +x.dur > 0 && !dayUsedMap(date)[x.id]).length;
   openModal('<div><h2>Preencher automático</h2><p class="muted">Adiciona as músicas que ainda não tocam em ' + esc(shortDate(date)) + ', alternando <b>uma de cada pasta</b>. Quando sobrar só uma pasta, entram todas as músicas dela. Nada é apagado e nada se sobrepõe.</p></div>' +
     '<p class="hint">' + (isToday ? 'Começa às <b>' + hh(Math.max(start, sc.ini * 3600)) + '</b>, 5 minutos depois do relógio agora.' : 'Começa no início do setor, depois do que já estiver programado.') + ' Há <b>' + free + '</b> ' + (free === 1 ? 'música disponível' : 'músicas disponíveis') + '.</p>' +
-    '<div class="rolepick"><label class="rp-opt" style="cursor:pointer"><b><input type="radio" name="afs" data-d="afScope" value="sector"' + (sd === 'sector' ? ' checked' : '') + '> Só o setor ' + esc(sc.nome) + '</b><span>Preenche até as ' + p2(sc.fim) + 'h.</span></label>' +
-    '<label class="rp-opt" style="cursor:pointer"><b><input type="radio" name="afs" data-d="afScope" value="day"' + (sd === 'day' ? ' checked' : '') + '> Do setor ' + esc(sc.nome) + ' até o fim do dia</b><span>Continua nos setores seguintes enquanto houver música.</span></label></div>' +
+    '<div class="rolepick"><label class="rp-opt" style="cursor:pointer"><b><input type="radio" name="afs" data-d="afScope" value="all"' + (sd === 'all' ? ' checked' : '') + '> Os 4 turnos do dia</b><span>Madrugada, manhã, tarde e noite. As músicas são divididas por igual entre os turnos que ainda não passaram.</span></label>' +
+    '<label class="rp-opt" style="cursor:pointer"><b><input type="radio" name="afs" data-d="afScope" value="sector"' + (sd === 'sector' ? ' checked' : '') + '> Só ' + esc(sc.nome) + '</b><span>Preenche até as ' + p2(sc.fim) + 'h.</span></label>' +
+    '<label class="rp-opt" style="cursor:pointer"><b><input type="radio" name="afs" data-d="afScope" value="day"' + (sd === 'day' ? ' checked' : '') + '> De ' + esc(sc.nome) + ' até o fim do dia</b><span>Continua nos turnos seguintes enquanto houver música.</span></label></div>' +
     '<p class="msg" id="afMsg" role="status"></p><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="auto-go">Preencher</button></div>');
 }
 async function autoFill() {
-  const date = S.date, n = nowSP(), isToday = date === n.date, sid0 = estSector(), scope = val('afScope', 'sector');
+  const date = S.date, n = nowSP(), isToday = date === n.date, sid0 = estSector(), scope = val('afScope', 'all');
   const startNow = isToday ? Math.ceil((n.sec + 300) / 60) * 60 : 0;
   const used = dayUsedMap(date), byF = {};
   Object.values(S.songs).forEach((x) => { if (+x.dur > 0 && !used[x.id]) (byF[x.style || ''] = byF[x.style || ''] || []).push(x); });
@@ -1908,8 +1909,10 @@ async function autoFill() {
   const queues = fids.map((f) => byF[f].slice().sort((a, b) => fold(a.title).localeCompare(fold(b.title))));
   const m = $('#afMsg');
   if (!queues.length) { if (m) { m.className = 'msg'; m.textContent = 'Não há músicas novas para este dia.'; } return; }
-  const i0 = SECT.findIndex((x) => x.id === sid0), secs = scope === 'day' ? SECT.slice(i0) : [SECT[i0]];
+  const i0 = SECT.findIndex((x) => x.id === sid0), secs = scope === 'all' ? SECT.slice() : scope === 'day' ? SECT.slice(i0) : [SECT[i0]];
   const saves = []; let added = 0, firstAt = null;
+  const startOf = (sc) => { const dd = S.plan[date + '_' + sc.id] || {}; const LL = layoutOf(sc.id, dd.items || [], dd.pins || {}); return Math.max(LL.length ? LL[LL.length - 1].end : sc.ini * 3600, sc.ini * 3600, isToday ? startNow : 0); };
+  let left = secs.filter((sc) => startOf(sc) < sc.fim * 3600).length;
   for (const sc of secs) {
     const doc = S.plan[date + '_' + sc.id] || {};
     const items = (doc.items || []).slice(), pins = Object.assign({}, doc.pins || {});
@@ -1917,13 +1920,19 @@ async function autoFill() {
     const natural = L.length ? L[L.length - 1].end : sc.ini * 3600;
     let cur = Math.max(natural, sc.ini * 3600, isToday ? startNow : 0);
     if (cur >= sc.fim * 3600) continue;
+    let lim = sc.fim * 3600;
+    if (secs.length > 1) {
+      const rest = queues.reduce((a, q) => a + q.reduce((b, x) => b + (+x.dur), 0), 0);
+      lim = Math.min(lim, cur + Math.ceil(rest / Math.max(1, left)));
+    }
+    left--;
     const placed = [];
     let moved = true;
     while (moved && queues.some((q) => q.length)) {
       moved = false;
       for (const q of queues) {
         if (!q.length) continue;
-        const j = q.findIndex((x) => cur + (+x.dur) <= sc.fim * 3600);
+        const j = cur < lim ? q.findIndex((x) => cur + (+x.dur) <= sc.fim * 3600) : -1;
         if (j < 0) continue;
         const x = q.splice(j, 1)[0];
         placed.push({ x, start: cur }); cur += +x.dur; moved = true;
