@@ -186,6 +186,13 @@
     delete: async function (id) { await init(); await sb.storage.from('audio').remove([id]); return { deleted: true }; }
   };
   window.__assetUrl = function (id) { return sb ? sb.storage.from('audio').getPublicUrl(id).data.publicUrl : '/_blob/' + id; };
+  /* funcoes do banco (curtidas, enquete, ouvindo agora, limites) */
+  window.__rpc = sb ? async function (name, args) {
+    await init();
+    var r = await sb.rpc(name, args || {});
+    if (r.error) { var e = new Error(r.error.message); e.code = r.error.code; throw e; }
+    return r.data;
+  } : null;
   window.__setAdmin = async function (uid, on) { await init(); var r = await sb.rpc('set_admin', { target: uid, on_: !!on }); if (r.error) throw r.error; };
 
   /* ---------- Radialistas: senha para dono e equipe ---------- */
