@@ -282,12 +282,13 @@ td select { min-height: 36px; width: auto; }
 .est { display: grid; gap: 12px; }
 .est-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 18px; }
 .est-bar h1 { font: 600 clamp(26px, 3.4vw, 34px) / 1.05 var(--f-display); }
-.est-grid { display: grid; grid-template-columns: 270px minmax(0, 1fr) 310px; grid-template-areas: "lib mon scn" "lib tl scn"; gap: 10px; align-items: stretch; }
+.est-grid { display: grid; grid-template-columns: 270px minmax(0, 1fr) 310px; grid-template-areas: "lib mon scn" "lib tl scn" "lib ins scn"; gap: 10px; align-items: stretch; }
 .dock { display: flex; flex-direction: column; min-width: 0; overflow: hidden; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
 .dock .dh { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0; padding: 7px 12px; font: 500 11px var(--f-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3); background: var(--panel-2); border-bottom: 1px solid var(--line); }
 .dock.lib { grid-area: lib; max-height: 82vh; }
 .dock.mon { grid-area: mon; }
 .dock.tl { grid-area: tl; }
+.dock.ins { grid-area: ins; }
 .dock.scn { grid-area: scn; max-height: 82vh; }
 .lib-tools { display: grid; gap: 8px; padding: 10px; border-bottom: 1px solid var(--line); }
 .fchips { display: flex; flex-wrap: wrap; gap: 5px; }
@@ -351,11 +352,11 @@ td select { min-height: 36px; width: auto; }
 .statusbar { display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: center; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font: 500 12px var(--f-mono); color: var(--ink-2); }
 .statusbar b { color: var(--ink); font-weight: 500; }
 @media (max-width: 1100px) {
-  .est-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "mon mon" "tl tl" "lib scn"; }
+  .est-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "mon mon" "tl tl" "ins ins" "lib scn"; }
   .dock.lib, .dock.scn { max-height: 70vh; }
 }
 @media (max-width: 720px) {
-  .est-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "mon" "tl" "scn" "lib"; }
+  .est-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "mon" "tl" "ins" "scn" "lib"; }
   .mons { grid-template-columns: minmax(0, 1fr); }
 }
 
@@ -701,6 +702,43 @@ body { background-image: radial-gradient(1200px 520px at 85% -8%, color-mix(in s
 .cov img { position: relative; display: block; width: 100%; height: 100%; object-fit: cover; }
 .cov.on { animation: respira 5s ease-in-out infinite; }
 @keyframes respira { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
+.ls { grid-template-columns: 40px minmax(0, 1fr) auto 30px !important; }
+.q { grid-template-columns: 52px 40px minmax(0, 1fr) auto !important; }
+.mon1 { position: relative; }
+.mon1.hasart { padding-right: 92px; }
+.mon1 .th.lg { position: absolute; right: 12px; top: 12px; }
+.insg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+.insg > section { padding: 12px 14px; border-right: 1px solid var(--line); min-width: 0; display: grid; gap: 10px; align-content: start; }
+.insg > section:last-child { border-right: 0; }
+.insg h4 { margin: 0; font: 600 11px var(--f-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3); }
+.insp { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 12px; align-items: start; }
+.insp .th.lg { position: static; width: 84px; height: 84px; }
+.insp b.ti { display: block; font: 600 17px/1.15 var(--f-display); overflow-wrap: anywhere; }
+.insp small { display: block; color: var(--ink-2); }
+.insr { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.insr input[type="time"], .insr select { min-height: 34px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--ground); color: var(--ink); font: 500 13px var(--f-mono); }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13px; }
+.kv dt { color: var(--ink-3); } .kv dd { margin: 0; font-family: var(--f-mono); }
+.mixbar { display: flex; height: 12px; border-radius: 99px; overflow: hidden; background: var(--ground); box-shadow: inset 0 0 0 1px var(--line); }
+.mixbar i { display: block; height: 100%; }
+.mixlg { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--ink-2); }
+.warn2 { display: grid; gap: 5px; margin: 0; padding: 0; list-style: none; font-size: 12.5px; }
+.warn2 li { padding: 6px 9px; border-radius: 7px; background: color-mix(in srgb, var(--warn, #c9902b) 16%, transparent); color: var(--ink); }
+.warn2 li.good { background: color-mix(in srgb, var(--ok) 16%, transparent); }
+.tpls { display: grid; gap: 4px; max-height: 150px; overflow: auto; }
+.tpl { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 6px; align-items: center; padding: 5px 8px; border: 1px solid var(--line); border-radius: 7px; font-size: 13px; }
+.tpl b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tpl small { color: var(--ink-3); font-family: var(--f-mono); font-size: 11px; }
+.kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; background: var(--ground); font: 500 12px var(--f-mono); text-align: center; }
+.kbl { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; align-items: center; font-size: 14px; }
+@media (max-width: 1100px) { .insg { grid-template-columns: minmax(0, 1fr); } .insg > section { border-right: 0; border-bottom: 1px solid var(--line); } }
+.th { width: 40px; height: 40px; border-radius: 7px; object-fit: cover; flex: none; background: var(--raise); box-shadow: 0 0 0 1px rgba(0, 0, 0, .18); }
+.th.lg { width: 64px; height: 64px; border-radius: 9px; }
+.next ol.tn li { grid-template-columns: 52px 40px minmax(0, 1fr) auto; }
+.song { grid-template-columns: 40px minmax(0, 1fr) auto auto !important; }
+.cvp { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding: 12px 16px; font-size: 14px; }
+.cvp #cvProg { min-width: 0; color: var(--ink-2); }
+.cvp #cvProg b { color: var(--ink); }
 .react { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .btn.like svg.i { transition: transform .2s; }
 .btn.like b { font: 500 12px var(--f-mono); padding: 1px 7px; border-radius: 99px; background: color-mix(in srgb, var(--ink) 10%, transparent); }
@@ -825,7 +863,7 @@ const NAV = [
   { id: 'programateca', nome: 'Programateca', curto: 'Pastas', ic: 'folder', roles: STAFF },
   { id: 'ouvintes', nome: 'Ouvintes', ic: 'people', roles: STAFF },
   { id: 'alteracoes', nome: 'Alterações', curto: 'Histórico', ic: 'history', roles: ['programador', 'dono'] },
-  { id: 'divulgar', nome: 'Divulgar', ic: 'qr', roles: ALL },
+  { id: 'divulgar', nome: 'Divulgar', ic: 'qr', roles: STAFF },
   { id: 'radialistas', nome: 'Radialistas', ic: 'key', roles: ['dono'], dono: true }
 ];
 const ICON = {
@@ -1252,7 +1290,7 @@ function vAoVivo() {
     '<label class="vol"><span class="eyebrow">Volume</span><input id="vol" type="range" min="0" max="100" value="' + Math.round(S.vol * 100) + '" aria-label="Volume"></label></div>' +
     '<p class="hint" id="audioMsg" role="status">' + esc(S.audioMsg) + '</p>' + presHTML();
   const nxt = nextList.length
-    ? '<ol>' + nextList.map((e) => '<li><span class="t">' + hh(e.start) + '</span><span style="min-width:0"><b>' + esc(e.song.title) + '</b><small>' + esc(e.song.artist) + '</small></span><span class="chip">' + (e.abs >= 86400 ? 'amanhã' : sectIc(e.sector) + esc(sectName(e.sector))) + '</span></li>').join('') + '</ol>'
+    ? '<ol class="tn">' + nextList.map((e) => '<li><span class="t">' + hh(e.start) + '</span>' + thumb(e.song) + '<span style="min-width:0"><b>' + esc(e.song.title) + '</b><small>' + esc(e.song.artist) + '</small></span><span class="chip">' + (e.abs >= 86400 ? 'amanhã' : sectIc(e.sector) + esc(sectName(e.sector))) + '</span></li>').join('') + '</ol>'
     : '<div class="empty" style="padding:24px 0"><p>Nada programado à frente.</p></div>';
   const lays = SECT.map((s) => ({ s, items: layout(n.date, s.id) }));
   return '<div class="wrap"><div class="ph"><div><h1>Ao vivo</h1><p>' + esc(greet()) + '. Todos ouvem a mesma coisa ao mesmo tempo. A programação é montada pela equipe da rádio.</p></div></div>' +
@@ -1312,7 +1350,7 @@ function vProg() {
 function songRow(s, opts) {
   opts = opts || {};
   const planned = plannedWhere(s.id).filter((x) => x.date >= nowSP().date).length;
-  return '<button type="button" class="song" data-act="sel-song" data-id="' + s.id + '" aria-pressed="' + (S.sel === s.id) + '"><span style="min-width:0"><b>' + esc(s.title) + '</b><small>' + esc(s.artist) + (opts.showStyle ? ' · ' + dotFor(s.style) + ' ' + esc(folderName(s.style)) : '') + '</small></span><span>' + (planned ? '<span class="chip acc">Na grade</span>' : '') + '</span><span class="d">' + mmss(+s.dur || 0) + '</span></button>';
+  return '<button type="button" class="song" data-act="sel-song" data-id="' + s.id + '" aria-pressed="' + (S.sel === s.id) + '">' + thumb(s) + '<span style="min-width:0"><b>' + esc(s.title) + '</b><small>' + esc(s.artist) + (opts.showStyle ? ' · ' + dotFor(s.style) + ' ' + esc(folderName(s.style)) : '') + '</small></span><span>' + (planned ? '<span class="chip acc">Na grade</span>' : '') + '</span><span class="d">' + mmss(+s.dur || 0) + '</span></button>';
 }
 
 function detailHTML() {
@@ -1353,7 +1391,7 @@ function vLib() {
     }).join('') + (cad ? '<button type="button" class="folder bulk" data-act="bulk-open"><span class="muted">' + ic('plus') + '</span><span><b>Enviar várias músicas</b><small>Separa nas pastas sozinho</small></span></button>' : '') + (cad ? '<button type="button" class="folder" data-act="new-folder" style="border-style:dashed"><span class="muted">' + ic('plus') + '</span><span><b>Nova pasta</b><small>Outro estilo</small></span></button>' : '') + '</div>';
   }
   const det = S.sel && S.songs[S.sel] ? detailHTML() : '';
-  return '<div class="wrap"><div class="ph"><div><h1>Programateca</h1><p>' + intro + '</p></div>' + searchBox + '</div><div class="libgrid' + (det ? ' det' : '') + '"><div style="display:grid;gap:14px;min-width:0">' + left + '</div>' + det + '</div></div>';
+  return '<div class="wrap"><div class="ph"><div><h1>Programateca</h1><p>' + intro + '</p></div>' + searchBox + '</div>' + cvPanel() + '<div class="libgrid' + (det ? ' det' : '') + '"><div style="display:grid;gap:14px;min-width:0">' + left + '</div>' + det + '</div></div>';
 }
 
 /* ---------- Pedidos protegidos (cifrados) ---------- */
@@ -1666,21 +1704,96 @@ function coverOf(s) {
   let c = null;
   try { c = JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { c = null; }
   if (c && (c.u || Date.now() - c.t < 6 * 864e5)) { CV[k] = c.u || ''; return c.u || null; }
+  if (s.coverTry && Date.now() - s.coverTry < 7 * 864e5) return null;
   if (!CVP[k] || Date.now() - CVP[k] > 60000) { CVP[k] = Date.now(); fetchCover(s, k); }
   return null;
 }
+const cvClean = (t) => fold(String(t || '').replace(/[\(\[][^\)\]]*[\)\]]/g, ' ').replace(/\b(feat|ft|part|com)\b\.?.*$/i, ' ').replace(/official|video|clipe|oficial|lyrics|letra|audio|hd|4k/gi, ' ')).replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+let itGate = 0;
+async function itunesGet(q, country) {
+  const wait = itGate + 3200 - Date.now();
+  itGate = Date.now() + Math.max(0, wait);
+  if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+  const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 8000);
+  try {
+    const r = await fetch('https://itunes.apple.com/search?media=music&entity=song&limit=15&country=' + country + '&term=' + encodeURIComponent(q), { signal: ctl.signal });
+    if (!r.ok) throw new Error('itunes ' + r.status);
+    return (await r.json()).results || [];
+  } finally { clearTimeout(to); }
+}
+async function itunesCover(s) {
+  const ft = cvClean(s.title), fa = cvClean(s.artist);
+  if (!ft) return '';
+  const steps = fa ? [[fa + ' ' + ft, 'BR'], [ft, 'BR'], [fa + ' ' + ft, 'US']] : [[ft, 'BR'], [ft, 'US']];
+  let best = null, bs = 0;
+  for (const [q, country] of steps) {
+    (await itunesGet(q, country)).forEach((x) => {
+      if (!x.artworkUrl100) return;
+      const n = cvClean(x.trackName), ar = cvClean(x.artistName);
+      let sc = 0;
+      if (n === ft) sc += 6; else if (n && (n.indexOf(ft) === 0 || ft.indexOf(n) === 0)) sc += 3; else return;
+      if (fa) { if (ar === fa) sc += 5; else if (ar && (ar.includes(fa) || fa.includes(ar))) sc += 3; else sc -= 4; }
+      if (sc > bs) { bs = sc; best = x; }
+    });
+    if (bs >= 11 || (bs >= 6 && !fa)) break;
+  }
+  return best && bs >= 6 ? best.artworkUrl100.replace(/\/\d+x\d+bb\./, '/600x600bb.') : '';
+}
+const GC = {};
+function genCover(s) {
+  s = s || {};
+  const k = (s.id || '') + '|' + (s.title || '') + '|' + (s.style || '');
+  if (GC[k]) return GC[k];
+  const m = /hsl\((\d+)/.exec(sColor(s.style || 'outros')), h = m ? +m[1] : 25;
+  const words = String(s.title || '♪').replace(/[\(\[].*$/, '').split(/\s+/).filter(Boolean);
+  const ini = ((words[0] || '♪')[0] + ((words[1] || '')[0] || '')).toUpperCase();
+  let seed = 0; for (const c of k) seed = (seed * 31 + c.charCodeAt(0)) % 9973;
+  const r1 = 90 + seed % 80, cx = 80 + (seed * 7) % 240, cy = 70 + (seed * 13) % 140;
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(' + h + ',52%,46%)"/><stop offset="1" stop-color="hsl(' + ((h + 28) % 360) + ',48%,16%)"/></linearGradient></defs><rect width="400" height="400" fill="url(#g)"/><circle cx="' + cx + '" cy="' + cy + '" r="' + r1 + '" fill="hsl(' + h + ',60%,70%)" fill-opacity=".16"/><circle cx="' + (400 - cx) + '" cy="' + (400 - cy) + '" r="' + (r1 + 40) + '" fill="#000" fill-opacity=".14"/><circle cx="200" cy="190" r="118" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="2"/><circle cx="200" cy="190" r="92" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="1.5"/><text x="200" y="228" text-anchor="middle" font-family="Georgia,\'Times New Roman\',serif" font-size="104" font-weight="700" fill="#fff" fill-opacity=".92">' + ini.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</text><text x="200" y="352" text-anchor="middle" font-family="Georgia,serif" font-size="22" letter-spacing="7" fill="#fff" fill-opacity=".6">PARIS CAST</text></svg>';
+  return (GC[k] = 'data:image/svg+xml,' + encodeURIComponent(svg));
+}
+const coverSrc = (s) => coverOf(s) || genCover(s);
+const thumb = (s, cls, st) => '<img class="th' + (cls ? ' ' + cls : '') + '"' + (st ? ' style="' + st + '"' : '') + ' src="' + esc(coverSrc(s)) + '" data-sid="' + esc((s && s.id) || '') + '" onerror="cvBad(this)" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">';
+window.cvBad = function (el) { el.onerror = null; el.src = genCover(S.songs[el.dataset.sid] || {}); };
+
+/* Busca de capas em segundo plano (produtor e dono): guarda a capa na própria música para todo mundo */
+const CJ = { on: false, done: 0, found: 0, total: 0, pause: 0, last: '' };
+const coverJobOk = () => !!(S.db && S.canEdit !== false && !S.as && ['produtor', 'dono'].includes(myRole()));
+const coverTodo = (force) => Object.values(S.songs).filter((x) => x.id && !x.cover && (force || !x.coverTry || Date.now() - x.coverTry > 7 * 864e5));
+async function coverJob(force) {
+  if (CJ.on || !coverJobOk() || Date.now() < CJ.pause) return;
+  const todo = coverTodo(force);
+  if (!todo.length) return;
+  CJ.on = true; CJ.done = 0; CJ.found = 0; CJ.total = todo.length; CJ.last = '';
+  scheduleRender();
+  try {
+    for (const song of todo) {
+      if (!coverJobOk()) break;
+      while (E.drag) await new Promise((r) => setTimeout(r, 1500));
+      let u;
+      try { u = await itunesCover(song); } catch (e) { CJ.pause = Date.now() + 5 * 60000; CJ.last = 'A internet recusou por um momento. Tento de novo em alguns minutos.'; break; }
+      try { await S.db.doc('songs/' + song.id).update(u ? { cover: u, coverTry: Date.now() } : { coverTry: Date.now() }); } catch (e) { CJ.last = 'Sem permissão para salvar as capas.'; break; }
+      if (u) { CJ.found++; CV[cvKey(song)] = u; }
+      CJ.done++;
+      const el = $('#cvProg'); if (el) el.innerHTML = cvProgInner();
+    }
+  } finally { CJ.on = false; scheduleRender(); }
+}
+function cvProgInner() {
+  const all = Object.values(S.songs), got = all.filter((x) => x.cover).length;
+  if (CJ.on) return '<b>Procurando capas…</b> ' + CJ.done + ' de ' + CJ.total + ' · ' + CJ.found + ' encontradas. Pode deixar o site aberto.';
+  return '<b>' + got + ' de ' + all.length + '</b> músicas com a capa original' + (all.length > got ? '. As outras mostram uma capa criada pela rádio.' : '.') + (CJ.last ? ' ' + esc(CJ.last) : '');
+}
+function cvPanel() {
+  if (!coverJobOk() || !Object.keys(S.songs).length) return '';
+  return '<section class="panel cvp" aria-label="Capas das músicas"><div id="cvProg" role="status">' + cvProgInner() + '</div><button class="btn sm" type="button" data-act="cv-run"' + (CJ.on ? ' disabled' : '') + '>' + ic('down') + 'Procurar capas agora</button></section>';
+}
 async function fetchCover(s, k) {
   let u = '';
-  try {
-    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 7000);
-    const r = await fetch('https://itunes.apple.com/search?media=music&entity=song&limit=6&country=BR&term=' + encodeURIComponent(((s.artist || '') + ' ' + (s.title || '')).trim()), { signal: ctl.signal });
-    clearTimeout(to);
-    const j = await r.json(), res = j.results || [], ft = fold(s.title || ''), fa = fold(s.artist || '');
-    const h = res.find((x) => { const n = fold(x.trackName || ''); return n && ft && (n.includes(ft) || ft.includes(n)); }) || res.find((x) => fa && (fold(x.artistName || '').includes(fa) || fa.includes(fold(x.artistName || ''))));
-    if (h && h.artworkUrl100) u = h.artworkUrl100.replace(/\/\d+x\d+bb\./, '/600x600bb.');
-  } catch (e) { return; }
+  try { u = await itunesCover(s); } catch (e) { return; }
   CV[k] = u;
   try { localStorage.setItem(k, JSON.stringify({ u, t: Date.now() })); } catch (e) { /* sem armazenamento */ }
+  if (u && s.id && !s.cover && S.db && S.canEdit !== false && ['produtor', 'dono'].includes(myRole()) && !S.as) { try { S.db.doc('songs/' + s.id).update({ cover: u }).catch(() => {}); } catch (e) { /* sem permissão */ } }
   updateMediaArt(); scheduleRender();
 }
 function updateMediaArt() {
@@ -1693,8 +1806,8 @@ function updateMediaArt() {
   } catch (e) { /* sem tela de bloqueio */ }
 }
 function artHTML(song, spin) {
-  const u = coverOf(song);
-  if (!u) return vinylHTML(song, spin);
+  const u = coverSrc(song);
+  if (!song) return vinylHTML(song, spin);
   return '<div class="cov' + (spin ? ' on' : '') + '" style="--c:' + sColor(song.style) + '"><img src="' + esc(u) + '" alt="Capa do álbum de ' + esc(song.title) + '" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></div>';
 }
 
@@ -1738,23 +1851,31 @@ function likeBtn(cur) {
   const li = S.likes[cur.id] || { count: 0, mine: false };
   return '<button type="button" class="btn sm like' + (li.mine ? ' on' : '') + '" id="likeBtn" data-act="like" data-id="' + esc(cur.id) + '" aria-pressed="' + !!li.mine + '" aria-label="' + (li.mine ? 'Descurtir' : 'Curtir') + ' esta música">' + ic('heart') + '<span>' + (li.mine ? 'Curtida' : 'Curtir') + '</span><b>' + (li.count || 0) + '</b></button>';
 }
+async function likeWho(id) {
+  const sg = S.songs[id] || {};
+  openModal('<div><h2>Quem curtiu</h2><p class="muted">' + esc(sg.title || 'Música') + (sg.artist ? ' · ' + esc(sg.artist) : '') + '</p></div><div id="lkWho"><p class="muted">Carregando…</p></div><div class="acts"><button class="btn pri" type="button" data-act="close-modal">Fechar</button></div>');
+  const r = await rpc('likes_who', { p_song: id }), box = $('#lkWho');
+  if (!box) return;
+  if (!Array.isArray(r)) { box.innerHTML = '<p class="msg">Não foi possível carregar. Rode o supabase.sql novo e tente de novo.</p>'; return; }
+  box.innerHTML = r.length ? '<ul class="panel rqs" style="max-height:50vh;overflow:auto">' + r.map((x) => { const tel = S.people[x.uid] && S.people[x.uid].tel; return '<li class="rq">' + avatar(x.uid) + '<div style="min-width:0"><div class="hd"><b>' + esc(nm(x.uid)) + '</b><small>' + ago(new Date(x.at).getTime()) + '</small></div>' + (tel ? '<p class="hint">' + esc(fmtPhone(tel)) + '</p>' : '') + '</div></li>'; }).join('') + '</ul>' : '<p class="muted">Ninguém curtiu esta música ainda.</p>';
+}
 function waLink(cur) {
   const u = siteUrl();
   const t = cur && cur.song ? '🎵 Ouvindo agora na Paris Cast: ' + cur.song.title + (cur.song.artist ? ' — ' + cur.song.artist : '') + '\nOuça também, ao vivo: ' + u : '🎶 Conheça a Paris Cast, a rádio da nossa escola!\nOuça ao vivo: ' + u;
   return 'https://wa.me/?text=' + encodeURIComponent(t);
 }
 function reactHTML(cur) {
-  return '<div class="react">' + (HAS_RPC() ? likeBtn(cur) : '') + '<a class="btn sm wa" id="waBtn" href="' + esc(waLink(cur)) + '" target="_blank" rel="noopener">' + ic('wa') + 'Compartilhar no WhatsApp</a></div>';
+  return '<div class="react">' + (HAS_RPC() ? likeBtn(cur) : '') + (HAS_RPC() && isDono() && !S.as ? '<button type="button" class="btn sm ghost" data-act="like-who" data-id="' + esc(cur.id) + '">' + ic('people') + 'Quem curtiu</button>' : '') + '<a class="btn sm wa" id="waBtn" href="' + esc(waLink(cur)) + '" target="_blank" rel="noopener">' + ic('wa') + 'Compartilhar no WhatsApp</a></div>';
 }
 function extrasHTML(a) {
   const n = a.n;
   const played = a.list.filter((e) => e.song && e.dur > 0 && e.date === n.date && e.absEnd <= n.sec).reverse();
   const hist = played.length
-    ? '<ol>' + played.slice(0, 12).map((e) => '<li><span class="t">' + hh(e.start) + '</span><span style="min-width:0"><b>' + esc(e.song.title) + '</b><small>' + esc(e.song.artist) + '</small></span><span class="chip">' + sectIc(e.sector) + esc(sectName(e.sector)) + '</span></li>').join('') + '</ol>' + (played.length > 12 ? '<p class="hint">Mostrando as 12 últimas de ' + played.length + ' músicas de hoje.</p>' : '')
+    ? '<ol class="tn">' + played.slice(0, 12).map((e) => '<li><span class="t">' + hh(e.start) + '</span>' + thumb(e.song) + '<span style="min-width:0"><b>' + esc(e.song.title) + '</b><small>' + esc(e.song.artist) + '</small></span><span class="chip">' + sectIc(e.sector) + esc(sectName(e.sector)) + '</span></li>').join('') + '</ol>' + (played.length > 12 ? '<p class="hint">Mostrando as 12 últimas de ' + played.length + ' músicas de hoje.</p>' : '')
     : '<div class="empty" style="padding:22px 0"><p>Ainda não tocou nenhuma música hoje.</p></div>';
   const top = (S.top || []).filter((x) => S.songs[x.song]);
   const topP = HAS_RPC() ? '<section class="panel next" aria-label="Mais curtidas"><h3>Mais curtidas</h3>' + (top.length
-    ? '<ol>' + top.map((x, i) => '<li><span class="t rk">' + (i + 1) + '</span><span style="min-width:0"><b>' + esc(S.songs[x.song].title) + '</b><small>' + esc(S.songs[x.song].artist) + '</small></span><span class="chip acc">' + ic('heart') + x.count + '</span></li>').join('') + '</ol>'
+    ? '<ol class="tn">' + top.map((x, i) => '<li><span class="t rk">' + (i + 1) + '</span>' + thumb(S.songs[x.song]) + '<span style="min-width:0"><b>' + esc(S.songs[x.song].title) + '</b><small>' + esc(S.songs[x.song].artist) + '</small></span><span class="chip acc">' + ic('heart') + x.count + '</span>' + (isDono() && !S.as ? '<button type="button" class="btn sm ghost" data-act="like-who" data-id="' + esc(x.song) + '">Quem</button>' : '') + '</li>').join('') + '</ol>'
     : '<div class="empty" style="padding:22px 0"><p>Ninguém curtiu nada ainda. Toque no coração na música que estiver tocando!</p></div>') + '</section>' : '';
   return '<div class="extras">' + topP + '<section class="panel next" aria-label="O que tocou hoje"><h3>Tocou hoje</h3>' + hist + '</section></div>';
 }
@@ -1987,10 +2108,10 @@ function vSug() {
   const q = S.quota.suggestions, full = !staff && q != null && q <= 0;
   const dis = blocked || !ready || full ? 'disabled' : '';
   const kinds = Object.entries(SUG_KIND).map(([k, n]) => '<option value="' + k + '"' + (val('sgKind', 'sugestao') === k ? ' selected' : '') + '>' + n + '</option>').join('');
-  const comp = '<form class="panel compose" data-act="send-sug"><div class="fld"><label for="sgKind">Assunto</label><select id="sgKind" data-d="sgKind" ' + dis + '>' + kinds + '</select></div><div class="fld"><label for="sgText">Sua mensagem</label><textarea id="sgText" data-d="sgText" maxlength="600" placeholder="Conte sua ideia, elogio ou problema. Seja gentil e direto." ' + dis + '>' + esc(val('sgText', '')) + '</textarea></div><div class="cfoot"><p class="hint">' + (blocked ? 'Seu acesso é só de leitura.' : !ready ? 'As sugestões ainda estão sendo ativadas. Tente de novo em instantes.' : (staff ? '' : quotaLine('suggestions', ['sugestão', 'sugestões']) + ' ') + 'Ninguém vê quem enviou, nem a equipe.') + '</p><button class="btn pri" type="submit" ' + dis + '>' + ic('check') + 'Enviar sugestão</button></div><p class="msg" id="sgOut" role="status"></p></form>';
+  const comp = '<form class="panel compose" data-act="send-sug"><div class="fld"><label for="sgKind">Assunto</label><select id="sgKind" data-d="sgKind" ' + dis + '>' + kinds + '</select></div><div class="fld"><label for="sgText">Sua mensagem</label><textarea id="sgText" data-d="sgText" maxlength="600" placeholder="Conte sua ideia, elogio ou problema. Seja gentil e direto." ' + dis + '>' + esc(val('sgText', '')) + '</textarea></div><div class="cfoot"><p class="hint">' + (blocked ? 'Seu acesso é só de leitura.' : !ready ? 'As sugestões ainda estão sendo ativadas. Tente de novo em instantes.' : (staff ? '' : quotaLine('suggestions', ['sugestão', 'sugestões']) + ' ') + 'Só o dono vê quem enviou.') + '</p><button class="btn pri" type="submit" ' + dis + '>' + ic('check') + 'Enviar sugestão</button></div><p class="msg" id="sgOut" role="status"></p></form>';
   if (!staff) {
     return '<div class="wrap"><div class="ph"><div><h1>Caixa de sugestões</h1><p>Tem uma ideia para a rádio? Quer elogiar ou avisar de um problema? Escreva aqui. Isto é separado dos pedidos de música.</p></div></div>' + comp +
-      '<div class="anon">' + ic('lock') + '<div><b>Totalmente anônimo</b><p>A mensagem é protegida e a equipe lê o texto, mas não vê quem escreveu.</p></div></div></div>';
+      '<div class="anon">' + ic('lock') + '<div><b>Anônimo para a equipe</b><p>A mensagem é protegida. A equipe lê o texto, mas só o dono consegue ver quem escreveu.</p></div></div></div>';
   }
   let body;
   if (!ready) body = '<div class="panel empty"><h3>Sugestões ainda não ativadas</h3><p>O dono precisa abrir a rádio uma vez para ativar a proteção.</p></div>';
@@ -2002,13 +2123,13 @@ function vSug() {
     const items = list.map(({ id, r, d }) => {
       if (!d) return '<li class="rq" data-st="novo"><span class="av" aria-hidden="true">?</span><div><div class="hd"><b>' + (S.reqBad['s_' + id] ? 'Mensagem ilegível' : 'Abrindo mensagem…') + '</b><small>' + ago(r.at) + '</small></div></div></li>';
       const lida = r.status === 'lida';
-      return '<li class="rq" data-st="' + (lida ? 'programada' : 'novo') + '"><span class="av" aria-hidden="true">' + ic('bulb') + '</span><div style="min-width:0"><div class="hd"><b>' + esc(SUG_KIND[d.kind] || 'Sugestão') + '</b><small>' + ago(r.at) + '</small><span class="chip ' + (lida ? 'ok' : 'warn') + '">' + (lida ? 'Lida' : 'Nova') + '</span></div><p class="quote" style="white-space:pre-wrap">' + esc(d.text) + '</p><div class="acts" style="justify-content:flex-start">' +
+      return '<li class="rq" data-st="' + (lida ? 'programada' : 'novo') + '"><span class="av" aria-hidden="true">' + ic('bulb') + '</span><div style="min-width:0"><div class="hd"><b>' + esc(SUG_KIND[d.kind] || 'Sugestão') + '</b><small>' + ago(r.at) + '</small><span class="chip ' + (lida ? 'ok' : 'warn') + '">' + (lida ? 'Lida' : 'Nova') + '</span></div>' + (isDono() && !S.as && d.by ? '<p class="hint">Enviada por <b>' + esc(nm(d.by)) + '</b>' + (S.people[d.by] && S.people[d.by].tel ? ' · ' + esc(fmtPhone(S.people[d.by].tel)) : '') + ' <small>(só o dono vê isto)</small></p>' : '') + '<p class="quote" style="white-space:pre-wrap">' + esc(d.text) + '</p><div class="acts" style="justify-content:flex-start">' +
         (lida ? '<button class="btn sm ghost" type="button" data-act="sg-status" data-id="' + id + '" data-s="nova">Marcar como nova</button>' : '<button class="btn sm pri" type="button" data-act="sg-status" data-id="' + id + '" data-s="lida">' + ic('check') + 'Marcar como lida</button>') +
         (S.confirmSug === id ? '<button class="btn sm danger" type="button" data-act="sg-del" data-id="' + id + '">Apagar mesmo</button><button class="btn sm ghost" type="button" data-act="sg-no">Cancelar</button>' : '<button class="btn sm ghost" type="button" data-act="sg-ask" data-id="' + id + '">Apagar</button>') + '</div></div></li>';
     }).join('');
     body = '<div class="rq-head">' + tabs + '</div>' + (list.length ? '<ul class="panel rqs">' + items + '</ul>' : '<div class="panel empty"><span class="bigic">' + ic('check') + '</span><h3>' + (f === 'todas' ? 'Nenhuma sugestão ainda' : 'Nenhuma sugestão nova') + '</h3><p>As mensagens anônimas da escola aparecem aqui.</p></div>');
   }
-  return '<div class="wrap"><div class="ph"><div><h1>Sugestões</h1><p>Mensagens anônimas dos ouvintes sobre a rádio. Ninguém sabe quem escreveu.</p></div></div>' + body + '<details class="mine"><summary>Enviar uma sugestão também</summary>' + comp + '</details></div>';
+  return '<div class="wrap"><div class="ph"><div><h1>Sugestões</h1><p>Mensagens dos ouvintes sobre a rádio. Só o dono vê quem escreveu.</p></div></div>' + body + '<details class="mine"><summary>Enviar uma sugestão também</summary>' + comp + '</details></div>';
 }
 async function sendSug() {
   const text = (D.sgText || '').trim(), kind = D.sgKind || 'sugestao', out = $('#sgOut');
@@ -2018,12 +2139,12 @@ async function sendSug() {
   if (!rk || !rk.pub) { out.textContent = 'As sugestões ainda não foram ativadas. Tente de novo em instantes.'; return; }
   out.textContent = '';
   let enc;
-  try { enc = await encReq({ text: text.slice(0, 600), kind }); } catch (e) { out.textContent = 'Este navegador não conseguiu proteger a mensagem.'; return; }
+  try { enc = await encReq({ text: text.slice(0, 600), kind, by: S.uid || null }); } catch (e) { out.textContent = 'Este navegador não conseguiu proteger a mensagem.'; return; }
   try { await S.db.collection('suggestions').add({ enc, kid: rk.kid || null, at: Date.now(), status: 'nova' }); } catch (e) {
     if (/limite_diario/.test((e && e.message) || '')) { S.quota.suggestions = 0; out.textContent = 'Você já usou as sugestões de hoje. Volte amanhã!'; render(); return; }
     out.textContent = 'Não foi possível enviar agora. Tente de novo.'; return;
   }
-  D.sgText = ''; toast('Sugestão enviada de forma anônima. Obrigado!');
+  D.sgText = ''; toast('Sugestão enviada. Obrigado!');
   if (S.quota.suggestions != null) S.quota.suggestions = Math.max(0, S.quota.suggestions - 1);
   refreshQuota('suggestions', true); render();
 }
@@ -2186,7 +2307,7 @@ function estHTML() {
   const fch = '<div class="fchips"><button type="button" data-act="est-folder" data-id="" aria-pressed="' + !E.folder + '">Todas</button>' + fl.filter((f) => counts[f.id]).map((f) => '<button type="button" data-act="est-folder" data-id="' + esc(f.id) + '" aria-pressed="' + (E.folder === f.id) + '">' + esc(f.nome) + ' ' + counts[f.id] + '</button>').join('') + '</div>';
   const rowsL = ls.slice(0, 300).map((x) => {
     const u = used[x.id];
-    return '<div class="ls" draggable="' + (edit && !u ? 'true' : 'false') + '" data-song="' + x.id + '" data-used="' + (u ? 1 : 0) + '"><span class="dot" style="background:' + sColor(x.style) + '"></span><span style="min-width:0"><b>' + esc(x.title) + '</b><small>' + esc(x.artist) + (u ? ' · já toca hoje (' + esc(sectName(u)) + ')' : '') + '</small></span><span class="d">' + mmss(+x.dur || 0) + '</span><button class="ib" type="button" data-act="est-add" data-id="' + x.id + '" aria-label="Adicionar ' + esc(x.title) + ' ao setor ' + esc(sect.nome) + '" ' + (edit && !u ? '' : 'disabled') + '>' + ic('plus') + '</button></div>';
+    return '<div class="ls" draggable="' + (edit && !u ? 'true' : 'false') + '" data-song="' + x.id + '" data-used="' + (u ? 1 : 0) + '">' + thumb(x, '', 'border-left:3px solid ' + sColor(x.style)) + '<span style="min-width:0"><b>' + esc(x.title) + '</b><small>' + esc(x.artist) + (u ? ' · já toca hoje (' + esc(sectName(u)) + ')' : '') + '</small></span><span class="d">' + mmss(+x.dur || 0) + '</span><button class="ib" type="button" data-act="est-add" data-id="' + x.id + '" aria-label="Adicionar ' + esc(x.title) + ' ao setor ' + esc(sect.nome) + '" ' + (edit && !u ? '' : 'disabled') + '>' + ic('plus') + '</button></div>';
   }).join('');
   const lib = '<section class="dock lib" aria-label="Biblioteca"><h3 class="dh"><span>Biblioteca</span><span>' + Object.keys(S.songs).length + '</span></h3><div class="lib-tools"><input type="search" data-d="eq" data-re="1" value="' + esc(val('eq', '')) + '" placeholder="Buscar música ou artista" autocomplete="off" aria-label="Buscar na biblioteca"><label class="esttime">Começar às <input type="time" step="1" data-d="estTime" value="' + esc(val('estTime', '')) + '" aria-label="Horário de início (opcional)"></label>' + fch + '</div><div class="lsongs">' + (rowsL || '<div class="empty" style="padding:28px 14px"><p>' + (Object.keys(S.songs).length ? 'Nada encontrado.' : 'A programateca está vazia. O produtor cadastra as músicas nas pastas.') + '</p></div>') + '</div></section>';
 
@@ -2194,8 +2315,8 @@ function estHTML() {
   const cur = AIR.cur;
   const nxt = AIR.list.find((e) => e.song && e.dur > 0 && e.abs > n.sec);
   const pct = cur ? Math.min(100, Math.max(0, (n.sec - cur.abs) / cur.dur * 100)) : 0;
-  const pgm = '<div class="mon1 pgm"><span class="tag">● No ar</span>' + (cur ? '<h3>' + esc(cur.song.title) + '</h3><p>' + esc(cur.song.artist) + ' · setor ' + esc(sectName(cur.sector)) + '</p><div class="prog"><i id="estBar" style="width:' + pct.toFixed(2) + '%"></i></div><div class="times"><span id="estEl">' + mmss(n.sec - cur.abs) + '</span><span>' + mmss(cur.dur) + '</span></div>' : '<h3>Fora do ar</h3><p>Nada tocando neste momento.</p>') + '</div>';
-  const pvw = '<div class="mon1 pvw"><span class="tag">▶ A seguir</span>' + (nxt ? '<h3>' + esc(nxt.song.title) + '</h3><p>' + esc(nxt.song.artist) + '</p><p class="mono">às ' + hh(nxt.start) + (nxt.abs >= 86400 ? ' de amanhã' : '') + ' · ' + mmss(nxt.dur) + '</p>' : '<h3>Nada programado</h3><p>Sem músicas à frente.</p>') + '</div>';
+  const pgm = '<div class="mon1 pgm' + (cur ? ' hasart' : '') + '">' + (cur ? thumb(cur.song, 'lg') : '') + '<span class="tag">● No ar</span>' + (cur ? '<h3>' + esc(cur.song.title) + '</h3><p>' + esc(cur.song.artist) + ' · setor ' + esc(sectName(cur.sector)) + '</p><div class="prog"><i id="estBar" style="width:' + pct.toFixed(2) + '%"></i></div><div class="times"><span id="estEl">' + mmss(n.sec - cur.abs) + '</span><span>' + mmss(cur.dur) + '</span></div>' : '<h3>Fora do ar</h3><p>Nada tocando neste momento.</p>') + '</div>';
+  const pvw = '<div class="mon1 pvw' + (nxt ? ' hasart' : '') + '">' + (nxt ? thumb(nxt.song, 'lg') : '') + '<span class="tag">▶ A seguir</span>' + (nxt ? '<h3>' + esc(nxt.song.title) + '</h3><p>' + esc(nxt.song.artist) + '</p><p class="mono">às ' + hh(nxt.start) + (nxt.abs >= 86400 ? ' de amanhã' : '') + ' · ' + mmss(nxt.dur) + '</p>' : '<h3>Nada programado</h3><p>Sem músicas à frente.</p>') + '</div>';
   const mon = '<section class="dock mon" aria-label="Monitores"><h3 class="dh"><span>Monitor</span><span class="mono" id="estClock">' + hhmmss(n.sec) + '</span></h3><div class="mons">' + pgm + pvw + '</div></section>';
 
   // linha do tempo
@@ -2214,7 +2335,7 @@ function estHTML() {
     const ph = date === today && n.sec >= x.ini * 3600 && n.sec < x.fim * 3600 ? '<i class="ph-line" style="left:' + ((n.sec - x.ini * 3600) / 60 * z).toFixed(1) + 'px"></i>' : '';
     return '<div class="lane' + (x.id === sid ? ' act' : '') + (past ? ' past' : '') + (edit && !past ? '' : ' ro') + '"><button type="button" class="lh" data-act="est-sector" data-id="' + x.id + '"><b>' + x.nome + '</b><small>' + p2(x.ini) + ':00–' + p2(x.fim) + ':00</small></button><div class="ltrack" data-lane="' + x.id + '">' + hrs + blocks + ph + '</div></div>';
   }).join('');
-  const tl = '<section class="dock tl" aria-label="Linha do tempo"><h3 class="dh"><span>Linha do tempo · ' + esc(longDate(date)) + '</span><span>' + dayCount(date) + ' músicas</span></h3><div class="tlbar"><label style="display:flex;align-items:center;gap:8px">Zoom <input type="range" min="3" max="40" step="1" value="' + z + '" data-act="est-zoom" aria-label="Zoom da linha do tempo"></label><span>Arraste a música para o horário desejado na faixa (ela fica fixa ali), ou use o botão +. O vazio entre as músicas é silêncio.</span></div><div class="tlscroll" id="tlscroll"><div class="tlin" style="--w:' + W6 + 'px;--z:' + z + 'px">' + ruler + lanes + '</div></div></section>';
+  const tl = '<section class="dock tl" aria-label="Linha do tempo"><h3 class="dh"><span>Linha do tempo · ' + esc(longDate(date)) + '</span><span>' + dayCount(date) + ' músicas</span></h3><div class="tlbar"><label style="display:flex;align-items:center;gap:8px">Zoom <input type="range" min="3" max="40" step="1" value="' + z + '" data-act="est-zoom" aria-label="Zoom da linha do tempo"></label><button class="btn sm ghost" type="button" data-act="est-now">Ir para agora</button><span>Arraste a música para o horário desejado na faixa (ela fica fixa ali), ou use o botão +. O vazio entre as músicas é silêncio.</span></div><div class="tlscroll" id="tlscroll"><div class="tlin" style="--w:' + W6 + 'px;--z:' + z + 'px">' + ruler + lanes + '</div></div></section>';
 
   // setores e fila
   const scenes = SECT.map((x) => {
@@ -2225,14 +2346,239 @@ function estHTML() {
   const qrows = qi.map((e, i) => {
     const isSel = E.sel === sid + ':' + i;
     const ctl = edit && !pastS ? '<span class="cc"><button class="ib" type="button" data-act="up" data-sector="' + sid + '" data-i="' + i + '" aria-label="Subir" ' + (i === 0 ? 'disabled' : '') + '>' + ic('up') + '</button><button class="ib" type="button" data-act="down" data-sector="' + sid + '" data-i="' + i + '" aria-label="Descer" ' + (i === qi.length - 1 ? 'disabled' : '') + '>' + ic('down') + '</button><button class="ib" type="button" data-act="rm" data-sector="' + sid + '" data-i="' + i + '" aria-label="Retirar da grade">' + ic('x') + '</button></span>' : '';
-    return '<div class="q" ' + (isSel ? 'aria-current="true"' : '') + ' data-act="est-sel" data-sector="' + sid + '" data-i="' + i + '" style="cursor:pointer"><span class="t">' + hh(e.start) + '</span><span style="min-width:0"><b>' + (e.song ? esc(e.song.title) : 'Música removida') + (e.pin != null ? ' <span class="fixo">fixo</span>' : '') + '</b><small>' + (e.song ? esc(e.song.artist) + ' · ' + mmss(e.dur) : '') + '</small></span>' + ctl + '</div>';
+    return '<div class="q" ' + (isSel ? 'aria-current="true"' : '') + ' data-act="est-sel" data-sector="' + sid + '" data-i="' + i + '" style="cursor:pointer"><span class="t">' + hh(e.start) + '</span>' + thumb(e.song) + '<span style="min-width:0"><b>' + (e.song ? esc(e.song.title) : 'Música removida') + (e.pin != null ? ' <span class="fixo">fixo</span>' : '') + '</b><small>' + (e.song ? esc(e.song.artist) + ' · ' + mmss(e.dur) : '') + '</small></span>' + ctl + '</div>';
   }).join('');
   const scn = '<section class="dock scn" aria-label="Setores"><h3 class="dh"><span>Setores</span></h3><div>' + scenes + '</div><h3 class="dh"><span>Fila · ' + esc(sect.nome) + '</span><span>' + qi.length + '</span></h3><div class="qlist">' + (qrows || '<div class="empty" style="padding:24px 14px"><p>Setor vazio. Adicione músicas da biblioteca.</p></div>') + '</div></section>';
+
+  const ins = insHTML(date, sid, edit, pastS, qi);
 
   // barra de estado
   const tot = SECT.reduce((a, x) => a + usedSec(date, x.id), 0);
   const stat = '<div class="statusbar"><span><b>' + dayCount(date) + '</b> músicas</span><span><b>' + hm(tot) + '</b> programados</span><span>Setor ativo: <b>' + esc(sect.nome) + '</b> · <b>' + hm(Math.max(0, CAP - usedSec(date, sid))) + '</b> livres</span><span>' + (pastS ? 'Setor já foi ao ar: somente leitura' : edit ? 'Edição liberada' : 'Somente leitura') + '</span></div>';
-  return '<div class="wrap est" style="max-width:1500px">' + bar + '<div class="est-grid">' + lib + mon + tl + scn + '</div>' + stat + '</div>';
+  return '<div class="wrap est" style="max-width:1500px">' + bar + '<div class="est-grid">' + lib + mon + tl + ins + scn + '</div>' + stat + '</div>';
+}
+
+/* ---------- Estúdio: inspetor, análise, ferramentas, modelos, exportar ---------- */
+Object.assign(S, { templates: {} });
+const CUE = { a: null, id: null };
+function cueStop() { if (CUE.a) { try { CUE.a.pause(); } catch (e) { /* já parado */ } CUE.a = null; } CUE.id = null; }
+function cueToggle(id) {
+  const sg = S.songs[id];
+  if (!sg || !sg.assetId) { toast('Esta música está sem arquivo de áudio.'); return; }
+  if (CUE.a && CUE.id === id && !CUE.a.paused) { cueStop(); render(); return; }
+  cueStop();
+  CUE.a = new Audio(window.__assetUrl(sg.assetId)); CUE.id = id; CUE.a.volume = 0.8;
+  CUE.a.onended = () => { CUE.id = null; CUE.a = null; scheduleRender(); };
+  CUE.a.play().then(() => scheduleRender()).catch(() => { toast('Não consegui tocar a pré-escuta.'); CUE.id = null; CUE.a = null; scheduleRender(); });
+}
+let ASK = null;
+function askModal(title, text, label, fn, danger) {
+  ASK = fn;
+  openModal('<div><h2>' + esc(title) + '</h2><p class="muted">' + esc(text) + '</p></div><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn ' + (danger ? 'danger' : 'pri') + '" type="button" data-act="ask-yes">' + esc(label) + '</button></div>');
+}
+const planOf = (date, sid) => { const d = S.plan[date + '_' + sid] || {}; return { items: (d.items || []).slice(), pins: Object.assign({}, d.pins || {}) }; };
+const estOk = () => can('programar') && !S.as && !isPast(S.date, estSector());
+const selInfo = (date) => {
+  const m = /^(\w+):(\d+)$/.exec(E.sel || '');
+  if (!m) return null;
+  const e = layout(date, m[1])[+m[2]];
+  return e ? { sid: m[1], i: +m[2], e } : null;
+};
+function analyze(date, sid) {
+  const sc = SECT.find((x) => x.id === sid);
+  const all = layout(date, sid), L = all.filter((e) => e.song && e.dur > 0);
+  const used = L.reduce((a, e) => a + e.dur, 0);
+  const gaps = []; let t = sc.ini * 3600;
+  L.forEach((e) => { if (e.start - t >= 1) gaps.push({ from: t, to: e.start }); t = e.end; });
+  const sil = gaps.reduce((a, g) => a + g.to - g.from, 0);
+  const rep = [];
+  for (let i = 1; i < L.length; i++) if (fold(L[i].song.artist) && fold(L[i].song.artist) === fold(L[i - 1].song.artist)) rep.push([L[i - 1], L[i]]);
+  const mix = {}; L.forEach((e) => { mix[e.song.style] = (mix[e.song.style] || 0) + e.dur; });
+  let run = 1, maxRun = 1, runStyle = '';
+  for (let i = 1; i < L.length; i++) { if (L[i].song.style === L[i - 1].song.style) { run++; if (run > maxRun) { maxRun = run; runStyle = L[i].song.style; } } else run = 1; }
+  return { sc, L, used, gaps, sil, rep, mix, maxRun, runStyle, missing: all.filter((e) => !e.song).length, noDur: all.filter((e) => e.song && !(e.dur > 0)).length, end: L.length ? L[L.length - 1].end : null };
+}
+function insHTML(date, sid, edit, pastS, qi) {
+  const sc = SECT.find((x) => x.id === sid), ok = edit && !pastS && !S.as;
+  const sel = selInfo(date), A = analyze(date, sid);
+  // 1) inspetor
+  let ins;
+  if (sel && sel.e.song) {
+    const e = sel.e, sg = e.song, playing = CUE.a && CUE.id === sg.id && !CUE.a.paused;
+    const others = SECT.filter((x) => x.id !== sel.sid).map((x) => '<option value="' + x.id + '">' + esc(x.nome) + '</option>').join('');
+    ins = '<div class="insp">' + thumb(sg, 'lg') + '<div style="min-width:0"><b class="ti">' + esc(sg.title) + '</b><small>' + esc(sg.artist) + '</small><small>' + dotFor(sg.style) + ' ' + esc(folderName(sg.style)) + ' · ' + mmss(e.dur) + '</small></div></div>' +
+      '<dl class="kv"><dt>Começa</dt><dd>' + clk(e.start) + (e.pin != null ? ' · fixo' : ' · segue a anterior') + '</dd><dt>Termina</dt><dd>' + clk(e.end) + '</dd><dt>Setor</dt><dd>' + esc(sectName(sel.sid)) + '</dd></dl>' +
+      '<div class="insr"><button class="btn sm" type="button" data-act="ins-cue" data-id="' + sg.id + '"' + (sg.assetId ? '' : ' disabled') + '>' + (playing ? '■ Parar pré-escuta' : '▶ Pré-escuta') + '</button>' + (sg.assetId ? '' : '<small class="muted">sem arquivo de áudio</small>') + '</div>' +
+      (ok ? '<div class="insr"><input type="time" step="1" id="insTime" value="' + clk(e.start) + '" aria-label="Horário exato"><button class="btn sm pri" type="button" data-act="ins-pin">Fixar neste horário</button>' + (e.pin != null ? '<button class="btn sm ghost" type="button" data-act="ins-unpin">Soltar horário</button>' : '') + '</div>' +
+        '<div class="insr"><select id="insMove" aria-label="Mover para o setor">' + others + '</select><button class="btn sm" type="button" data-act="ins-move">Mover de setor</button><button class="btn sm danger" type="button" data-act="ins-rm">Retirar da grade</button></div>' : '');
+  } else {
+    ins = '<div class="empty" style="padding:18px 4px"><p>Toque numa música da linha do tempo ou da fila para ver os detalhes, fixar o horário exato, ouvir a pré-escuta ou mover para outro setor.</p></div>';
+  }
+  // 2) analise
+  const mixTot = Object.values(A.mix).reduce((a, b) => a + b, 0) || 1;
+  const mixKeys = Object.keys(A.mix).sort((a, b) => A.mix[b] - A.mix[a]);
+  const notes = [];
+  if (A.gaps.length) { const g = A.gaps.slice().sort((a, b) => (b.to - b.from) - (a.to - a.from))[0]; notes.push('<li>' + A.gaps.length + (A.gaps.length === 1 ? ' buraco' : ' buracos') + ' sem música (' + hm(A.sil) + '). O maior: ' + clk(g.from) + ' às ' + clk(g.to) + '.</li>'); }
+  if (A.rep.length) notes.push('<li>' + A.rep.length + (A.rep.length === 1 ? ' vez' : ' vezes') + ' com o mesmo artista em seguida (ex.: ' + esc(A.rep[0][0].song.artist) + ').</li>');
+  if (A.maxRun >= 4) notes.push('<li>' + A.maxRun + ' músicas seguidas de ' + esc(folderName(A.runStyle)) + '. Que tal variar o estilo?</li>');
+  if (A.missing) notes.push('<li>' + A.missing + ' música(s) apagada(s) ainda na grade.</li>');
+  if (A.noDur) notes.push('<li>' + A.noDur + ' música(s) sem duração, que não tocam.</li>');
+  if (A.end != null && A.end < sc.fim * 3600 - 60) notes.push('<li>Sem programação depois das ' + clk(A.end) + ' (' + hm(sc.fim * 3600 - A.end) + ' até as ' + p2(sc.fim) + ':00).</li>');
+  const ana = A.L.length
+    ? '<dl class="kv"><dt>Ocupação</dt><dd>' + hm(A.used) + ' de ' + hm(CAP) + ' (' + Math.round(A.used / CAP * 100) + '%)</dd><dt>Músicas</dt><dd>' + A.L.length + ' · média ' + mmss(Math.round(A.used / A.L.length)) + '</dd><dt>Termina</dt><dd>' + clk(A.end) + '</dd></dl>' +
+      '<div class="mixbar" role="img" aria-label="Mistura de estilos">' + mixKeys.map((k) => '<i style="width:' + (A.mix[k] / mixTot * 100).toFixed(1) + '%;background:' + sColor(k) + '"></i>').join('') + '</div>' +
+      '<div class="mixlg">' + mixKeys.slice(0, 6).map((k) => '<span>' + dotFor(k) + ' ' + esc(folderName(k)) + ' ' + Math.round(A.mix[k] / mixTot * 100) + '%</span>').join('') + '</div>' +
+      '<ul class="warn2">' + (notes.join('') || '<li class="good">Tudo certo neste setor: sem buracos e sem artista repetido em seguida.</li>') + '</ul>'
+    : '<div class="empty" style="padding:18px 4px"><p>Setor vazio. Adicione músicas ou use as ferramentas ao lado.</p></div>';
+  // 3) ferramentas
+  const tl = Object.entries(S.templates || {}).map(([id, t]) => Object.assign({ id }, t)).sort((a, b) => (b.at || 0) - (a.at || 0));
+  const tpls = tl.length ? '<div class="tpls">' + tl.map((t) => '<div class="tpl"><span style="min-width:0"><b>' + esc(t.nome || 'Modelo') + '</b><small>' + (t.items || []).length + ' músicas</small></span>' + (ok ? '<button class="btn sm" type="button" data-act="tpl-apply" data-id="' + t.id + '">Aplicar</button><button class="ib" type="button" data-act="tpl-del" data-id="' + t.id + '" aria-label="Apagar modelo">' + ic('x') + '</button>' : '') + '</div>').join('') + '</div>' : '<p class="hint">Nenhum modelo ainda. Salve a ordem de um setor para reutilizar em outro dia.</p>';
+  const tools = (ok ? '<div class="insr"><button class="btn sm" type="button" data-act="tool" data-k="shuffle">Embaralhar</button><button class="btn sm" type="button" data-act="tool" data-k="artists">Evitar artista repetido</button><button class="btn sm" type="button" data-act="tool" data-k="reverse">Inverter</button></div>' +
+    '<div class="insr"><select id="toolSort" aria-label="Ordenar por"><option value="titulo">Título A–Z</option><option value="artista">Artista A–Z</option><option value="curta">Mais curtas primeiro</option><option value="longa">Mais longas primeiro</option><option value="estilo">Estilo</option></select><button class="btn sm" type="button" data-act="tool-sort">Ordenar</button></div>' +
+    '<div class="insr"><button class="btn sm" type="button" data-act="tool" data-k="unpin">Soltar horários fixos</button><button class="btn sm" type="button" data-act="tool" data-k="missing">Tirar músicas apagadas</button><button class="btn sm danger" type="button" data-act="tool" data-k="clear">Limpar setor</button></div>' : '<p class="hint">Somente leitura: o programador e o dono usam estas ferramentas.</p>') +
+    '<h4>Modelos de setor</h4>' + (ok ? '<div class="insr"><button class="btn sm pri" type="button" data-act="tpl-save"' + (A.L.length ? '' : ' disabled') + '>Salvar este setor como modelo</button></div>' : '') + tpls +
+    '<h4>Exportar e atalhos</h4><div class="insr"><button class="btn sm" type="button" data-act="exp-csv">Baixar planilha (CSV)</button><button class="btn sm" type="button" data-act="exp-print">' + ic('print') + 'Imprimir a grade</button><button class="btn sm ghost" type="button" data-act="kb-help">Atalhos</button></div>';
+  return '<section class="dock ins" aria-label="Inspetor e ferramentas"><h3 class="dh"><span>Inspetor · Análise · Ferramentas</span><span>' + esc(sc.nome) + '</span></h3><div class="insg"><section aria-label="Música selecionada"><h4>Música selecionada</h4>' + ins + '</section><section aria-label="Análise do setor"><h4>Análise · ' + esc(sc.nome) + '</h4>' + ana + '</section><section aria-label="Ferramentas"><h4>Ferramentas do setor</h4>' + tools + '</section></div></section>';
+}
+async function insPin() {
+  const sel = selInfo(S.date), v = $('#insTime');
+  if (!sel || !estOk() || !v) return;
+  const sec = parseClk(v.value), sc = SECT.find((x) => x.id === sel.sid);
+  if (sec == null || sec < sc.ini * 3600 || sec >= sc.fim * 3600) { toast('Escolha um horário entre ' + p2(sc.ini) + ':00 e ' + p2(sc.fim) + ':00.'); return; }
+  const pl = planPlace(S.date, sel.sid, sel.e.id, sec);
+  if (pl.err) { toast(pl.err); return; }
+  if (await savePlan(S.date, sel.sid, pl.items, pl.pins)) { E.sel = sel.sid + ':' + Math.max(0, pl.items.indexOf(sel.e.id)); toast('Fixada às ' + clk(pl.start) + '.'); render(); }
+}
+async function insUnpin() {
+  const sel = selInfo(S.date);
+  if (!sel || !estOk()) return;
+  const pl = planOf(S.date, sel.sid); delete pl.pins[sel.e.id];
+  if (await savePlan(S.date, sel.sid, pl.items, pl.pins)) toast('Horário solto: toca logo após a anterior.');
+}
+async function toolRun(kind, sortBy) {
+  if (!estOk()) return;
+  const date = S.date, sid = estSector(), sc = SECT.find((x) => x.id === sid), pl = planOf(date, sid);
+  if (!pl.items.length) { toast('O setor está vazio.'); return; }
+  const idx = []; pl.items.forEach((id, i) => { if (pl.pins[id] == null && S.songs[id]) idx.push(i); });
+  let ids = idx.map((i) => pl.items[i]);
+  const art = (id) => fold((S.songs[id] || {}).artist);
+  let msg = '';
+  if (kind === 'shuffle') { ids = shuffle(ids); msg = 'Setor embaralhado.'; }
+  else if (kind === 'reverse') { ids.reverse(); msg = 'Ordem invertida.'; }
+  else if (kind === 'sort') {
+    const g = (id) => S.songs[id] || {};
+    const by = { titulo: (a, b) => fold(g(a).title).localeCompare(fold(g(b).title)), artista: (a, b) => fold(g(a).artist).localeCompare(fold(g(b).artist)), curta: (a, b) => (+g(a).dur || 0) - (+g(b).dur || 0), longa: (a, b) => (+g(b).dur || 0) - (+g(a).dur || 0), estilo: (a, b) => String(g(a).style).localeCompare(String(g(b).style)) || fold(g(a).title).localeCompare(fold(g(b).title)) }[sortBy];
+    ids.sort(by); msg = 'Setor ordenado.';
+  } else if (kind === 'artists') {
+    const pool = ids.slice(), out = [];
+    idx.forEach((slot) => {
+      const prev = slot > 0 ? (out[slot - 1] || pl.items[slot - 1]) : null, next = pl.items[slot + 1] && pl.pins[pl.items[slot + 1]] != null ? pl.items[slot + 1] : null;
+      let k = pool.findIndex((id) => (!prev || art(id) !== art(prev) || !art(id)) && (!next || art(id) !== art(next) || !art(id)));
+      if (k < 0) k = 0;
+      out[slot] = pool.splice(k, 1)[0];
+    });
+    ids = idx.map((slot) => out[slot]); msg = 'Artistas repetidos separados sempre que possível.';
+  } else if (kind === 'unpin') {
+    if (!Object.keys(pl.pins).length) { toast('Nenhuma música tem horário fixo.'); return; }
+    return askModal('Soltar horários fixos?', 'Todas as músicas deste setor passam a tocar em sequência, a partir das ' + p2(sc.ini) + ':00. Dá para desfazer em Alterações.', 'Soltar', async () => { if (await savePlan(date, sid, pl.items, {})) toast('Horários soltos.'); });
+  } else if (kind === 'missing') {
+    const keep = pl.items.filter((id) => S.songs[id]);
+    if (keep.length === pl.items.length) { toast('Nenhuma música apagada na grade.'); return; }
+    const pins = {}; keep.forEach((id) => { if (pl.pins[id] != null) pins[id] = pl.pins[id]; });
+    if (await savePlan(date, sid, keep, pins)) toast('Músicas apagadas retiradas da grade.');
+    return;
+  } else if (kind === 'clear') {
+    return askModal('Limpar o setor ' + sc.nome + '?', 'Todas as ' + pl.items.length + ' músicas saem da grade deste setor. Dá para desfazer em Alterações.', 'Limpar setor', async () => { if (await savePlan(date, sid, [], {})) toast('Setor limpo.'); }, true);
+  }
+  const items = pl.items.slice(); idx.forEach((i, k) => { items[i] = ids[k]; });
+  const L = layoutOf(sid, items, pl.pins);
+  if (L.length && L[L.length - 1].end > sc.fim * 3600) { toast('Essa ordem não cabe no setor.'); return; }
+  if (L.some((e) => e.pin != null && e.start > e.pin + 0.5)) { toast('Essa ordem atrasaria uma música de horário fixo. Solte os horários fixos antes.'); return; }
+  if (JSON.stringify(items) === JSON.stringify(pl.items)) { toast('Já está assim.'); return; }
+  if (await savePlan(date, sid, items, pl.pins)) toast(msg);
+}
+function tplSaveModal() {
+  const sid = estSector(), n = ((S.plan[S.date + '_' + sid] || {}).items || []).length;
+  openModal('<div><h2>Salvar como modelo</h2><p class="muted">Guarda a ordem e os horários fixos do setor ' + esc(sectName(sid)) + ' (' + n + ' músicas) para usar em qualquer dia e setor.</p></div><div class="fld"><label for="tplName">Nome do modelo</label><input id="tplName" maxlength="40" placeholder="Ex.: Manhã animada" autocomplete="off"></div><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="tpl-go">Salvar modelo</button></div>');
+  setTimeout(() => { const i = $('#tplName'); if (i) i.focus(); }, 60);
+}
+async function tplSave() {
+  const el = $('#tplName'), nome = el ? el.value.trim() : '';
+  if (!nome) { toast('Dê um nome ao modelo.'); return; }
+  const sid = estSector(), sc = SECT.find((x) => x.id === sid), pl = planOf(S.date, sid), offs = {};
+  Object.entries(pl.pins).forEach(([id, v]) => { if (pl.items.includes(id)) offs[id] = Math.round(v - sc.ini * 3600); });
+  if (await W(() => S.db.collection('templates').add({ nome, items: pl.items, offs, from: sid, at: Date.now(), by: S.uid || null }))) { closeModal(); toast('Modelo salvo.'); }
+}
+function tplApply(id) {
+  const t = S.templates[id], date = S.date, sid = estSector();
+  if (!t || !estOk()) return;
+  askModal('Aplicar “' + (t.nome || 'modelo') + '”?', 'O setor ' + sectName(sid) + ' fica com a ordem do modelo. Músicas que já tocam em outro setor deste dia ou que foram apagadas ficam de fora. Dá para desfazer em Alterações.', 'Aplicar modelo', async () => {
+    const sc = SECT.find((x) => x.id === sid), used = dayUsedMap(date);
+    const items = [], pins = {}; let tot = 0, skip = 0;
+    (t.items || []).forEach((mid) => {
+      const sg = S.songs[mid], d = sg ? (+sg.dur || 0) : 0;
+      if (!sg || d <= 0 || (used[mid] && used[mid] !== sid) || tot + d > CAP) { skip++; return; }
+      items.push(mid); tot += d;
+      if (t.offs && t.offs[mid] != null) pins[mid] = sc.ini * 3600 + t.offs[mid];
+    });
+    const L = layoutOf(sid, items, pins);
+    if (L.length && L[L.length - 1].end > sc.fim * 3600) { toast('O modelo não cabe neste setor.'); return; }
+    if (await savePlan(date, sid, items, pins)) toast('Modelo aplicado: ' + items.length + ' músicas' + (skip ? ' (' + skip + ' ficaram de fora)' : '') + '.');
+  });
+}
+function gradeRows(date) {
+  const rows = [];
+  SECT.forEach((x) => layout(date, x.id).forEach((e) => { if (e.song) rows.push({ sec: x.nome, ini: clk(e.start), fim: clk(e.end), t: e.song.title, a: e.song.artist, st: folderName(e.song.style), d: mmss(e.dur) }); }));
+  return rows;
+}
+function expCsv() {
+  const rows = gradeRows(S.date);
+  if (!rows.length) { toast('Não há músicas neste dia.'); return; }
+  const q = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const csv = '﻿' + [['Data', 'Setor', 'Início', 'Fim', 'Música', 'Artista', 'Estilo', 'Duração'].map(q).join(';')].concat(rows.map((r) => [S.date, r.sec, r.ini, r.fim, r.t, r.a, r.st, r.d].map(q).join(';'))).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'grade-paris-cast-' + S.date + '.csv';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function expPrint() {
+  const rows = gradeRows(S.date);
+  if (!rows.length) { toast('Não há músicas neste dia.'); return; }
+  const by = {}; rows.forEach((r) => { (by[r.sec] = by[r.sec] || []).push(r); });
+  const html = '<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Grade ' + esc(S.date) + '</title><style>body{font:13px Georgia,serif;margin:26px;color:#2b1a10}h1{font-size:26px;margin:0}p.s{margin:2px 0 14px;color:#7a5a40}h2{margin:18px 0 6px;font-size:16px;border-bottom:2px solid #8a5a2b;padding-bottom:3px}table{width:100%;border-collapse:collapse}td{padding:4px 6px;border-bottom:1px solid #e3d6c6;vertical-align:top}td.h{font-family:monospace;width:62px;white-space:nowrap}td.d{font-family:monospace;text-align:right;width:48px}small{color:#7a5a40}</style><h1>Paris Cast · Grade</h1><p class="s">' + esc(longDate(S.date)) + '</p>' + Object.keys(by).map((k) => '<h2>' + esc(k) + '</h2><table>' + by[k].map((r) => '<tr><td class="h">' + esc(r.ini.slice(0, 5)) + '</td><td><b>' + esc(r.t) + '</b> <small>' + esc(r.a) + ' · ' + esc(r.st) + '</small></td><td class="d">' + esc(r.d) + '</td></tr>').join('') + '</table>').join('') + '</html>';
+  const f = document.createElement('iframe');
+  f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  document.body.appendChild(f);
+  f.contentDocument.open(); f.contentDocument.write(html); f.contentDocument.close();
+  setTimeout(() => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { toast('Não consegui abrir a impressão.'); } setTimeout(() => f.remove(), 3000); }, 300);
+}
+function kbHelp() {
+  const k = (a, b) => '<span><span class="kbd">' + a.join('</span> <span class="kbd">') + '</span></span><span>' + b + '</span>';
+  openModal('<div><h2>Atalhos do Estúdio</h2><p class="muted">Funcionam quando nenhum campo de texto está selecionado.</p></div><div class="kbl">' + [k(['↑', '↓'], 'Selecionar a música anterior ou a próxima do setor'), k(['Alt', '↑ ↓'], 'Mover a música selecionada'), k(['Delete'], 'Retirar a música selecionada da grade'), k(['1', '2', '3', '4'], 'Trocar de setor: madrugada, manhã, tarde, noite'), k(['Espaço'], 'Pré-escuta da música selecionada'), k(['N'], 'Ir para o horário de agora na linha do tempo'), k(['Ctrl', 'Z'], 'Desfazer a última alteração da grade')].join('') + '</div><div class="acts"><button class="btn pri" type="button" data-act="close-modal">Fechar</button></div>');
+}
+function estKey(e) {
+  if (S.view !== 'estudio' || !$('#modal').hidden || e.metaKey && e.key.toLowerCase() !== 'z') return;
+  const t = e.target, tag = t && t.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+  const sid = estSector(), L = layout(S.date, sid), sel = selInfo(S.date), k = e.key;
+  if ((e.ctrlKey || e.metaKey) && k.toLowerCase() === 'z') { if (can('programar') && !S.as) { e.preventDefault(); undoLast(); } return; }
+  if (e.ctrlKey) return;
+  if (k === 'ArrowUp' || k === 'ArrowDown') {
+    if (!L.length) return;
+    e.preventDefault();
+    const d = k === 'ArrowUp' ? -1 : 1;
+    if (e.altKey) { if (sel && estOk()) { moveItem(S.date, sel.sid, sel.i, d).then(() => { E.sel = sel.sid + ':' + Math.max(0, Math.min(L.length - 1, sel.i + d)); render(); }); } return; }
+    const ni = sel && sel.sid === sid ? Math.max(0, Math.min(L.length - 1, sel.i + d)) : 0;
+    E.sel = sid + ':' + ni; render(); return;
+  }
+  if ((k === 'Delete' || k === 'Backspace') && sel && estOk()) { e.preventDefault(); removeItem(S.date, sel.sid, sel.i); E.sel = null; return; }
+  if (/^[1-4]$/.test(k)) { E.sector = SECT[+k - 1].id; E.sel = null; render(); return; }
+  if (k === ' ' && sel && sel.e.song) { e.preventDefault(); cueToggle(sel.e.id); return; }
+  if (k.toLowerCase() === 'n') { estNow(); }
+}
+function estNow() {
+  const ph = $('.ph-line'), sc = $('#tlscroll');
+  if (!ph || !sc) { toast('Vá para o dia de hoje para ver o horário de agora.'); return; }
+  sc.scrollLeft += ph.getBoundingClientRect().left - sc.getBoundingClientRect().left - sc.clientWidth / 2;
 }
 const vEstudio = () => estHTML();
 async function estDropSong(id, date, sid, sec) {
@@ -2710,7 +3056,8 @@ async function saveSong() {
   }
   let ok;
   if (mid) {
-    ok = await W(() => S.db.doc('songs/' + mid).update({ title, artist, style, dur }));
+    const old0 = S.songs[mid] || {}, chg = fold(old0.title || '') !== fold(title) || fold(old0.artist || '') !== fold(artist);
+    ok = await W(() => S.db.doc('songs/' + mid).update(chg ? { title, artist, style, dur, cover: '', coverTry: 0 } : { title, artist, style, dur }));
   } else {
     const ref = S.db ? S.db.collection('songs').doc() : null;
     const body = { title, artist, style, dur, by: S.uid || null, at: Date.now() };
@@ -2941,11 +3288,29 @@ async function removeReg(uid) {
 /* ---------- Ações ---------- */
 async function act(a, el) {
   switch (a) {
-    case 'nav': S.fade = 1; S.view = el.dataset.v; S.sel = null; render(); window.scrollTo(0, 0);
+    case 'nav': cueStop(); S.fade = 1; S.view = el.dataset.v; S.sel = null; render(); window.scrollTo(0, 0);
       if (S.view === 'pedidos') refreshQuota('requests', true); else if (S.view === 'sugestoes') refreshQuota('suggestions', true); else if (S.view === 'aovivo') { refreshLikes(true); refreshPoll(true); ping(true); }
       break;
     case 'play': S.tuned = true; userPaused = false; loadedKey = null; S.audioMsg = ''; AIR = onAir(); syncAudio(AIR); render(); ping(true); break;
     case 'stop': S.tuned = false; pauseQuiet(audio); stopKeep(); loadedKey = null; S.audioMsg = ''; flush(); render(); ping(true); break;
+    case 'cv-run': coverJob(true); break;
+    case 'ask-yes': { const f = ASK; ASK = null; closeModal(); if (f) f(); break; }
+    case 'ins-cue': cueToggle(el.dataset.id); break;
+    case 'ins-pin': insPin(); break;
+    case 'ins-unpin': insUnpin(); break;
+    case 'ins-rm': { const sel = selInfo(S.date); if (sel && estOk()) { removeItem(S.date, sel.sid, sel.i); E.sel = null; } break; }
+    case 'ins-move': { const sel = selInfo(S.date), to = $('#insMove') && $('#insMove').value; if (sel && to && estOk()) { estDropBlock(S.date, sel.sid, sel.i, to, null).then(() => { E.sel = null; render(); }); } break; }
+    case 'tool': toolRun(el.dataset.k); break;
+    case 'tool-sort': toolRun('sort', $('#toolSort') && $('#toolSort').value); break;
+    case 'tpl-save': if (estOk()) tplSaveModal(); break;
+    case 'tpl-go': tplSave(); break;
+    case 'tpl-apply': tplApply(el.dataset.id); break;
+    case 'tpl-del': { const t = S.templates[el.dataset.id]; if (t && estOk()) askModal('Apagar o modelo “' + (t.nome || '') + '”?', 'O modelo some da lista. A grade dos dias não muda.', 'Apagar', () => { W(() => S.db.doc('templates/' + el.dataset.id).delete()); }, true); break; }
+    case 'exp-csv': expCsv(); break;
+    case 'exp-print': expPrint(); break;
+    case 'kb-help': kbHelp(); break;
+    case 'est-now': estNow(); break;
+    case 'like-who': if (isDono() && !S.as) likeWho(el.dataset.id); break;
     case 'like': {
       const id = el.dataset.id, was = S.likes[id] || { count: 0, mine: false };
       if (S.likeBusy) break;
@@ -3203,11 +3568,13 @@ document.addEventListener('change', async (e) => {
   if (t.dataset && t.dataset.d) { D[t.dataset.d] = t.value; if (t.dataset.re) render(); }
 });
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && !$('#modal').hidden) closeModal();
+  if (e.key === 'Escape' && !$('#modal').hidden) { closeModal(); return; }
+  estKey(e);
 });
 window.addEventListener('pagehide', flush);
 
 /* ---------- Relógio da rádio ---------- */
+let cjT = 0;
 function tick() {
   const prev = curKey;
   AIR = onAir();
@@ -3215,6 +3582,7 @@ function tick() {
   curKey = cur ? cur.date + cur.sector + cur.id : null;
   syncAudio(AIR);
   ping(); refreshLikes(); refreshPoll();
+  if (++cjT % 20 === 5) coverJob();
   if (S.view === 'pedidos') refreshQuota('requests'); else if (S.view === 'sugestoes') refreshQuota('suggestions');
   const pl0 = S.polls.atual;
   if (pl0 && pl0.status === 'open' && Date.now() >= pl0.endsAt && can('programar') && !S.as) closePoll(false);
@@ -3304,6 +3672,7 @@ async function boot() {
     sub('plan', 'plan');
     sub('requests', 'requests', null, () => { decryptAll(); });
     sub('suggestions', 'suggestions', null, () => { decryptAll(); });
+    sub('templates', 'templates');
     sub('polls', 'polls');
     sub('history', 'history');
     sub('listeners', 'listeners');
