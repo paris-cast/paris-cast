@@ -824,10 +824,16 @@ a.btn { color: inherit; text-decoration: none; }
 .inst .tx b { display: block; font-family: var(--f-display); font-size: 17px; }
 .inst .tx small { color: var(--ink-3); }
 .inst .acts { display: flex; gap: 8px; flex: none; }
-.mnt { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 18px; border-radius: 12px; border: 1px solid #c98a2b; background: color-mix(in srgb, #e0a23a 22%, var(--panel)); color: var(--ink); }
+.mnt { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 16px; padding: 18px 22px; margin: 0 0 22px; border-radius: 14px; border: 2px solid #7a1f12; background: linear-gradient(100deg, #b3361e, #8e2514); color: #fff; box-shadow: 0 10px 28px rgba(122, 31, 18, .38), 0 0 0 4px rgba(179, 54, 30, .18); animation: mntPulse 2.4s ease-in-out infinite; }
+.mnt .mi { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .18); }
+.mnt .mi .i { width: 28px; height: 28px; }
+.mnt .btn { flex: none; background: rgba(255, 255, 255, .16); color: #fff; border-color: rgba(255, 255, 255, .5); }
+@keyframes mntPulse { 50% { box-shadow: 0 10px 28px rgba(122, 31, 18, .38), 0 0 0 9px rgba(179, 54, 30, .08); } }
+@media (prefers-reduced-motion: reduce) { .mnt { animation: none; } }
+@media (max-width: 640px) { .mnt { padding: 14px; gap: 12px; flex-wrap: wrap; } .mnt .mi { width: 42px; height: 42px; } .mnt .tx { flex-basis: calc(100% - 60px); } }
 .mnt .tx { flex: 1; min-width: 0; }
-.mnt .tx b { font-family: var(--f-display); font-size: 17px; }
-.mnt .tx span { display: block; color: var(--ink-2); font-size: 14px; }
+.mnt .tx b { display: block; font-family: var(--f-display); font-size: 24px; line-height: 1.15; }
+.mnt .tx span { display: block; margin-top: 3px; color: rgba(255, 255, 255, .92); font-size: 15px; }
 .stepsl { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 8px; color: var(--ink-2); }
 @media (max-width: 640px) { .inst { flex-wrap: wrap; } .inst .acts { width: 100%; } .inst .acts .btn { flex: 1; } }
 </style>
@@ -1201,6 +1207,12 @@ function startKeep(title) {
 const stopKeep = () => { try { pauseQuiet(keep); } catch (e) { /* ok */ } };
 autoResume(audio); autoResume(keep);
 function syncAudio(air) {
+  if (mntOf()) {
+    const was = S.tuned;
+    S.tuned = false; pauseQuiet(audio); stopKeep(); loadedKey = null;
+    if (was) { S.audioMsg = ''; scheduleRender(); toast('A rádio entrou em manutenção. O som foi pausado.'); }
+    return;
+  }
   if (!S.tuned) { pauseQuiet(audio); stopKeep(); return; }
   const cur = air.cur;
   if (!cur) { pauseQuiet(audio); loadedKey = null; startKeep('Intervalo'); return; }
@@ -1286,7 +1298,7 @@ function vAoVivo() {
   let hero;
   if (cur) {
     const pct = Math.min(100, Math.max(0, ((n.sec - cur.abs) / cur.dur) * 100));
-    hero = artHTML(cur.song, S.tuned) + '<div class="hinfo"><div class="onair"><span class="lamp on"></span>No ar · setor ' + esc(sectName(cur.sector)) + eqHTML(S.tuned) + '</div>' +
+    hero = artHTML(cur.song, S.tuned) + '<div class="hinfo"><div class="onair">' + (mntOf() ? '<span class="lamp"></span>Em manutenção · sem som' : '<span class="lamp on"></span>No ar · setor ' + esc(sectName(cur.sector)) + eqHTML(S.tuned)) + '</div>' +
       '<div><h2>' + esc(cur.song.title) + '</h2><p class="art">' + esc(cur.song.artist) + '</p></div>' +
       '<div class="muted dotline">' + dotFor(cur.song.style) + esc(folderName(cur.song.style)) + '</div>' +
       '<div><div class="prog"><i id="progBar" style="width:' + pct.toFixed(2) + '%"></i></div><div class="times"><span id="tEl">' + mmss(n.sec - cur.abs) + '</span><span>' + mmss(cur.dur) + '</span></div></div>' + reactHTML(cur) + '</div>';
@@ -1406,7 +1418,7 @@ function vLib() {
     }).join('') + (cad ? '<button type="button" class="folder bulk" data-act="bulk-open"><span class="muted">' + ic('plus') + '</span><span><b>Enviar várias músicas</b><small>Separa nas pastas sozinho</small></span></button>' : '') + (cad ? '<button type="button" class="folder" data-act="new-folder" style="border-style:dashed"><span class="muted">' + ic('plus') + '</span><span><b>Nova pasta</b><small>Outro estilo</small></span></button>' : '') + '</div>';
   }
   const det = S.sel && S.songs[S.sel] ? detailHTML() : '';
-  return '<div class="wrap"><div class="ph"><div><h1>Programateca</h1><p>' + intro + '</p></div>' + searchBox + '</div>' + cvPanel() + '<div class="libgrid' + (det ? ' det' : '') + '"><div style="display:grid;gap:14px;min-width:0">' + left + '</div>' + det + '</div></div>';
+  return '<div class="wrap"><div class="ph"><div><h1>Programateca</h1><p>' + intro + '</p></div>' + searchBox + '</div>' + '<div class="libgrid' + (det ? ' det' : '') + '"><div style="display:grid;gap:14px;min-width:0">' + left + '</div>' + det + '</div></div>';
 }
 
 /* ---------- Pedidos protegidos (cifrados) ---------- */
@@ -1709,115 +1721,33 @@ function badWord(text) {
 }
 
 /* ---------- Capa do álbum ---------- */
-const CV = {}, CVP = {};
-const cvKey = (s) => 'pc_cv_' + fold((s.title || '') + '|' + (s.artist || '')).replace(/[^a-z0-9]/g, '').slice(0, 70);
-function coverOf(s) {
-  if (!s) return null;
-  if (s.cover) return s.cover;
-  const k = cvKey(s);
-  if (CV[k] !== undefined) return CV[k] || null;
-  let c = null;
-  try { c = JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { c = null; }
-  if (c && (c.u || Date.now() - c.t < 6 * 864e5)) { CV[k] = c.u || ''; return c.u || null; }
-  if (s.coverTry && Date.now() - s.coverTry < 7 * 864e5) return null;
-  if (!CVP[k] || Date.now() - CVP[k] > 60000) { CVP[k] = Date.now(); fetchCover(s, k); }
-  return null;
-}
-const cvClean = (t) => fold(String(t || '').replace(/[\(\[][^\)\]]*[\)\]]/g, ' ').replace(/\b(feat|ft|part|com)\b\.?.*$/i, ' ').replace(/official|video|clipe|oficial|lyrics|letra|audio|hd|4k/gi, ' ')).replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
-let itGate = 0;
-async function itunesGet(q, country) {
-  const wait = itGate + 3200 - Date.now();
-  itGate = Date.now() + Math.max(0, wait);
-  if (wait > 0) await new Promise((r) => setTimeout(r, wait));
-  const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 8000);
-  try {
-    const r = await fetch('https://itunes.apple.com/search?media=music&entity=song&limit=15&country=' + country + '&term=' + encodeURIComponent(q), { signal: ctl.signal });
-    if (!r.ok) throw new Error('itunes ' + r.status);
-    return (await r.json()).results || [];
-  } finally { clearTimeout(to); }
-}
-async function itunesCover(s) {
-  const ft = cvClean(s.title), fa = cvClean(s.artist);
-  if (!ft) return '';
-  const steps = fa ? [[fa + ' ' + ft, 'BR'], [ft, 'BR'], [fa + ' ' + ft, 'US']] : [[ft, 'BR'], [ft, 'US']];
-  let best = null, bs = 0;
-  for (const [q, country] of steps) {
-    (await itunesGet(q, country)).forEach((x) => {
-      if (!x.artworkUrl100) return;
-      const n = cvClean(x.trackName), ar = cvClean(x.artistName);
-      let sc = 0;
-      if (n === ft) sc += 6; else if (n && (n.indexOf(ft) === 0 || ft.indexOf(n) === 0)) sc += 3; else return;
-      if (fa) { if (ar === fa) sc += 5; else if (ar && (ar.includes(fa) || fa.includes(ar))) sc += 3; else sc -= 4; }
-      if (sc > bs) { bs = sc; best = x; }
-    });
-    if (bs >= 11 || (bs >= 6 && !fa)) break;
-  }
-  return best && bs >= 6 ? best.artworkUrl100.replace(/\/\d+x\d+bb\./, '/600x600bb.') : '';
-}
 const GC = {};
 function genCover(s) {
   s = s || {};
-  const k = (s.id || '') + '|' + (s.title || '') + '|' + (s.style || '');
-  if (GC[k]) return GC[k];
-  const m = /hsl\((\d+)/.exec(sColor(s.style || 'outros')), h = m ? +m[1] : 25;
-  const words = String(s.title || '♪').replace(/[\(\[].*$/, '').split(/\s+/).filter(Boolean);
-  const ini = ((words[0] || '♪')[0] + ((words[1] || '')[0] || '')).toUpperCase();
-  let seed = 0; for (const c of k) seed = (seed * 31 + c.charCodeAt(0)) % 9973;
-  const r1 = 90 + seed % 80, cx = 80 + (seed * 7) % 240, cy = 70 + (seed * 13) % 140;
-  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(' + h + ',52%,46%)"/><stop offset="1" stop-color="hsl(' + ((h + 28) % 360) + ',48%,16%)"/></linearGradient></defs><rect width="400" height="400" fill="url(#g)"/><circle cx="' + cx + '" cy="' + cy + '" r="' + r1 + '" fill="hsl(' + h + ',60%,70%)" fill-opacity=".16"/><circle cx="' + (400 - cx) + '" cy="' + (400 - cy) + '" r="' + (r1 + 40) + '" fill="#000" fill-opacity=".14"/><circle cx="200" cy="190" r="118" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="2"/><circle cx="200" cy="190" r="92" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="1.5"/><text x="200" y="228" text-anchor="middle" font-family="Georgia,\'Times New Roman\',serif" font-size="104" font-weight="700" fill="#fff" fill-opacity=".92">' + ini.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</text><text x="200" y="352" text-anchor="middle" font-family="Georgia,serif" font-size="22" letter-spacing="7" fill="#fff" fill-opacity=".6">PARIS CAST</text></svg>';
-  return (GC[k] = 'data:image/svg+xml,' + encodeURIComponent(svg));
+  const words = String(s.title || '').replace(/[\(\[].*$/, '').split(/\s+/).filter((w) => /[A-Za-z0-9À-ÿ]/.test(w));
+  const ini = (((words[0] || '♪')[0] || '♪') + ((words[1] || '')[0] || '')).toUpperCase();
+  if (GC[ini]) return GC[ini];
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a6531"/><stop offset="1" stop-color="#2b1a10"/></linearGradient></defs><rect width="400" height="400" fill="url(#g)"/><circle cx="130" cy="110" r="120" fill="#f0d3a4" fill-opacity=".10"/><circle cx="290" cy="300" r="140" fill="#000" fill-opacity=".16"/><circle cx="200" cy="185" r="118" fill="none" stroke="#f3dcb8" stroke-opacity=".35" stroke-width="2"/><circle cx="200" cy="185" r="92" fill="none" stroke="#f3dcb8" stroke-opacity=".18" stroke-width="1.5"/><text x="200" y="224" text-anchor="middle" font-family="Georgia,\'Times New Roman\',serif" font-size="104" font-weight="700" fill="#fff4e0" fill-opacity=".95">' + ini.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</text><text x="200" y="352" text-anchor="middle" font-family="Georgia,serif" font-size="22" letter-spacing="7" fill="#f3dcb8" fill-opacity=".75">PARIS CAST</text></svg>';
+  return (GC[ini] = 'data:image/svg+xml,' + encodeURIComponent(svg));
 }
-const coverSrc = (s) => coverOf(s) || genCover(s);
+const coverSrc = (s) => genCover(s);
 const thumb = (s, cls, st) => '<img class="th' + (cls ? ' ' + cls : '') + '"' + (st ? ' style="' + st + '"' : '') + ' src="' + esc(coverSrc(s)) + '" data-sid="' + esc((s && s.id) || '') + '" onerror="cvBad(this)" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">';
 window.cvBad = function (el) { el.onerror = null; el.src = genCover(S.songs[el.dataset.sid] || {}); };
 
-/* Busca de capas em segundo plano (produtor e dono): guarda a capa na própria música para todo mundo */
-const CJ = { on: false, done: 0, found: 0, total: 0, pause: 0, last: '' };
-const coverJobOk = () => !!(S.db && S.canEdit !== false && !S.as && ['produtor', 'dono'].includes(myRole()));
-const coverTodo = (force) => Object.values(S.songs).filter((x) => x.id && !x.cover && (force || !x.coverTry || Date.now() - x.coverTry > 7 * 864e5));
-async function coverJob(force) {
-  if (CJ.on || !coverJobOk() || Date.now() < CJ.pause) return;
-  const todo = coverTodo(force);
-  if (!todo.length) return;
-  CJ.on = true; CJ.done = 0; CJ.found = 0; CJ.total = todo.length; CJ.last = '';
-  scheduleRender();
-  try {
-    for (const song of todo) {
-      if (!coverJobOk()) break;
-      while (E.drag) await new Promise((r) => setTimeout(r, 1500));
-      let u;
-      try { u = await itunesCover(song); } catch (e) { CJ.pause = Date.now() + 5 * 60000; CJ.last = 'A internet recusou por um momento. Tento de novo em alguns minutos.'; break; }
-      try { await S.db.doc('songs/' + song.id).update(u ? { cover: u, coverTry: Date.now() } : { coverTry: Date.now() }); } catch (e) { CJ.last = 'Sem permissão para salvar as capas.'; break; }
-      if (u) { CJ.found++; CV[cvKey(song)] = u; }
-      CJ.done++;
-      const el = $('#cvProg'); if (el) el.innerHTML = cvProgInner();
-    }
-  } finally { CJ.on = false; scheduleRender(); }
-}
-function cvProgInner() {
-  const all = Object.values(S.songs), got = all.filter((x) => x.cover).length;
-  if (CJ.on) return '<b>Procurando capas…</b> ' + CJ.done + ' de ' + CJ.total + ' · ' + CJ.found + ' encontradas. Pode deixar o site aberto.';
-  return '<b>' + got + ' de ' + all.length + '</b> músicas com a capa original' + (all.length > got ? '. As outras mostram uma capa criada pela rádio.' : '.') + (CJ.last ? ' ' + esc(CJ.last) : '');
-}
-function cvPanel() {
-  if (!coverJobOk() || !Object.keys(S.songs).length) return '';
-  return '<section class="panel cvp" aria-label="Capas das músicas"><div id="cvProg" role="status">' + cvProgInner() + '</div><button class="btn sm" type="button" data-act="cv-run"' + (CJ.on ? ' disabled' : '') + '>' + ic('down') + 'Procurar capas agora</button></section>';
-}
-async function fetchCover(s, k) {
-  let u = '';
-  try { u = await itunesCover(s); } catch (e) { return; }
-  CV[k] = u;
-  try { localStorage.setItem(k, JSON.stringify({ u, t: Date.now() })); } catch (e) { /* sem armazenamento */ }
-  if (u && s.id && !s.cover && S.db && S.canEdit !== false && ['produtor', 'dono'].includes(myRole()) && !S.as) { try { S.db.doc('songs/' + s.id).update({ cover: u }).catch(() => {}); } catch (e) { /* sem permissão */ } }
-  updateMediaArt(); scheduleRender();
+const MA = {};
+function mediaArt(song, cb) {
+  const k = (song.id || '') + '|' + (song.title || '') + '|' + (song.style || '');
+  if (MA[k]) { cb(MA[k]); return; }
+  const im = new Image();
+  im.onload = () => { try { const c = document.createElement('canvas'); c.width = c.height = 512; c.getContext('2d').drawImage(im, 0, 0, 512, 512); MA[k] = c.toDataURL('image/png'); cb(MA[k]); } catch (e) { /* sem imagem na tela de bloqueio */ } };
+  im.src = genCover(song);
 }
 function updateMediaArt() {
   try {
     const cur = AIR && AIR.cur;
     if (!cur || !('mediaSession' in navigator) || !window.MediaMetadata) return;
-    const u = coverOf(cur.song);
-    if (!u) return;
-    navigator.mediaSession.metadata = new MediaMetadata({ title: cur.song.title || 'Paris Cast', artist: cur.song.artist || '', album: 'Paris Cast', artwork: [{ src: u, sizes: '600x600', type: 'image/jpeg' }] });
+    const sg = cur.song;
+    mediaArt(sg, (u) => { try { navigator.mediaSession.metadata = new MediaMetadata({ title: sg.title || 'Paris Cast', artist: sg.artist || '', album: 'Paris Cast', artwork: [{ src: u, sizes: '512x512', type: 'image/png' }] }); } catch (e) { /* sem tela de bloqueio */ } });
   } catch (e) { /* sem tela de bloqueio */ }
 }
 function artHTML(song, spin) {
@@ -1856,11 +1786,15 @@ const mntOf = () => { const m = S.config && S.config.maintenance; return m && m.
 function mntBanner() {
   const m = mntOf();
   if (!m) return '';
-  return '<div class="mnt" role="status"><span aria-hidden="true">' + ic('history') + '</span><div class="tx"><b>Voltamos já</b><span>' + esc(m.msg || 'A equipe está fazendo ajustes na rádio.') + (m.back ? ' Previsão: ' + esc(m.back) + '.' : '') + '</span></div>' + (isDono() && !S.as ? '<button class="btn sm" type="button" data-act="mnt-off">Desativar aviso</button>' : '') + '</div>';
+  return '<div class="mnt" role="alert"><span class="mi" aria-hidden="true">' + ic('history') + '</span><div class="tx"><b>Rádio em manutenção · voltamos já</b><span>' + esc(m.msg || 'A equipe está fazendo ajustes na rádio.') + (m.back ? ' Previsão: ' + esc(m.back) + '.' : '') + ' O som está pausado, mas a programação segue no horário.</span></div>' + (isDono() && !S.as ? '<button class="btn sm" type="button" data-act="mnt-off">Desativar aviso</button>' : '') + '</div>';
 }
 function mntPanel() {
   if (!isDono() || S.as || mntOf()) return '';
   return '<section class="panel" aria-label="Aviso de manutenção" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:22px"><div style="flex:1;min-width:220px"><h3 style="margin:0">Aviso de manutenção</h3><p class="muted" style="margin:4px 0 0">Vai mexer em algo? Ligue um aviso “voltamos já” que aparece no topo para todos os ouvintes e equipe.</p></div><button class="btn" type="button" data-act="mnt-open">Ligar aviso</button></section>';
+}
+function mntListenModal() {
+  const m = mntOf() || {};
+  openModal('<div><h2>Rádio em manutenção</h2><p class="muted">' + esc(m.msg || 'A equipe está fazendo ajustes na rádio.') + (m.back ? ' Previsão de volta: <b>' + esc(m.back) + '</b>.' : '') + '</p><p class="muted">Por enquanto o som está desligado. A programação segue no relógio e o som volta assim que o aviso sair.</p></div><div class="acts"><button class="btn pri" type="button" data-act="close-modal">Entendi</button></div>');
 }
 function mntModal() {
   openModal('<div><h2>Aviso de manutenção</h2><p class="muted">Aparece no topo do site para todo mundo até você desativar. A rádio continua tocando.</p></div><div class="fld"><label for="mntMsg">Mensagem</label><input id="mntMsg" maxlength="140" value="A equipe está fazendo ajustes na rádio." autocomplete="off"></div><div class="fld"><label for="mntBack">Previsão de volta (opcional)</label><input id="mntBack" maxlength="40" placeholder="Ex.: hoje às 20h" autocomplete="off"></div><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="mnt-on">Ligar aviso</button></div>');
@@ -3112,7 +3046,7 @@ async function saveSong() {
   let ok;
   if (mid) {
     const old0 = S.songs[mid] || {}, chg = fold(old0.title || '') !== fold(title) || fold(old0.artist || '') !== fold(artist);
-    ok = await W(() => S.db.doc('songs/' + mid).update(chg ? { title, artist, style, dur, cover: '', coverTry: 0 } : { title, artist, style, dur }));
+    ok = await W(() => S.db.doc('songs/' + mid).update(chg ? { title, artist, style, dur } : { title, artist, style, dur }));
   } else {
     const ref = S.db ? S.db.collection('songs').doc() : null;
     const body = { title, artist, style, dur, by: S.uid || null, at: Date.now() };
@@ -3346,7 +3280,7 @@ async function act(a, el) {
     case 'nav': cueStop(); S.fade = 1; S.view = el.dataset.v; S.sel = null; render(); window.scrollTo(0, 0);
       if (S.view === 'pedidos') refreshQuota('requests', true); else if (S.view === 'sugestoes') refreshQuota('suggestions', true); else if (S.view === 'aovivo') { refreshLikes(true); refreshPoll(true); ping(true); }
       break;
-    case 'play': S.tuned = true; userPaused = false; loadedKey = null; S.audioMsg = ''; AIR = onAir(); syncAudio(AIR); render(); ping(true); break;
+    case 'play': if (mntOf()) { mntListenModal(); break; } S.tuned = true; userPaused = false; loadedKey = null; S.audioMsg = ''; AIR = onAir(); syncAudio(AIR); render(); ping(true); break;
     case 'install': doInstall(); break;
     case 'install-x': try { localStorage.setItem('pc_inst_x', String(Date.now())); } catch (e) { /* sem armazenamento */ } render(); break;
     case 'mnt-open': if (isDono() && !S.as) mntModal(); break;
@@ -3358,7 +3292,6 @@ async function act(a, el) {
     }
     case 'mnt-off': if (isDono() && !S.as && await W(() => S.db.doc('config/maintenance').set({ on: false, at: Date.now(), by: S.uid || null }))) toast('Aviso desligado.'); break;
     case 'stop': S.tuned = false; pauseQuiet(audio); stopKeep(); loadedKey = null; S.audioMsg = ''; flush(); render(); ping(true); break;
-    case 'cv-run': coverJob(true); break;
     case 'ask-yes': { const f = ASK; ASK = null; closeModal(); if (f) f(); break; }
     case 'ins-cue': cueToggle(el.dataset.id); break;
     case 'ins-pin': insPin(); break;
@@ -3639,7 +3572,6 @@ document.addEventListener('keydown', (e) => {
 window.addEventListener('pagehide', flush);
 
 /* ---------- Relógio da rádio ---------- */
-let cjT = 0;
 function tick() {
   const prev = curKey;
   AIR = onAir();
@@ -3647,7 +3579,6 @@ function tick() {
   curKey = cur ? cur.date + cur.sector + cur.id : null;
   syncAudio(AIR);
   ping(); refreshLikes(); refreshPoll();
-  if (++cjT % 20 === 5) coverJob();
   if (S.view === 'pedidos') refreshQuota('requests'); else if (S.view === 'sugestoes') refreshQuota('suggestions');
   const pl0 = S.polls.atual;
   if (pl0 && pl0.status === 'open' && Date.now() >= pl0.endsAt && can('programar') && !S.as) closePoll(false);
