@@ -815,6 +815,21 @@ a.btn { color: inherit; text-decoration: none; }
   .poster .scan { font-size: 28px !important; }
   .poster .purl { font-size: 15px !important; }
 }
+
+/* instalar o app e aviso de manutenção */
+.inst { display: flex; align-items: center; gap: 14px; padding: 14px 16px; margin-bottom: 22px; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line)); border-radius: 12px; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 12%, var(--panel)), var(--panel)); }
+.inst .ii { flex: none; width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; background: var(--accent); color: #fff; }
+.inst .ii .i { width: 22px; height: 22px; }
+.inst .tx { flex: 1; min-width: 0; }
+.inst .tx b { display: block; font-family: var(--f-display); font-size: 17px; }
+.inst .tx small { color: var(--ink-3); }
+.inst .acts { display: flex; gap: 8px; flex: none; }
+.mnt { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 18px; border-radius: 12px; border: 1px solid #c98a2b; background: color-mix(in srgb, #e0a23a 22%, var(--panel)); color: var(--ink); }
+.mnt .tx { flex: 1; min-width: 0; }
+.mnt .tx b { font-family: var(--f-display); font-size: 17px; }
+.mnt .tx span { display: block; color: var(--ink-2); font-size: 14px; }
+.stepsl { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 8px; color: var(--ink-2); }
+@media (max-width: 640px) { .inst { flex-wrap: wrap; } .inst .acts { width: 100%; } .inst .acts .btn { flex: 1; } }
 </style>
 </head>
 <body>
@@ -1295,7 +1310,7 @@ function vAoVivo() {
   const lays = SECT.map((s) => ({ s, items: layout(n.date, s.id) }));
   return '<div class="wrap"><div class="ph"><div><h1>Ao vivo</h1><p>' + esc(greet()) + '. Todos ouvem a mesma coisa ao mesmo tempo. A programação é montada pela equipe da rádio.</p></div></div>' +
     '<div class="live"><section class="panel hero" aria-label="No ar"><div class="hero-in">' + hero + '</div>' + ctl + '</section><section class="panel next" aria-label="A seguir"><h3>A seguir</h3>' + nxt + '</section></div>' +
-    pollHTML() + extrasHTML(a) + '<section class="panel today" aria-label="Grade de hoje"><h3>A grade de hoje</h3>' + reguaHTML(n.date, lays) + '</section></div>';
+    pollHTML() + mntPanel() + extrasHTML(a) + '<section class="panel today" aria-label="Grade de hoje"><h3>A grade de hoje</h3>' + reguaHTML(n.date, lays) + '</section></div>';
 }
 
 function reguaHTML(date, lays) {
@@ -1809,6 +1824,46 @@ function artHTML(song, spin) {
   const u = coverSrc(song);
   if (!song) return vinylHTML(song, spin);
   return '<div class="cov' + (spin ? ' on' : '') + '" style="--c:' + sColor(song.style) + '"><img src="' + esc(u) + '" alt="Capa do álbum de ' + esc(song.title) + '" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></div>';
+}
+
+
+/* ---------- Instalar como aplicativo ---------- */
+let DEFER = null;
+const isStandalone = () => { try { return !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; } catch (e) { return false; } };
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const instHidden = () => { try { const t = +localStorage.getItem('pc_inst_x') || 0; return Date.now() - t < 10 * 864e5; } catch (e) { return false; } };
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); DEFER = e; scheduleRender(); });
+window.addEventListener('appinstalled', () => { DEFER = null; try { localStorage.setItem('pc_inst_x', String(Date.now() + 3650 * 864e5)); } catch (e) { /* sem armazenamento */ } scheduleRender(); });
+function instHTML() {
+  if (S.view !== 'aovivo' || isStandalone() || instHidden()) return '';
+  return '<section class="inst" aria-label="Instalar o aplicativo"><span class="ii">' + ic('down') + '</span><div class="tx"><b>Tenha a Paris Cast no celular</b><small>Fica na tela inicial como um aplicativo, abre mais rápido e ajuda a continuar tocando com a tela desligada.</small></div><div class="acts"><button class="btn pri sm" type="button" data-act="install">Instalar</button><button class="btn ghost sm" type="button" data-act="install-x">Agora não</button></div></section>';
+}
+async function doInstall() {
+  if (DEFER) {
+    try { DEFER.prompt(); const r = await DEFER.userChoice; if (r && r.outcome === 'accepted') toast('Instalando a Paris Cast…'); } catch (e) { /* cancelado */ }
+    DEFER = null; scheduleRender(); return;
+  }
+  const ios = isIOS();
+  openModal('<div><h2>Instalar a Paris Cast</h2><p class="muted">' + (ios ? 'No iPhone ou iPad, use o Safari:' : 'No Chrome do celular ou do computador:') + '</p></div>' +
+    (ios
+      ? '<ol class="stepsl"><li>Abra este site no <b>Safari</b> (não funciona dentro de outros aplicativos).</li><li>Toque no botão <b>Compartilhar</b> (o quadrado com a seta para cima).</li><li>Role e toque em <b>Adicionar à Tela de Início</b>.</li><li>Toque em <b>Adicionar</b>. O ícone da rádio aparece na tela inicial.</li></ol>'
+      : '<ol class="stepsl"><li>Toque nos <b>três pontinhos</b> do canto do Chrome.</li><li>Toque em <b>Instalar aplicativo</b> (ou <b>Adicionar à tela inicial</b>).</li><li>Confirme em <b>Instalar</b>. O ícone da rádio aparece na tela inicial.</li></ol><p class="hint">Se a opção não aparecer, o site já pode estar instalado ou o navegador não permite. No computador, procure o ícone de instalar na barra de endereço.</p>') +
+    '<div class="acts"><button class="btn pri" type="button" data-act="close-modal">Entendi</button></div>');
+}
+
+/* ---------- Aviso de manutenção ("voltamos já") ---------- */
+const mntOf = () => { const m = S.config && S.config.maintenance; return m && m.on ? m : null; };
+function mntBanner() {
+  const m = mntOf();
+  if (!m) return '';
+  return '<div class="mnt" role="status"><span aria-hidden="true">' + ic('history') + '</span><div class="tx"><b>Voltamos já</b><span>' + esc(m.msg || 'A equipe está fazendo ajustes na rádio.') + (m.back ? ' Previsão: ' + esc(m.back) + '.' : '') + '</span></div>' + (isDono() && !S.as ? '<button class="btn sm" type="button" data-act="mnt-off">Desativar aviso</button>' : '') + '</div>';
+}
+function mntPanel() {
+  if (!isDono() || S.as || mntOf()) return '';
+  return '<section class="panel" aria-label="Aviso de manutenção" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:22px"><div style="flex:1;min-width:220px"><h3 style="margin:0">Aviso de manutenção</h3><p class="muted" style="margin:4px 0 0">Vai mexer em algo? Ligue um aviso “voltamos já” que aparece no topo para todos os ouvintes e equipe.</p></div><button class="btn" type="button" data-act="mnt-open">Ligar aviso</button></section>';
+}
+function mntModal() {
+  openModal('<div><h2>Aviso de manutenção</h2><p class="muted">Aparece no topo do site para todo mundo até você desativar. A rádio continua tocando.</p></div><div class="fld"><label for="mntMsg">Mensagem</label><input id="mntMsg" maxlength="140" value="A equipe está fazendo ajustes na rádio." autocomplete="off"></div><div class="fld"><label for="mntBack">Previsão de volta (opcional)</label><input id="mntBack" maxlength="40" placeholder="Ex.: hoje às 20h" autocomplete="off"></div><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="mnt-on">Ligar aviso</button></div>');
 }
 
 /* ---------- Ouvindo agora ---------- */
@@ -2665,7 +2720,7 @@ function render() {
   const sv = {}, wy = window.scrollY;
   if (sameView) ['.qlist', '.lsongs', '.bklist'].forEach((q) => { const el = main.querySelector(q); if (el) sv[q] = el.scrollTop; });
   $('#side').innerHTML = sideHTML();
-  main.innerHTML = mheadHTML() + stripHTML() + (views[S.view] || vAoVivo)();
+  main.innerHTML = mheadHTML() + mntBanner() + stripHTML() + instHTML() + (views[S.view] || vAoVivo)();
   if (sameView) {
     Object.entries(sv).forEach(([q, t]) => { const el = main.querySelector(q); if (el) el.scrollTop = t; });
     if (window.scrollY !== wy) window.scrollTo(0, wy);
@@ -3292,6 +3347,16 @@ async function act(a, el) {
       if (S.view === 'pedidos') refreshQuota('requests', true); else if (S.view === 'sugestoes') refreshQuota('suggestions', true); else if (S.view === 'aovivo') { refreshLikes(true); refreshPoll(true); ping(true); }
       break;
     case 'play': S.tuned = true; userPaused = false; loadedKey = null; S.audioMsg = ''; AIR = onAir(); syncAudio(AIR); render(); ping(true); break;
+    case 'install': doInstall(); break;
+    case 'install-x': try { localStorage.setItem('pc_inst_x', String(Date.now())); } catch (e) { /* sem armazenamento */ } render(); break;
+    case 'mnt-open': if (isDono() && !S.as) mntModal(); break;
+    case 'mnt-on': {
+      if (!isDono() || S.as) break;
+      const msg = ($('#mntMsg').value || '').trim().slice(0, 140), back = ($('#mntBack').value || '').trim().slice(0, 40);
+      if (await W(() => S.db.doc('config/maintenance').set({ on: true, msg, back, at: Date.now(), by: S.uid || null }))) { closeModal(); toast('Aviso ligado para todos.'); }
+      break;
+    }
+    case 'mnt-off': if (isDono() && !S.as && await W(() => S.db.doc('config/maintenance').set({ on: false, at: Date.now(), by: S.uid || null }))) toast('Aviso desligado.'); break;
     case 'stop': S.tuned = false; pauseQuiet(audio); stopKeep(); loadedKey = null; S.audioMsg = ''; flush(); render(); ping(true); break;
     case 'cv-run': coverJob(true); break;
     case 'ask-yes': { const f = ASK; ASK = null; closeModal(); if (f) f(); break; }
