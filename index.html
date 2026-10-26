@@ -836,6 +836,67 @@ a.btn { color: inherit; text-decoration: none; }
 .mnt .tx span { display: block; margin-top: 3px; color: rgba(255, 255, 255, .92); font-size: 15px; }
 .stepsl { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 8px; color: var(--ink-2); }
 @media (max-width: 640px) { .inst { flex-wrap: wrap; } .inst .acts { width: 100%; } .inst .acts .btn { flex: 1; } }
+/* ===== Lote 3: semana, equipe, painel, dados, meu, sobre ===== */
+.wkbar { padding: 14px 16px; display: grid; gap: 12px; margin-bottom: 14px; }
+.wk2 { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.wk2 button { display: grid; gap: 2px; justify-items: center; padding: 9px 4px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); min-height: 52px; }
+.wk2 button b { font: 600 14px var(--f-body); }
+.wk2 button span { font: 500 11px var(--f-mono); color: var(--ink-3); }
+.wk2 button.tem span { color: var(--accent); }
+.wk2 button.hoje { border-color: var(--accent); }
+.wk2 button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.wk2 button[aria-pressed="true"] span { color: var(--accent-ink); }
+.wks-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.wks { text-align: left; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+.wks[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.wks .sh { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.wks .sh b { display: inline-flex; gap: 6px; align-items: center; }
+.wks .mt { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-2); }
+.wkgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 14px; margin-bottom: 14px; align-items: start; }
+.wkcol { padding: 16px; display: grid; gap: 10px; }
+.wkcol h3 { font: 600 18px var(--f-display); margin: 0; }
+.wkcol h3 small { font: 500 12px var(--f-mono); color: var(--ink-3); }
+.wkcol input[type="search"] { min-height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--ground); color: var(--ink); font: inherit; }
+.wlist { display: grid; gap: 4px; max-height: 520px; overflow-y: auto; }
+.wr { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 6px 8px; border-radius: 8px; }
+.wr:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.wr .th { width: 38px; height: 38px; border-radius: 6px; object-fit: cover; }
+.wr .tx { min-width: 0; display: grid; }
+.wr .tx b, .wr .tx small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wr .tx small { color: var(--ink-3); font-size: 12px; }
+.wr .t, .wr .d { font: 500 12px var(--f-mono); color: var(--ink-2); }
+.wr .cc { display: flex; gap: 2px; }
+.fixo { font: 600 10px var(--f-mono); padding: 1px 6px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); }
+.nxd { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px; }
+.nxd li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; }
+.nxd .t { font: 600 13px var(--f-body); }
+.wkpick { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 6px 0; }
+.wkpick label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.sht { width: 100%; border-collapse: collapse; min-width: 620px; }
+.sht th, .sht td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+.sht th { font: 600 12px var(--f-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
+.sht select { width: 100%; min-height: 36px; border: 1px solid var(--line); border-radius: 7px; background: var(--ground); color: var(--ink); font: inherit; padding: 0 6px; }
+.rq.undone { opacity: .65; }
+.panel.rqs { list-style: none; padding: 4px 10px; margin: 0; }
+.fld textarea { width: 100%; min-height: 84px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--ground); color: var(--ink); font: inherit; resize: vertical; }
+.fld select { min-height: 42px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--ground); color: var(--ink); font: inherit; }
+.tg { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; min-height: 42px; }
+.hbars { display: flex; align-items: flex-end; gap: 4px; height: 170px; padding: 6px 0 22px; }
+.hbars.wk8 { height: 150px; }
+.hb { position: relative; flex: 1; height: 100%; display: flex; align-items: flex-end; justify-content: center; }
+.hb i { display: block; width: 100%; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #000)); }
+.hb span { position: absolute; bottom: -20px; font: 500 10.5px var(--f-mono); color: var(--ink-3); white-space: nowrap; }
+.hb em { position: absolute; top: -2px; font: 600 11px var(--f-mono); font-style: normal; color: var(--ink-2); transform: translateY(-100%); }
+.how { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--ink-2); line-height: 1.55; }
+.how.sects { list-style: none; padding: 0; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 6px; }
+.how.sects li { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); }
+.how.sects li small { display: block; font: 500 12px var(--f-mono); color: var(--ink-3); }
+.abouth { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding: 14px 18px; margin-bottom: 14px; border-color: var(--accent); }
+@media (max-width: 560px) { .wr { grid-template-columns: auto minmax(0, 1fr) auto auto; } .wr > .t { display: none; } .wk2 button { min-height: 46px; } }
+.wks { display: grid; gap: 4px; }
+.wks .meter { display: block; width: 100%; margin: 8px 0 4px; }
+.wks .mt { display: flex; }
+.wks .hrs { white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -869,7 +930,7 @@ const ROLES = { ouvinte: 'Ouvinte', produtor: 'Produtor', programador: 'Programa
 const STAFF = ['produtor', 'programador', 'dono'];
 const ALL = ['ouvinte', 'produtor', 'programador', 'dono'];
 const LAND = { ouvinte: 'aovivo', produtor: 'programateca', programador: 'estudio', dono: 'ouvintes' };
-const DEF_FOLDERS = ['Funk', 'Forró', 'Rap', 'Trap', 'Sertanejo', 'Pagode', 'Samba', 'MPB', 'Rock', 'Pop', 'Eletrônica', 'Gospel', 'Reggae', 'Axé', 'Piseiro', 'Outros'];
+const DEF_FOLDERS = ['Funk', 'Forró', 'Rap', 'Trap', 'Sertanejo', 'Pagode', 'Samba', 'MPB', 'Rock', 'Pop', 'Eletrônica', 'Gospel', 'Reggae', 'Axé', 'Piseiro', 'Vinhetas', 'Reserva', 'Outros'];
 const HUES = [28, 10, 44, 338, 36, 20, 52, 4, 62, 350, 24, 16, 70, 40, 32, 0];
 const DOW = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
 const DOWS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
@@ -885,6 +946,12 @@ const NAV = [
   { id: 'ouvintes', nome: 'Ouvintes', ic: 'people', roles: STAFF },
   { id: 'alteracoes', nome: 'Alterações', curto: 'Histórico', ic: 'history', roles: ['programador', 'dono'] },
   { id: 'divulgar', nome: 'Divulgar', ic: 'qr', roles: STAFF },
+  { id: 'semana', nome: 'Grade da semana', curto: 'Semana', ic: 'week', roles: ['programador', 'dono'] },
+  { id: 'equipe', nome: 'Equipe', ic: 'team', roles: STAFF },
+  { id: 'dados', nome: 'Dados', ic: 'chart', roles: ['programador', 'dono'] },
+  { id: 'painel', nome: 'Painel do dono', curto: 'Painel', ic: 'shield', roles: ['dono'], dono: true },
+  { id: 'meu', nome: 'Meu histórico', curto: 'Meu', ic: 'user', roles: ALL },
+  { id: 'sobre', nome: 'Sobre a rádio', curto: 'Sobre', ic: 'info', roles: ALL },
   { id: 'radialistas', nome: 'Radialistas', ic: 'key', roles: ['dono'], dono: true }
 ];
 const ICON = {
@@ -916,6 +983,15 @@ Object.assign(ICON, {
 const emblem = (cls) => '<svg class="emb ' + (cls || '') + '" viewBox="0 0 64 72" aria-hidden="true"><path d="M5 68V31a27 27 0 0 1 54 0v37z"/><path d="M32 13 22.5 60M32 13 41.5 60M26.5 40h11M28.8 29h6.4M22.5 60h19"/><path d="M26.5 60q5.5-10 11 0"/><path d="M26 11a6 6 0 0 0 0 6M22.5 9a10 10 0 0 0 0 10M38 11a6 6 0 0 1 0 6M41.5 9a10 10 0 0 1 0 10"/><path d="M5 68h54"/></svg>';
 const SECT_IC = { madrugada: 'stars', dia: 'sun', tarde: 'sunset', noite: 'moon' };
 const sectIc = (id) => ic(SECT_IC[id] || 'sun');
+Object.assign(ICON, {
+  week: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M7.5 14h2M11 14h2M14.5 14h2"/>',
+  team: '<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="17" cy="9.5" r="2.4"/><path d="M16 14.2c2.6-.3 4.5 1.4 4.5 4.3"/>',
+  chart: '<path d="M4 20V4M4 20h16"/><rect x="7.5" y="11" width="3" height="6" rx=".6"/><rect x="12.5" y="7" width="3" height="10" rx=".6"/><rect x="17.5" y="13" width="2.6" height="4" rx=".6"/>',
+  shield: '<path d="M12 3.5 5 6v5.5c0 4.3 3 7.6 7 9 4-1.4 7-4.7 7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>',
+  user: '<circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c0-3.8 3.1-6 7-6s7 2.2 7 6"/>',
+  dl: '<path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/>',
+  info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.6v.1"/>'
+});
 const ic = (n) => '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + (ICON[n] || '') + '</svg>';
 
 /* ---------- Utilitários ---------- */
@@ -1075,7 +1151,7 @@ function entriesAbs(fromDay, days) {
 function onAir() {
   const n = nowSP();
   const list = entriesAbs(n.date, 3);
-  const cur = list.find((e) => e.song && e.dur > 0 && e.abs <= n.sec && n.sec < e.absEnd) || null;
+  const cur = list.find((e) => e.song && e.dur > 0 && e.abs <= n.sec && n.sec < e.absEnd) || reserveCur(n, list);
   const sector = SECT.find((s) => n.sec >= s.ini * 3600 && n.sec < s.fim * 3600) || null;
   return { n, list, cur, sector };
 }
@@ -1298,7 +1374,7 @@ function vAoVivo() {
   let hero;
   if (cur) {
     const pct = Math.min(100, Math.max(0, ((n.sec - cur.abs) / cur.dur) * 100));
-    hero = artHTML(cur.song, S.tuned) + '<div class="hinfo"><div class="onair">' + (mntOf() ? '<span class="lamp"></span>Em manutenção · sem som' : '<span class="lamp on"></span>No ar · setor ' + esc(sectName(cur.sector)) + eqHTML(S.tuned)) + '</div>' +
+    hero = artHTML(cur.song, S.tuned) + '<div class="hinfo"><div class="onair">' + (mntOf() ? '<span class="lamp"></span>Em manutenção · sem som' : '<span class="lamp on"></span>' + (cur.reserve ? 'Programação reserva' : 'No ar · setor ' + esc(sectName(cur.sector))) + eqHTML(S.tuned)) + '</div>' +
       '<div><h2>' + esc(cur.song.title) + '</h2><p class="art">' + esc(cur.song.artist) + '</p></div>' +
       '<div class="muted dotline">' + dotFor(cur.song.style) + esc(folderName(cur.song.style)) + '</div>' +
       '<div><div class="prog"><i id="progBar" style="width:' + pct.toFixed(2) + '%"></i></div><div class="times"><span id="tEl">' + mmss(n.sec - cur.abs) + '</span><span>' + mmss(cur.dur) + '</span></div></div>' + reactHTML(cur) + '</div>';
@@ -1322,7 +1398,7 @@ function vAoVivo() {
   const lays = SECT.map((s) => ({ s, items: layout(n.date, s.id) }));
   return '<div class="wrap"><div class="ph"><div><h1>Ao vivo</h1><p>' + esc(greet()) + '. Todos ouvem a mesma coisa ao mesmo tempo. A programação é montada pela equipe da rádio.</p></div></div>' +
     '<div class="live"><section class="panel hero" aria-label="No ar"><div class="hero-in">' + hero + '</div>' + ctl + '</section><section class="panel next" aria-label="A seguir"><h3>A seguir</h3>' + nxt + '</section></div>' +
-    pollHTML() + mntPanel() + extrasHTML(a) + '<section class="panel today" aria-label="Grade de hoje"><h3>A grade de hoje</h3>' + reguaHTML(n.date, lays) + '</section></div>';
+    pollHTML() + wqHTML() + mntPanel() + extrasHTML(a) + '<section class="panel today" aria-label="Grade de hoje"><h3>A grade de hoje</h3>' + reguaHTML(n.date, lays) + '</section></div>';
 }
 
 function reguaHTML(date, lays) {
@@ -1594,11 +1670,11 @@ const pendBadge = () => (isStaff() && pendCount() ? '<span class="nb" aria-label
 
 function vPed() {
   const staff = isStaff();
-  const blocked = S.canWrite === false;
+  const blocked = S.canWrite === false || !!S.blockedMe;
   const ready = !!(S.config.reqkeys && S.config.reqkeys.pub);
   const off = blocked || !ready || (!staff && S.quota.requests != null && S.quota.requests <= 0);
   const dis = off ? 'disabled' : '';
-  const comp = '<form class="panel compose" data-act="send-request"><div class="two"><div class="fld"><label for="rqTitle">Música</label><input id="rqTitle" type="text" data-d="rqTitle" value="' + esc(val('rqTitle', '')) + '" placeholder="Nome da música" autocomplete="off" ' + dis + '></div><div class="fld"><label for="rqArtist">Cantor, cantora ou banda</label><input id="rqArtist" type="text" data-d="rqArtist" value="' + esc(val('rqArtist', '')) + '" placeholder="Opcional" autocomplete="off" ' + dis + '></div></div><div class="fld"><label for="rqMsg">Recado</label><textarea id="rqMsg" data-d="rqMsg" placeholder="Quer mandar um alô junto? (opcional)" ' + dis + '>' + esc(val('rqMsg', '')) + '</textarea></div><div class="cfoot"><p class="hint">' + (blocked ? 'Seu acesso é só de leitura, então não dá para enviar pedidos.' : !ready ? 'Os pedidos ainda estão sendo ativados. Tente de novo em instantes.' : (staff ? '' : quotaLine('requests', ['pedido', 'pedidos']) + ' ') + 'O pedido não é garantia. A equipe decide se a música entra na programação.') + '</p><button class="btn pri" type="submit" ' + dis + '>' + ic('check') + 'Enviar pedido</button></div><p class="msg" id="rqMsgOut" role="status"></p></form>';
+  const comp = '<form class="panel compose" data-act="send-request"><div class="two"><div class="fld"><label for="rqTitle">Música</label><input id="rqTitle" type="text" data-d="rqTitle" value="' + esc(val('rqTitle', '')) + '" placeholder="Nome da música" autocomplete="off" ' + dis + '></div><div class="fld"><label for="rqArtist">Cantor, cantora ou banda</label><input id="rqArtist" type="text" data-d="rqArtist" value="' + esc(val('rqArtist', '')) + '" placeholder="Opcional" autocomplete="off" ' + dis + '></div></div><div class="fld"><label for="rqMsg">Recado</label><textarea id="rqMsg" data-d="rqMsg" placeholder="Quer mandar um alô junto? (opcional)" ' + dis + '>' + esc(val('rqMsg', '')) + '</textarea></div><div class="cfoot"><p class="hint">' + (blocked ? (S.blockedMe ? 'A equipe pausou seus envios. Fale com a coordenação da rádio.' : 'Seu acesso é só de leitura, então não dá para enviar pedidos.') : !ready ? 'Os pedidos ainda estão sendo ativados. Tente de novo em instantes.' : (staff ? '' : quotaLine('requests', ['pedido', 'pedidos']) + ' ') + 'O pedido não é garantia. A equipe decide se a música entra na programação.') + '</p><button class="btn pri" type="submit" ' + dis + '>' + ic('check') + 'Enviar pedido</button></div><p class="msg" id="rqMsgOut" role="status"></p></form>';
   if (!staff) {
     return '<div class="wrap"><div class="ph"><div><h1>Pedir música</h1><p>Peça uma música para a Paris Cast e ela pode entrar na programação.</p></div></div>' + comp +
       '<div class="anon">' + ic('lock') + '<div><b>Seu pedido é anônimo</b><p>Só a equipe da rádio vê o que foi pedido e quem pediu. Os outros ouvintes não veem nada.</p></div></div></div>';
@@ -1671,7 +1747,7 @@ function vOuv() {
     const reg = S.names[x.id], pe = S.people[x.id] || {}, acct = (S.prof[x.id] || {}).name;
     const cell = '<span class="rb r-' + r + '">' + esc(ROLES[r]) + '</span>' + (edit && !meOwner ? ' <button type="button" class="btn sm" data-act="role-open" data-uid="' + esc(x.id) + '" aria-label="Dar cargo a ' + esc(nm(x.id)) + '">' + ic('key') + 'Dar cargo</button>' : '');
     const sub2 = !reg ? '<span class="who2">Sem cadastro</span>' : showPh && acct && fold(acct) !== fold(reg.nome) ? '<span class="who2">Conta: ' + esc(acct) + '</span>' : '';
-    const del = !showPh ? '' : '<td>' + (x.id === S.uid || !reg ? '' : S.confirmReg === x.id ? '<span style="display:flex;gap:6px"><button class="btn sm danger" type="button" data-act="reg-ok" data-uid="' + esc(x.id) + '">Confirmar</button><button class="btn sm ghost" type="button" data-act="reg-no">Cancelar</button></span>' : '<button class="btn sm ghost" type="button" data-act="reg-ask" data-uid="' + esc(x.id) + '">Remover cadastro</button>') + '</td>';
+    const del = !showPh ? '' : '<td>' + (x.id === S.uid || !reg ? '' : S.confirmReg === x.id ? '<span style="display:flex;gap:6px"><button class="btn sm danger" type="button" data-act="reg-ok" data-uid="' + esc(x.id) + '">Confirmar</button><button class="btn sm ghost" type="button" data-act="reg-no">Cancelar</button></span>' : '<button class="btn sm ghost" type="button" data-act="reg-ask" data-uid="' + esc(x.id) + '">Remover cadastro</button>') + (isDono() && !S.as && x.id !== S.uid ? ' <button class="btn sm ghost" type="button" data-act="' + (S.blocked[x.id] ? 'blk-off' : 'blk-set') + '" data-uid="' + esc(x.id) + '">' + (S.blocked[x.id] ? 'Desbloquear' : 'Bloquear') + '</button>' : '') + '</td>';
     return '<tr><td><span class="pp">' + avatar(x.id) + '<span style="min-width:0;overflow:hidden;text-overflow:ellipsis">' + esc(nm(x.id)) + (x.id === S.uid ? ' <span class="chip">você</span>' : '') + sub2 + '</span></span></td>' + (showPh ? '<td class="tel">' + esc(pe.tel ? fmtPhone(pe.tel) : '—') + '</td>' : '') + '<td>' + cell + '</td><td class="num">' + (x.visits || 0) + '</td><td class="num">' + hm(x.sec || 0) + '</td><td class="num">' + (x.ls && nowMs - x.ls < 75000 ? '<span class="chip ok">ouvindo</span>' : ago(x.last)) + '</td>' + del + '</tr>';
   }).join('');
   const table = L.length ? '<div class="tw"><table><thead><tr><th>Pessoa</th>' + (showPh ? '<th>Telefone</th>' : '') + '<th>Cargo</th><th class="num">Visitas</th><th class="num">Tempo ouvido</th><th class="num">Última vez</th>' + (showPh ? '<th></th>' : '') + '</tr></thead><tbody>' + (tr || '<tr><td colspan="' + cols + '" class="muted">Ninguém encontrado.</td></tr>') + '</tbody></table></div>' : '<div class="empty" style="padding:24px 0"><p>Ninguém entrou ainda.</p></div>';
@@ -1854,7 +1930,7 @@ function waLink(cur) {
   return 'https://wa.me/?text=' + encodeURIComponent(t);
 }
 function reactHTML(cur) {
-  return '<div class="react">' + (HAS_RPC() ? likeBtn(cur) : '') + (HAS_RPC() && isDono() && !S.as ? '<button type="button" class="btn sm ghost" data-act="like-who" data-id="' + esc(cur.id) + '">' + ic('people') + 'Quem curtiu</button>' : '') + '<a class="btn sm wa" id="waBtn" href="' + esc(waLink(cur)) + '" target="_blank" rel="noopener">' + ic('wa') + 'Compartilhar no WhatsApp</a></div>';
+  return '<div class="react">' + (HAS_RPC() ? likeBtn(cur) : '') + (HAS_RPC() && isDono() && !S.as ? '<button type="button" class="btn sm ghost" data-act="like-who" data-id="' + esc(cur.id) + '">' + ic('people') + 'Quem curtiu</button>' : '') + '<a class="btn sm wa" id="waBtn" href="' + esc(waLink(cur)) + '" target="_blank" rel="noopener">' + ic('wa') + 'Compartilhar no WhatsApp</a><button type="button" class="btn sm ghost" data-act="share-card">' + ic('play') + 'Imagem para o Stories</button></div>';
 }
 function extrasHTML(a) {
   const n = a.n;
@@ -2093,11 +2169,11 @@ const sugData = (id) => { const r = S.suggestions[id] || {}; return r.enc ? (S.r
 const sugNew = () => Object.values(S.suggestions).filter((r) => r.status !== 'lida').length;
 const sugBadge = () => (isStaff() && sugNew() ? '<span class="nb" aria-label="' + sugNew() + ' sugestões novas">' + sugNew() + '</span>' : '');
 function vSug() {
-  const staff = isStaff(), blocked = S.canWrite === false, ready = !!(S.config.reqkeys && S.config.reqkeys.pub);
+  const staff = isStaff(), blocked = S.canWrite === false || !!S.blockedMe, ready = !!(S.config.reqkeys && S.config.reqkeys.pub);
   const q = S.quota.suggestions, full = !staff && q != null && q <= 0;
   const dis = blocked || !ready || full ? 'disabled' : '';
   const kinds = Object.entries(SUG_KIND).map(([k, n]) => '<option value="' + k + '"' + (val('sgKind', 'sugestao') === k ? ' selected' : '') + '>' + n + '</option>').join('');
-  const comp = '<form class="panel compose" data-act="send-sug"><div class="fld"><label for="sgKind">Assunto</label><select id="sgKind" data-d="sgKind" ' + dis + '>' + kinds + '</select></div><div class="fld"><label for="sgText">Sua mensagem</label><textarea id="sgText" data-d="sgText" maxlength="600" placeholder="Conte sua ideia, elogio ou problema. Seja gentil e direto." ' + dis + '>' + esc(val('sgText', '')) + '</textarea></div><div class="cfoot"><p class="hint">' + (blocked ? 'Seu acesso é só de leitura.' : !ready ? 'As sugestões ainda estão sendo ativadas. Tente de novo em instantes.' : (staff ? '' : quotaLine('suggestions', ['sugestão', 'sugestões']) + ' ') + 'Só o dono vê quem enviou.') + '</p><button class="btn pri" type="submit" ' + dis + '>' + ic('check') + 'Enviar sugestão</button></div><p class="msg" id="sgOut" role="status"></p></form>';
+  const comp = '<form class="panel compose" data-act="send-sug"><div class="fld"><label for="sgKind">Assunto</label><select id="sgKind" data-d="sgKind" ' + dis + '>' + kinds + '</select></div><div class="fld"><label for="sgText">Sua mensagem</label><textarea id="sgText" data-d="sgText" maxlength="600" placeholder="Conte sua ideia, elogio ou problema. Seja gentil e direto." ' + dis + '>' + esc(val('sgText', '')) + '</textarea></div><div class="cfoot"><p class="hint">' + (blocked ? (S.blockedMe ? 'A equipe pausou seus envios. Fale com a coordenação da rádio.' : 'Seu acesso é só de leitura.') : !ready ? 'As sugestões ainda estão sendo ativadas. Tente de novo em instantes.' : (staff ? '' : quotaLine('suggestions', ['sugestão', 'sugestões']) + ' ') + 'Só o dono vê quem enviou.') + '</p><button class="btn pri" type="submit" ' + dis + '>' + ic('check') + 'Enviar sugestão</button></div><p class="msg" id="sgOut" role="status"></p></form>';
   if (!staff) {
     return '<div class="wrap"><div class="ph"><div><h1>Caixa de sugestões</h1><p>Tem uma ideia para a rádio? Quer elogiar ou avisar de um problema? Escreva aqui. Isto é separado dos pedidos de música.</p></div></div>' + comp +
       '<div class="anon">' + ic('lock') + '<div><b>Anônimo para a equipe</b><p>A mensagem é protegida. A equipe lê o texto, mas só o dono consegue ver quem escreveu.</p></div></div></div>';
@@ -2130,6 +2206,7 @@ async function sendSug() {
   let enc;
   try { enc = await encReq({ text: text.slice(0, 600), kind, by: S.uid || null }); } catch (e) { out.textContent = 'Este navegador não conseguiu proteger a mensagem.'; return; }
   try { await S.db.collection('suggestions').add({ enc, kid: rk.kid || null, at: Date.now(), status: 'nova' }); } catch (e) {
+    if (/bloqueado/.test((e && e.message) || '')) { S.blockedMe = true; render(); return; }
     if (/limite_diario/.test((e && e.message) || '')) { S.quota.suggestions = 0; out.textContent = 'Você já usou as sugestões de hoje. Volte amanhã!'; render(); return; }
     out.textContent = 'Não foi possível enviar agora. Tente de novo.'; return;
   }
@@ -2343,7 +2420,7 @@ function estHTML() {
 
   // barra de estado
   const tot = SECT.reduce((a, x) => a + usedSec(date, x.id), 0);
-  const stat = '<div class="statusbar"><span><b>' + dayCount(date) + '</b> músicas</span><span><b>' + hm(tot) + '</b> programados</span><span>Setor ativo: <b>' + esc(sect.nome) + '</b> · <b>' + hm(Math.max(0, CAP - usedSec(date, sid))) + '</b> livres</span><span>' + (pastS ? 'Setor já foi ao ar: somente leitura' : edit ? 'Edição liberada' : 'Somente leitura') + '</span></div>';
+  const stat = '<div class="statusbar"><span><b>' + dayCount(date) + '</b> músicas</span><span><b>' + hm(tot) + '</b> programados</span><span>Setor ativo: <b>' + esc(sect.nome) + '</b> · <b>' + hm(Math.max(0, CAP - usedSec(date, sid))) + '</b> livres</span>' + statExtra(date, sid) + '<span>' + (pastS ? 'Setor já foi ao ar: somente leitura' : edit ? 'Edição liberada' : 'Somente leitura') + '</span></div>';
   return '<div class="wrap est" style="max-width:1500px">' + bar + '<div class="est-grid">' + lib + mon + tl + ins + scn + '</div>' + stat + '</div>';
 }
 
@@ -2425,7 +2502,7 @@ function insHTML(date, sid, edit, pastS, qi) {
   const tools = (ok ? '<div class="insr"><button class="btn sm" type="button" data-act="tool" data-k="shuffle">Embaralhar</button><button class="btn sm" type="button" data-act="tool" data-k="artists">Evitar artista repetido</button><button class="btn sm" type="button" data-act="tool" data-k="reverse">Inverter</button></div>' +
     '<div class="insr"><select id="toolSort" aria-label="Ordenar por"><option value="titulo">Título A–Z</option><option value="artista">Artista A–Z</option><option value="curta">Mais curtas primeiro</option><option value="longa">Mais longas primeiro</option><option value="estilo">Estilo</option></select><button class="btn sm" type="button" data-act="tool-sort">Ordenar</button></div>' +
     '<div class="insr"><button class="btn sm" type="button" data-act="tool" data-k="unpin">Soltar horários fixos</button><button class="btn sm" type="button" data-act="tool" data-k="missing">Tirar músicas apagadas</button><button class="btn sm danger" type="button" data-act="tool" data-k="clear">Limpar setor</button></div>' : '<p class="hint">Somente leitura: o programador e o dono usam estas ferramentas.</p>') +
-    '<h4>Modelos de setor</h4>' + (ok ? '<div class="insr"><button class="btn sm pri" type="button" data-act="tpl-save"' + (A.L.length ? '' : ' disabled') + '>Salvar este setor como modelo</button></div>' : '') + tpls +
+    (ok ? '<div class="insr"><button class="btn sm" type="button" data-act="vin-open">Intercalar vinhetas</button></div>' : '') + '<h4>Modelos de setor</h4>' + (ok ? '<div class="insr"><button class="btn sm pri" type="button" data-act="tpl-save"' + (A.L.length ? '' : ' disabled') + '>Salvar este setor como modelo</button></div>' : '') + tpls +
     '<h4>Exportar e atalhos</h4><div class="insr"><button class="btn sm" type="button" data-act="exp-csv">Baixar planilha (CSV)</button><button class="btn sm" type="button" data-act="exp-print">' + ic('print') + 'Imprimir a grade</button><button class="btn sm ghost" type="button" data-act="kb-help">Atalhos</button></div>';
   return '<section class="dock ins" aria-label="Inspetor e ferramentas"><h3 class="dh"><span>Inspetor · Análise · Ferramentas</span><span>' + esc(sc.nome) + '</span></h3><div class="insg"><section aria-label="Música selecionada"><h4>Música selecionada</h4>' + ins + '</section><section aria-label="Análise do setor"><h4>Análise · ' + esc(sc.nome) + '</h4>' + ana + '</section><section aria-label="Ferramentas"><h4>Ferramentas do setor</h4>' + tools + '</section></div></section>';
 }
@@ -2608,7 +2685,567 @@ function secAtX(track, x) {
   return Math.round((sc.ini * 3600 + (x - r.left) / E.zoom * 60) / 5) * 5;
 }
 
-const views = { estudio: vEstudio, aovivo: vAoVivo, programacao: vProg, pedidos: vPed, sugestoes: vSug, programateca: vLib, ouvintes: vOuv, alteracoes: vHist, divulgar: vDiv, radialistas: vRad };
+
+/* ======================================================================
+   NOVIDADES 3: grade da semana, programação reserva, vinhetas, equipe,
+   painel do dono, dados, meu histórico, pergunta da semana, cartão, sobre
+   ====================================================================== */
+Object.assign(S, { weekly: {}, shifts: {}, drafts: {}, notes: {}, stafflog: {}, blocked: {}, blockedMe: false, myLikes: null, stats: null, wqRes: null });
+const DOWN = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+const DOWS3 = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+const DOW_ORDER = [1, 2, 3, 4, 5, 6, 0];
+const dowOf = (date) => pd(date).getUTCDay();
+const isMgr = () => can('programar') && !S.as;
+const dl = (name, blob) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); };
+
+/* ---------- Grade da semana (vale para os dias sem programação própria) ---------- */
+function injectWeek() {
+  Object.keys(S.plan).forEach((k) => { if (S.plan[k] && S.plan[k].virtual) delete S.plan[k]; });
+  const today = nowSP().date;
+  for (let k = -1; k <= 14; k++) {
+    const date = addDays(today, k), dow = dowOf(date);
+    for (const sc of SECT) {
+      const key = date + '_' + sc.id;
+      if (S.plan[key]) continue;
+      const w = S.weekly[dow + '_' + sc.id];
+      if (!w || !(w.items || []).length) continue;
+      const pins = {};
+      Object.entries(w.offs || {}).forEach(([id, o]) => { if ((w.items || []).includes(id)) pins[id] = sc.ini * 3600 + (+o || 0); });
+      S.plan[key] = { date, sector: sc.id, items: (w.items || []).filter((id) => S.songs[id]), pins, virtual: true };
+    }
+  }
+}
+const WK = { dow: null, sid: 'dia', folder: '' };
+const wkDoc = (dow, sid) => S.weekly[dow + '_' + sid] || { items: [], offs: {} };
+const wkPins = (sid, w) => { const sc = SECT.find((x) => x.id === sid), p = {}; Object.entries(w.offs || {}).forEach(([id, o]) => { if ((w.items || []).includes(id)) p[id] = sc.ini * 3600 + (+o || 0); }); return p; };
+const wkUsed = (dow) => { const m = {}; for (const s of SECT) for (const id of (wkDoc(dow, s.id).items || [])) m[id] = s.id; return m; };
+const wkCount = (dow) => SECT.reduce((a, s) => a + (wkDoc(dow, s.id).items || []).length, 0);
+const wkSec = (dow, sid) => (wkDoc(dow, sid).items || []).reduce((a, id) => a + (+(S.songs[id] || {}).dur || 0), 0);
+const wkSave = (dow, sid, items, offs) => W(() => S.db.doc('weekly/' + dow + '_' + sid).set({ dow, sector: sid, items, offs: offs || {}, at: Date.now(), by: S.uid || null }));
+function vSem() {
+  const today = nowSP().date, td = dowOf(today);
+  if (WK.dow == null) WK.dow = td;
+  const dow = WK.dow, sid = WK.sid, sc = SECT.find((x) => x.id === sid), edit = isMgr();
+  const dchips = DOW_ORDER.map((d) => '<button type="button" data-act="wk-dow" data-d="' + d + '" aria-pressed="' + (d === dow) + '" class="' + (d === td ? 'hoje ' : '') + (wkCount(d) ? 'tem' : '') + '"><b>' + DOWS3[d] + '</b><span>' + wkCount(d) + '</span></button>').join('');
+  const stabs = SECT.map((x) => { const u = wkSec(dow, x.id), c = (wkDoc(dow, x.id).items || []).length; return '<button type="button" class="wks" data-act="wk-sec" data-id="' + x.id + '" aria-pressed="' + (x.id === sid) + '"><span class="sh"><b>' + sectIc(x.id) + x.nome + '</b><span class="hrs">' + p2(x.ini) + ':00–' + p2(x.fim) + ':00</span></span><span class="meter" style="margin:0"><b style="width:' + Math.min(100, u / CAP * 100).toFixed(1) + '%"></b></span><span class="mt"><span>' + c + (c === 1 ? ' música' : ' músicas') + ' · ' + hm(u) + '</span><span>' + (CAP - u > 0 ? hm(CAP - u) + ' livres' : 'Completo') + '</span></span></button>'; }).join('');
+  const used = wkUsed(dow), q = fold(val('wkq', '')), fl = allFolders(), counts = {};
+  Object.values(S.songs).forEach((x) => { counts[x.style] = (counts[x.style] || 0) + 1; });
+  let ls = Object.values(S.songs).filter((x) => +x.dur > 0).sort((a, b) => fold(a.title).localeCompare(fold(b.title)));
+  if (WK.folder) ls = ls.filter((x) => x.style === WK.folder);
+  if (q) ls = ls.filter((x) => fold(x.title).includes(q) || fold(x.artist).includes(q));
+  const fch = '<div class="fchips"><button type="button" data-act="wk-folder" data-id="" aria-pressed="' + !WK.folder + '">Todas</button>' + fl.filter((f) => counts[f.id]).map((f) => '<button type="button" data-act="wk-folder" data-id="' + esc(f.id) + '" aria-pressed="' + (WK.folder === f.id) + '">' + esc(f.nome) + ' ' + counts[f.id] + '</button>').join('') + '</div>';
+  const lib = ls.slice(0, 250).map((x) => { const u = used[x.id]; return '<div class="wr">' + thumb(x) + '<span class="tx"><b>' + esc(x.title) + '</b><small>' + esc(x.artist) + (u ? ' · já está em ' + esc(sectName(u)) : '') + '</small></span><span class="d">' + mmss(+x.dur || 0) + '</span><button class="ib" type="button" data-act="wk-add" data-id="' + x.id + '" aria-label="Adicionar ' + esc(x.title) + '" ' + (edit && !u ? '' : 'disabled') + '>' + ic('plus') + '</button></div>'; }).join('');
+  const w = wkDoc(dow, sid), L = layoutOf(sid, w.items, wkPins(sid, w));
+  const base = L.map((e, i) => '<div class="wr">' + '<span class="t">' + hh(e.start) + '</span>' + (e.song ? thumb(e.song) : '') + '<span class="tx"><b>' + (e.song ? esc(e.song.title) : 'Música removida') + (e.pin != null ? ' <span class="fixo">fixo</span>' : '') + '</b><small>' + (e.song ? esc(e.song.artist) + ' · ' + mmss(e.dur) : '') + '</small></span>' + (edit ? '<span class="cc"><button class="ib" type="button" data-act="wk-up" data-i="' + i + '" aria-label="Subir" ' + (i === 0 ? 'disabled' : '') + '>' + ic('up') + '</button><button class="ib" type="button" data-act="wk-down" data-i="' + i + '" aria-label="Descer" ' + (i === L.length - 1 ? 'disabled' : '') + '>' + ic('down') + '</button><button class="ib" type="button" data-act="wk-rm" data-i="' + i + '" aria-label="Retirar">' + ic('x') + '</button></span>' : '') + '</div>').join('');
+  const nx = Array.from({ length: 7 }, (_, k) => addDays(today, k)).map((d) => {
+    const real = SECT.filter((s) => S.plan[d + '_' + s.id] && !S.plan[d + '_' + s.id].virtual).length, virt = SECT.filter((s) => (S.plan[d + '_' + s.id] || {}).virtual).length;
+    const st = real ? '<span class="chip ok">Programação própria</span>' : virt ? '<span class="chip acc">Grade da semana</span>' : '<span class="chip warn">Vazio</span>';
+    return '<li><span class="t">' + esc(DOWS3[dowOf(d)] + ' ' + shortDate(d)) + '</span>' + st + '</li>';
+  }).join('');
+  return '<div class="wrap"><div class="ph"><div><h1>Grade da semana</h1><p>Monte uma vez e a rádio repete toda semana. Vale para todo dia que ainda não tem programação própria. Se você mexer num dia no Estúdio, aquele dia passa a ser só dele.</p></div></div>' +
+    '<div class="panel wkbar"><div class="wk2" role="group" aria-label="Dia da semana">' + dchips + '</div>' + (edit ? '<div class="acts" style="margin:0"><button class="btn sm" type="button" data-act="wk-copy">Copiar ' + esc(DOWN[dow].toLowerCase()) + ' para outros dias</button><button class="btn sm" type="button" data-act="wk-imp">Importar de um dia da grade</button><button class="btn sm danger" type="button" data-act="wk-clear">Limpar ' + esc(DOWN[dow].toLowerCase()) + '</button></div>' : '<p class="hint">Somente leitura: o programador e o dono montam a grade da semana.</p>') + '</div>' +
+    '<div class="wks-row">' + stabs + '</div>' +
+    '<div class="wkgrid"><section class="panel wkcol"><h3>Biblioteca</h3><input type="search" data-d="wkq" data-re="1" value="' + esc(val('wkq', '')) + '" placeholder="Buscar música ou artista" autocomplete="off" aria-label="Buscar na biblioteca">' + fch + '<div class="wlist">' + (lib || '<div class="empty" style="padding:24px 8px"><p>Nada encontrado.</p></div>') + '</div></section>' +
+    '<section class="panel wkcol"><h3>' + esc(DOWN[dow]) + ' · ' + esc(sc.nome) + ' <small>' + L.length + (L.length === 1 ? ' música' : ' músicas') + '</small></h3><div class="wlist">' + (base || '<div class="empty" style="padding:24px 8px"><p>Nada neste setor ainda. Escolha músicas na biblioteca ao lado.</p></div>') + '</div></section></div>' +
+    '<section class="panel"><h3 style="margin-top:0">Próximos 7 dias</h3><ul class="nxd">' + nx + '</ul></section></div>';
+}
+async function wkAdd(id) {
+  const dow = WK.dow, sid = WK.sid, sc = SECT.find((x) => x.id === sid), sg = S.songs[id];
+  if (!isMgr() || !sg) return;
+  const w = wkDoc(dow, sid), d = +sg.dur || 0;
+  if (wkUsed(dow)[id]) { toast('Essa música já está neste dia.'); return; }
+  if (wkSec(dow, sid) + d > CAP) { toast('Não cabe no setor ' + sc.nome + '.'); return; }
+  const items = (w.items || []).concat([id]);
+  if (await wkSave(dow, sid, items, w.offs)) toast('Adicionada.');
+}
+async function wkMove(i, dir) {
+  const dow = WK.dow, sid = WK.sid, w = wkDoc(dow, sid), items = (w.items || []).slice(), j = i + dir;
+  if (!isMgr() || j < 0 || j >= items.length) return;
+  const t = items[i]; items[i] = items[j]; items[j] = t;
+  const L = layoutOf(sid, items, wkPins(sid, w));
+  if (L.length && L[L.length - 1].end > SECT.find((x) => x.id === sid).fim * 3600) { toast('Essa ordem não cabe no setor.'); return; }
+  await wkSave(dow, sid, items, w.offs);
+}
+async function wkRm(i) {
+  const dow = WK.dow, sid = WK.sid, w = wkDoc(dow, sid), items = (w.items || []).slice(), offs = Object.assign({}, w.offs || {});
+  if (!isMgr()) return;
+  delete offs[items[i]]; items.splice(i, 1);
+  await wkSave(dow, sid, items, offs);
+}
+function wkCopyModal() {
+  const dow = WK.dow;
+  openModal('<div><h2>Copiar ' + esc(DOWN[dow].toLowerCase()) + ' para outros dias</h2><p class="muted">Copia os 4 setores. O que já existir nos dias escolhidos é substituído.</p></div><div class="wkpick">' + DOW_ORDER.filter((d) => d !== dow).map((d) => '<label><input type="checkbox" class="wkc" value="' + d + '"> ' + esc(DOWN[d]) + '</label>').join('') + '</div><div class="acts"><button class="btn ghost" type="button" data-act="wk-util">Marcar seg a sex</button><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="wk-copy-go">Copiar</button></div>');
+}
+async function wkCopyGo() {
+  const src = WK.dow, tg = Array.from(document.querySelectorAll('.wkc:checked')).map((x) => +x.value);
+  if (!tg.length) { toast('Marque pelo menos um dia.'); return; }
+  closeModal();
+  let ok = true;
+  for (const t of tg) for (const s of SECT) { const w = wkDoc(src, s.id); ok = (await wkSave(t, s.id, (w.items || []).slice(), Object.assign({}, w.offs || {}))) && ok; }
+  if (ok) toast('Copiado para ' + tg.length + (tg.length === 1 ? ' dia.' : ' dias.'));
+}
+function wkImpModal() {
+  openModal('<div><h2>Importar de um dia da grade</h2><p class="muted">Copia a programação real de um dia (os 4 setores, com os horários fixos) para ' + esc(DOWN[WK.dow].toLowerCase()) + ' da grade da semana. O que já estava aqui é substituído.</p></div><div class="fld"><label for="wkImpD">Dia</label><input id="wkImpD" type="date" value="' + nowSP().date + '"></div><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="wk-imp-go">Importar</button></div>');
+}
+async function wkImpGo() {
+  const date = ($('#wkImpD') || {}).value, dow = WK.dow;
+  if (!date) { toast('Escolha o dia.'); return; }
+  if (!SECT.some((s) => ((S.plan[date + '_' + s.id] || {}).items || []).length)) { toast('Esse dia não tem músicas.'); return; }
+  closeModal();
+  let ok = true, n = 0;
+  for (const s of SECT) {
+    const d = S.plan[date + '_' + s.id] || {}, items = (d.items || []).filter((id) => S.songs[id]), offs = {};
+    Object.entries(d.pins || {}).forEach(([id, v]) => { if (items.includes(id)) offs[id] = Math.round(v - s.ini * 3600); });
+    n += items.length;
+    ok = (await wkSave(dow, s.id, items, offs)) && ok;
+  }
+  if (ok) toast(n + ' músicas importadas.');
+}
+function wkClear() {
+  const dow = WK.dow;
+  askModal('Limpar ' + DOWN[dow].toLowerCase() + '?', 'Tira todas as músicas dos 4 setores deste dia da semana. Dias que já têm programação própria não mudam.', 'Limpar', async () => { let ok = true; for (const s of SECT) if ((wkDoc(dow, s.id).items || []).length) ok = (await wkSave(dow, s.id, [], {})) && ok; if (ok) toast('Dia limpo.'); }, true);
+}
+
+/* ---------- Programação reserva: toca no lugar do silêncio ---------- */
+function reserveCur(n, list) {
+  const rv = S.config && S.config.reserve;
+  if (!rv || !rv.on) return null;
+  const fid = rv.folder || 'reserva';
+  const pool = Object.values(S.songs).filter((s) => s.style === fid && +s.dur > 0).sort((a, b) => (a.id < b.id ? -1 : 1));
+  if (!pool.length) return null;
+  let gs = 0, ge = Infinity;
+  for (const e of list) {
+    if (!(e.song && e.dur > 0)) continue;
+    if (e.absEnd <= n.sec) gs = Math.max(gs, e.absEnd); else if (e.abs > n.sec) ge = Math.min(ge, e.abs);
+  }
+  let seed = 0; for (const c of n.date + ':' + gs) seed = (seed * 31 + c.charCodeAt(0)) % 100003;
+  let i = seed % pool.length, t = gs;
+  for (let g = 0; g < 6000; g++) {
+    const s = pool[i % pool.length], d = +s.dur;
+    if (n.sec < t + d) {
+      const end = Math.min(t + d, ge), sec = sectAt(n.sec);
+      return { id: s.id, song: s, start: t, end, dur: end - t, pin: null, date: n.date, sector: sec ? sec.id : 'dia', abs: t, absEnd: end, reserve: true };
+    }
+    t += d; i++;
+  }
+  return null;
+}
+
+/* ---------- Vinhetas intercaladas ---------- */
+const isVin = (id) => (S.songs[id] || {}).style === 'vinhetas';
+function vinModal() {
+  const mine = planOf(S.date, estSector()).items.filter(isVin).length, free = Object.values(S.songs).filter((s) => s.style === 'vinhetas' && +s.dur > 0 && !dayUsedMap(S.date)[s.id]).length;
+  openModal('<div><h2>Intercalar vinhetas</h2><p class="muted">Coloca uma vinheta (da pasta <b>Vinhetas</b>) depois de cada certo número de músicas do setor ' + esc(sectName(estSector())) + '. Cada vinheta toca uma vez por dia.' + (mine ? ' As vinhetas que já estão neste setor são reorganizadas.' : '') + '</p><p class="hint">Vinhetas disponíveis agora: <b>' + (free + mine) + '</b>.</p></div><div class="fld"><label for="vinN">Uma vinheta a cada</label><select id="vinN">' + [2, 3, 4, 5, 6, 8, 10].map((k) => '<option value="' + k + '"' + (k === 4 ? ' selected' : '') + '>' + k + ' músicas</option>').join('') + '</select></div><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="vin-go">Intercalar</button></div>');
+}
+async function vinRun() {
+  if (!estOk()) return;
+  const n = +($('#vinN') || {}).value || 4, date = S.date, sid = estSector(), sc = SECT.find((x) => x.id === sid), pl = planOf(date, sid);
+  const used = dayUsedMap(date), mineV = pl.items.filter(isVin);
+  const pool = shuffle(Object.values(S.songs).filter((s) => s.style === 'vinhetas' && +s.dur > 0 && (!used[s.id] || mineV.includes(s.id))).map((s) => s.id));
+  if (!pool.length) { closeModal(); toast('Não há vinhetas disponíveis. Cadastre vinhetas na pasta Vinhetas.'); return; }
+  const base = pl.items.filter((id) => !isVin(id)), items = []; let c = 0, vi = 0;
+  base.forEach((id, k) => { items.push(id); c++; if (c % n === 0 && k < base.length - 1 && vi < pool.length) items.push(pool[vi++]); });
+  const pins = {}; items.forEach((id) => { if (pl.pins[id] != null && !isVin(id)) pins[id] = pl.pins[id]; });
+  const L = layoutOf(sid, items, pins);
+  closeModal();
+  if (L.length && L[L.length - 1].end > sc.fim * 3600) { toast('Com as vinhetas não cabe no setor.'); return; }
+  if (L.some((e) => e.pin != null && e.start > e.pin + 0.5)) { toast('Uma vinheta atrasaria uma música de horário fixo. Solte os horários fixos antes.'); return; }
+  if (await savePlan(date, sid, items, pins)) toast(vi + (vi === 1 ? ' vinheta intercalada.' : ' vinhetas intercaladas.'));
+}
+
+/* ---------- Equipe: anotações, escala, aprovação do dia, entradas ---------- */
+const staffUids = () => { const s = new Set(); Object.entries(S.roles).forEach(([id, r]) => { if (r && STAFF.includes(r.role)) s.add(id); }); if (S.uid && isStaff()) s.add(S.uid); return Array.from(s).sort((a, b) => fold(nm(a)).localeCompare(fold(nm(b)))); };
+const daySig = (date) => {
+  let s = '';
+  SECT.forEach((x) => { const d = S.plan[date + '_' + x.id] || {}; s += x.id + ':' + (d.items || []).join(',') + '|' + JSON.stringify(d.pins || {}) + ';'; });
+  let h = 5381; for (let i = 0; i < s.length; i++) h = (((h << 5) + h) + s.charCodeAt(i)) >>> 0;
+  return String(h);
+};
+function draftState(date) {
+  const d = S.drafts[date];
+  if (!d) return { k: 'none', t: 'Sem revisão', cls: '' };
+  const ch = d.sig !== daySig(date);
+  if (d.status === 'aprovado') return ch ? { k: 'mudou', t: 'Mudou depois de aprovado', cls: 'warn' } : { k: 'ok', t: 'Aprovado', cls: 'ok' };
+  if (d.status === 'ajustes') return { k: 'ajustes', t: 'Ajustes pedidos', cls: 'warn' };
+  return ch ? { k: 'pend2', t: 'Em revisão (mudou depois do envio)', cls: 'warn' } : { k: 'pend', t: 'Aguardando aprovação', cls: 'acc' };
+}
+function statExtra(date, sid) {
+  const virt = (S.plan[date + '_' + sid] || {}).virtual, dr = S.drafts[date] ? draftState(date) : null;
+  return (virt ? '<span>Veio da grade da semana</span>' : '') + (dr ? '<span>Revisão: <b>' + esc(dr.t) + '</b></span>' : '');
+}
+function vEq() {
+  const mgr = isMgr(), dono = isDono() && !S.as, staff = isStaff();
+  if (!staff) return '<div class="wrap"><div class="panel empty"><h3>Área da equipe</h3></div></div>';
+  // anotações
+  const nts = Object.entries(S.notes).map(([id, n]) => Object.assign({ id }, n)).sort((a, b) => (a.done ? 1 : 0) - (b.done ? 1 : 0) || (b.at || 0) - (a.at || 0));
+  const nrows = nts.map((n) => '<li class="rq' + (n.done ? ' undone' : '') + '" data-st="' + (n.done ? 'recusada' : 'novo') + '">' + avatar(n.by) + '<div style="min-width:0"><div class="hd"><b>' + esc(n.by ? nm(n.by) : 'Equipe') + '</b><small>' + ago(n.at) + '</small>' + (n.done ? '<span class="chip ok">Resolvido</span>' : '') + '</div><p class="quote" style="white-space:pre-wrap">' + esc(n.text) + '</p><div class="acts" style="justify-content:flex-start"><button class="btn sm ' + (n.done ? 'ghost' : 'pri') + '" type="button" data-act="nt-done" data-id="' + esc(n.id) + '">' + (n.done ? 'Reabrir' : 'Marcar como resolvido') + '</button>' + (dono || n.by === S.uid ? '<button class="btn sm ghost" type="button" data-act="nt-del" data-id="' + esc(n.id) + '">Apagar</button>' : '') + '</div></div></li>').join('');
+  const notes = '<section class="panel sec2"><div><h2>Anotações da equipe</h2><p class="muted">Recados internos entre a equipe. Os ouvintes não veem. Ex.: “falta o áudio da música X”.</p></div><div class="fld"><label for="ntText">Nova anotação</label><textarea id="ntText" data-d="ntText" maxlength="500" placeholder="Escreva o recado…">' + esc(val('ntText', '')) + '</textarea></div><div class="acts" style="justify-content:flex-start"><button class="btn pri" type="button" data-act="nt-add">' + ic('plus') + 'Adicionar anotação</button></div>' + (nrows ? '<ul class="panel rqs">' + nrows + '</ul>' : '<p class="hint">Nenhuma anotação ainda.</p>') + '</section>';
+  // escala
+  const today = nowSP().date, su = staffUids();
+  const head = '<tr><th>Dia</th>' + SECT.map((x) => '<th>' + esc(x.nome) + '</th>').join('') + '</tr>';
+  const rowsS = Array.from({ length: 7 }, (_, k) => addDays(today, k)).map((d) => '<tr><td><b>' + esc(DOWS3[dowOf(d)]) + '</b> ' + shortDate(d) + '</td>' + SECT.map((x) => {
+    const cur = (S.shifts[d + '_' + x.id] || {}).uid || '';
+    if (!mgr) return '<td>' + (cur ? esc(nm(cur)) : '<span class="muted">—</span>') + '</td>';
+    return '<td><select data-act="sh-set" data-k="' + d + '_' + x.id + '" aria-label="Responsável ' + esc(shortDate(d) + ' ' + x.nome) + '"><option value="">—</option>' + su.concat(cur && !su.includes(cur) ? [cur] : []).map((u) => '<option value="' + esc(u) + '"' + (u === cur ? ' selected' : '') + '>' + esc(nm(u)) + '</option>').join('') + '</select></td>';
+  }).join('') + '</tr>').join('');
+  const shifts = '<section class="panel sec2"><div><h2>Escala de turnos</h2><p class="muted">Quem fica responsável por cada turno nos próximos 7 dias. ' + (mgr ? 'Escolha o nome em cada turno.' : 'Só o programador e o dono alteram.') + '</p></div><div class="tw"><table class="sht"><thead>' + head + '</thead><tbody>' + rowsS + '</tbody></table></div></section>';
+  // aprovação
+  const date = val('drDate', today), ds = draftState(date), dr = S.drafts[date] || null, cnt = dayCount(date);
+  const drBtns = (mgr && !dono ? '<button class="btn pri" type="button" data-act="dr-send"' + (cnt ? '' : ' disabled') + '>Enviar para aprovação</button>' : '') + (dono ? '<button class="btn pri" type="button" data-act="dr-ok"' + (cnt ? '' : ' disabled') + '>Aprovar a grade deste dia</button><button class="btn" type="button" data-act="dr-adj">Pedir ajustes</button>' + (mgr ? '<button class="btn ghost" type="button" data-act="dr-send"' + (cnt ? '' : ' disabled') + '>Marcar como em revisão</button>' : '') : '');
+  const appr = '<section class="panel sec2"><div><h2>Revisão da grade do dia</h2><p class="muted">O programador envia o dia para o dono conferir. É um aviso de conferência: a grade já está no ar e continua valendo. Se a grade mudar depois da aprovação, o selo avisa.</p></div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end"><div class="fld" style="margin:0"><label for="drDate">Dia</label><input id="drDate" type="date" data-d="drDate" data-re="1" value="' + esc(date) + '"></div><div><span class="chip ' + ds.cls + '" style="font-size:14px;padding:6px 12px">' + esc(ds.t) + '</span> <small class="muted">' + cnt + (cnt === 1 ? ' música' : ' músicas') + ' nesse dia</small></div></div>' +
+    (dr ? '<p class="hint">' + (dr.by ? 'Enviado por <b>' + esc(nm(dr.by)) + '</b> ' + ago(dr.at) + '. ' : '') + (dr.decBy ? 'Decidido por <b>' + esc(nm(dr.decBy)) + '</b> ' + ago(dr.decAt) + '.' : '') + (dr.comment ? ' Recado: “' + esc(dr.comment) + '”' : '') + '</p>' : '') +
+    (dono ? '<div class="fld"><label for="drCom">Recado para o programador (opcional)</label><input id="drCom" data-d="drCom" maxlength="140" value="' + esc(val('drCom', '')) + '" autocomplete="off"></div>' : '') +
+    '<div class="acts" style="justify-content:flex-start">' + (drBtns || '<p class="hint">Só o programador e o dono usam a revisão.</p>') + '</div></section>';
+  // entradas
+  const lg = Object.entries(S.stafflog).map(([id, l]) => Object.assign({ id }, l)).sort((a, b) => (b.at || 0) - (a.at || 0)).slice(0, 40);
+  const logs = dono ? '<section class="panel sec2"><div><h2>Entradas da equipe</h2><p class="muted">Quem entrou com conta de radialista e quando. Só o dono vê. Mostra as 40 mais recentes.</p></div>' + (lg.length ? '<ul class="panel rqs">' + lg.map((l) => '<li class="rq">' + avatar(l.uid) + '<div style="min-width:0"><div class="hd"><b>' + esc(nm(l.uid)) + '</b><span class="rb r-' + esc(ROLES[l.role] ? l.role : 'ouvinte') + '">' + esc(ROLES[l.role] || 'Equipe') + '</span><small>' + ago(l.at) + ' · ' + esc(new Date(l.at).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })) + '</small></div></div></li>').join('') + '</ul>' : '<p class="hint">Nenhuma entrada registrada ainda.</p>') + '</section>' : '';
+  return '<div class="wrap"><div class="ph"><div><h1>Equipe</h1><p>Anotações, escala de turnos, revisão da grade e registro de entradas. Só quem tem cargo vê esta aba.</p></div></div>' + notes + shifts + appr + logs + '</div>';
+}
+async function logStaff() {
+  if (S.logged || !S.db || !S.uid || S.as) return;
+  if (window.__staff && window.__staff.isAnon()) return;
+  const r = role();
+  if (!STAFF.includes(r)) return;
+  try { if (sessionStorage.getItem('pc_logged')) { S.logged = true; return; } } catch (e) { /* sem armazenamento */ }
+  S.logged = true;
+  try { await S.db.collection('stafflog').add({ uid: S.uid, role: r, at: Date.now() }); sessionStorage.setItem('pc_logged', '1'); } catch (e) { /* sem permissão */ }
+}
+
+/* ---------- Painel do dono: cópia de segurança, restaurar, bloqueios, donos, reserva, texto Sobre ---------- */
+const BK_COLS = ['songs', 'folders', 'plan', 'weekly', 'templates', 'polls', 'config', 'roles', 'names', 'people', 'listeners', 'claims', 'shifts', 'notes', 'drafts', 'blocked', 'history', 'requests', 'suggestions'];
+const RS_GROUPS = [['musicas', 'Músicas e pastas', ['songs', 'folders']], ['grade', 'Grade dos dias, grade da semana e modelos', ['plan', 'weekly', 'templates']], ['cadastros', 'Cadastros, cargos e bloqueios', ['names', 'people', 'roles', 'claims', 'listeners', 'blocked']], ['pedidos', 'Pedidos e sugestões (protegidos)', ['requests', 'suggestions']], ['equipe', 'Equipe: anotações, escala, revisões e histórico', ['notes', 'shifts', 'drafts', 'history']], ['config', 'Configurações e enquetes', ['config', 'polls']]];
+let RS = null;
+const lastBackup = () => { try { return +localStorage.getItem('pc_last_backup') || 0; } catch (e) { return 0; } };
+async function backupNow() {
+  if (!isDono() || S.as) return;
+  const btn = $('#bkBtn'); if (btn) { btn.disabled = true; btn.textContent = 'Reunindo os dados…'; }
+  const data = {}; let total = 0;
+  for (const c of BK_COLS) {
+    try { const sn = await S.db.collection(c).get(); data[c] = {}; sn.docs.forEach((d) => { data[c][d.id] = d.data(); }); total += sn.docs.length; } catch (e) { console.warn(c, e); data[c] = {}; }
+  }
+  const out = { app: 'paris-cast', versao: 1, em: new Date().toISOString(), docs: total, dados: data };
+  dl('paris-cast-copia-' + nowSP().date + '.json', new Blob([JSON.stringify(out)], { type: 'application/json' }));
+  try { localStorage.setItem('pc_last_backup', String(Date.now())); } catch (e) { /* sem armazenamento */ }
+  toast('Cópia baixada: ' + total + ' itens.');
+  render();
+}
+async function rsRead(file) {
+  try {
+    const j = JSON.parse(await file.text());
+    if (!j || j.app !== 'paris-cast' || !j.dados) throw new Error('arquivo');
+    RS = { j, name: file.name, sel: { musicas: true, grade: true }, busy: false, msg: '' };
+  } catch (e) { RS = null; toast('Esse arquivo não é uma cópia da Paris Cast.'); }
+  render();
+}
+async function rsRun() {
+  if (!RS || RS.busy || !isDono() || S.as) return;
+  const cols = []; RS_GROUPS.forEach(([k, , cs]) => { if (RS.sel[k]) cs.forEach((c) => cols.push(c)); });
+  if (!cols.length) { toast('Marque o que você quer restaurar.'); return; }
+  closeModal();
+  RS.busy = true; render();
+  let ok = 0, bad = 0;
+  const tot = cols.reduce((a, c) => a + Object.keys((RS.j.dados[c] || {})).length, 0);
+  for (const c of cols) {
+    for (const [id, d] of Object.entries(RS.j.dados[c] || {})) {
+      try { await S.db.doc(c + '/' + id).set(d); ok++; } catch (e) { bad++; }
+      if ((ok + bad) % 10 === 0) { const el = $('#rsProg'); if (el) el.textContent = 'Restaurando… ' + (ok + bad) + ' de ' + tot; }
+    }
+  }
+  RS.busy = false; RS.msg = 'Pronto: ' + ok + ' itens restaurados' + (bad ? ', ' + bad + ' não puderam ser gravados.' : '.');
+  toast(RS.msg); render();
+}
+function rsConfirm() {
+  if (!RS) return;
+  const cols = []; RS_GROUPS.forEach(([k, , cs]) => { if (RS.sel[k]) cs.forEach((c) => cols.push(c)); });
+  const n = cols.reduce((a, c) => a + Object.keys((RS.j.dados[c] || {})).length, 0);
+  if (!n) { toast('Nada para restaurar nas partes marcadas.'); return; }
+  askModal('Restaurar ' + n + ' itens?', 'Os itens da cópia substituem os que têm o mesmo nome no site. O que não está na cópia não é apagado. Os arquivos de áudio não fazem parte da cópia e continuam onde estão.', 'Restaurar agora', rsRun, true);
+}
+function vPan() {
+  if (!isDono()) return '<div class="wrap"><div class="panel empty"><h3>Só o dono vê esta aba</h3></div></div>';
+  const owner = S.isOwner && !S.as, lb = lastBackup();
+  const days = lb ? Math.floor((Date.now() - lb) / 864e5) : null;
+  const bk = '<section class="panel sec2"><div><h2>Cópia de segurança</h2><p class="muted">Baixa um arquivo com músicas, pastas, grade, semana, cadastros (com telefones), cargos, pedidos e histórico. Guarde em lugar seguro, pois tem dados pessoais. Os arquivos de áudio ficam no Supabase e não vêm junto.</p></div><div class="acts" style="justify-content:flex-start"><button class="btn pri" id="bkBtn" type="button" data-act="bk-now">' + ic('dl') + 'Baixar cópia de segurança</button></div><p class="hint">' + (lb ? 'Última cópia baixada neste aparelho: ' + (days === 0 ? 'hoje' : days === 1 ? 'ontem' : 'há ' + days + ' dias') + '.' : 'Nenhuma cópia baixada neste aparelho ainda.') + '</p></section>';
+  let rs;
+  if (!RS) rs = '<div class="fld"><label for="rsFile">Arquivo da cópia (.json)</label><input id="rsFile" type="file" accept=".json,application/json"></div>';
+  else {
+    const cnt = (cs) => cs.reduce((a, c) => a + Object.keys(RS.j.dados[c] || {}).length, 0);
+    rs = '<p class="hint">Arquivo: <b>' + esc(RS.name) + '</b> · feito em ' + esc(new Date(RS.j.em).toLocaleString('pt-BR')) + ' · ' + (RS.j.docs || 0) + ' itens.</p><div class="wkpick">' + RS_GROUPS.map(([k, n, cs]) => '<label><input type="checkbox" data-act="rs-sel" data-k="' + k + '"' + (RS.sel[k] ? ' checked' : '') + '> ' + esc(n) + ' <small class="muted">(' + cnt(cs) + ')</small></label>').join('') + '</div><div class="acts" style="justify-content:flex-start"><button class="btn danger" type="button" data-act="rs-go"' + (RS.busy ? ' disabled' : '') + '>Restaurar o que está marcado</button><button class="btn ghost" type="button" data-act="rs-x"' + (RS.busy ? ' disabled' : '') + '>Escolher outro arquivo</button></div><p class="msg okm" id="rsProg" role="status">' + esc(RS.busy ? 'Restaurando…' : RS.msg) + '</p>';
+  }
+  const rest = '<section class="panel sec2"><div><h2>Restaurar uma cópia</h2><p class="muted">Use se algo for apagado por engano. Escolha o arquivo e marque quais partes voltar.</p></div>' + rs + '</section>';
+  const bl = Object.entries(S.blocked).map(([id, b]) => Object.assign({ id }, b)).sort((a, b) => (b.at || 0) - (a.at || 0));
+  const blk = '<section class="panel sec2"><div><h2>Pessoas bloqueadas</h2><p class="muted">Quem está bloqueado não consegue mandar pedidos, sugestões, curtir nem votar. Para bloquear alguém, use o botão na aba Ouvintes.</p></div>' + (bl.length ? '<ul class="panel rqs">' + bl.map((b) => '<li class="rq">' + avatar(b.id) + '<div style="min-width:0"><div class="hd"><b>' + esc(nm(b.id)) + '</b><small>bloqueado ' + ago(b.at) + '</small></div></div><button class="btn sm" type="button" data-act="blk-off" data-uid="' + esc(b.id) + '">Desbloquear</button></li>').join('') + '</ul>' : '<p class="hint">Ninguém bloqueado.</p>') + '</section>';
+  const donos = Object.entries(S.roles).filter(([, r]) => r && r.role === 'dono').map(([id]) => id);
+  const cand = Object.keys(S.names).filter((id) => S.names[id] && S.names[id].nome && id !== S.uid && !donos.includes(id)).sort((a, b) => fold(nm(a)).localeCompare(fold(nm(b))));
+  const dn = '<section class="panel sec2"><div><h2>Donos</h2><p class="muted">Um segundo dono de confiança evita que a rádio fique sem administrador se você perder o celular ou a senha. Ele faz quase tudo que você faz, mas só você dá o cargo de dono e ninguém tira você.</p></div><ul class="panel rqs"><li class="rq">' + avatar(S.uid) + '<div style="min-width:0"><div class="hd"><b>' + esc(nm(S.uid)) + '</b><span class="rb r-dono">Dono</span><small>você</small></div></div></li>' + donos.filter((id) => id !== S.uid).map((id) => '<li class="rq">' + avatar(id) + '<div style="min-width:0"><div class="hd"><b>' + esc(nm(id)) + '</b><span class="rb r-dono">Dono</span></div></div>' + (owner ? '<button class="btn sm ghost" type="button" data-act="role-open" data-uid="' + esc(id) + '">Mudar cargo</button>' : '') + '</li>').join('') + '</ul>' + (owner ? '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end"><div class="fld" style="margin:0;min-width:220px"><label for="dnPick">Escolher outra pessoa</label><select id="dnPick" data-d="dnPick"><option value="">Selecione…</option>' + cand.map((id) => '<option value="' + esc(id) + '"' + (val('dnPick', '') === id ? ' selected' : '') + '>' + esc(nm(id)) + '</option>').join('') + '</select></div><button class="btn" type="button" data-act="dn-go">Dar cargo de dono</button></div>' : '<p class="hint">Só o dono principal escolhe novos donos.</p>') + '</section>';
+  const rv = S.config.reserve || {}, vf = allFolders();
+  const rsv = '<section class="panel sec2"><div><h2>Programação reserva</h2><p class="muted">Quando a grade estiver sem música (um buraco ou um setor vazio), a rádio toca músicas de uma pasta reserva em vez de ficar em silêncio. A reserva sai da frente assim que a próxima música da grade começa.</p></div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end"><label class="tg"><input type="checkbox" data-act="rv-on"' + (rv.on ? ' checked' : '') + '> Ligada</label><div class="fld" style="margin:0"><label for="rvFolder">Pasta da reserva</label><select id="rvFolder" data-act="rv-folder">' + vf.map((f) => '<option value="' + esc(f.id) + '"' + ((rv.folder || 'reserva') === f.id ? ' selected' : '') + '>' + esc(f.nome) + '</option>').join('') + '</select></div></div><p class="hint">Músicas na pasta escolhida: <b>' + Object.values(S.songs).filter((s) => s.style === (rv.folder || 'reserva') && +s.dur > 0).length + '</b>.' + (rv.on ? '' : ' Ligue para a reserva funcionar.') + '</p></section>';
+  const ab = S.config.about || {};
+  const abt = '<section class="panel sec2"><div><h2>Texto da página “Sobre a rádio”</h2><p class="muted">A apresentação que os ouvintes novos leem. Deixe em branco para usar o texto padrão.</p></div><div class="fld"><label for="abText">Apresentação</label><textarea id="abText" data-d="abText" maxlength="600" placeholder="Ex.: A Paris Cast é a rádio da nossa escola…">' + esc(val('abText', ab.intro || '')) + '</textarea></div><div class="acts" style="justify-content:flex-start"><button class="btn pri" type="button" data-act="ab-save">Salvar texto</button></div></section>';
+  return '<div class="wrap"><div class="ph"><div><h1>Painel do dono</h1><p>Cópia de segurança, restauração, bloqueios, donos e ajustes gerais da rádio.</p></div></div>' + bk + rest + blk + dn + rsv + abt + '</div>';
+}
+
+/* ---------- Dados: estatísticas e relatório mensal ---------- */
+async function loadStats(force) {
+  if (!HAS_RPC() || !S.uid || !isMgr()) return;
+  if (!force && S.stats && Date.now() - (S.statsAt || 0) < 60000) return;
+  S.statsAt = Date.now();
+  const r = await rpc('stats_hours', { p_days: 60 });
+  if (Array.isArray(r)) { S.stats = r; if (S.view === 'dados') scheduleRender(); }
+  const t = await rpc('likes_top', { p_n: 10 });
+  if (Array.isArray(t)) { S.top10 = t; if (S.view === 'dados') scheduleRender(); }
+}
+function hourAgg(rows) {
+  const by = {};
+  (rows || []).forEach((r) => { const k = +r.hour; (by[k] = by[k] || { n: 0, on: 0, li: 0, max: 0 }); by[k].n++; by[k].on += +r.online || 0; by[k].li += +r.listening || 0; by[k].max = Math.max(by[k].max, +r.online || 0); });
+  return Array.from({ length: 24 }, (_, h) => { const b = by[h]; return { h, avg: b ? b.on / b.n : 0, li: b ? b.li / b.n : 0, max: b ? b.max : 0 }; });
+}
+function weekBuckets(weeks) {
+  const today = nowSP().date, ws0 = addDays(today, -((dowOf(today) + 6) % 7)), out = [];
+  for (let k = weeks - 1; k >= 0; k--) { const a = addDays(ws0, -7 * k), b = addDays(a, 7); out.push({ a, n: Object.values(S.names).filter((x) => x && x.at && new Date(x.at).toLocaleDateString('sv-SE', { timeZone: 'America/Sao_Paulo' }) >= a && new Date(x.at).toLocaleDateString('sv-SE', { timeZone: 'America/Sao_Paulo' }) < b).length }); }
+  return out;
+}
+const monthKey = (ms) => new Date(ms).toLocaleDateString('sv-SE', { timeZone: 'America/Sao_Paulo' }).slice(0, 7);
+function monthStats(ym) {
+  const inM = (ms) => ms && monthKey(ms) === ym;
+  const planDays = {}; let planned = 0;
+  Object.values(S.plan).forEach((d) => { if (d && !d.virtual && String(d.date).slice(0, 7) === ym) { planDays[d.date] = 1; planned += (d.items || []).length; } });
+  const hist = Object.values(S.history).filter((h) => inM(h.at)).length;
+  const rows = (S.stats || []).filter((r) => String(r.day).slice(0, 7) === ym);
+  const peak = hourAgg(rows).slice().sort((a, b) => b.avg - a.avg)[0];
+  return { novos: Object.values(S.names).filter((x) => x && inM(x.at)).length, pedidos: Object.values(S.requests).filter((x) => inM(x.at)).length, sug: Object.values(S.suggestions).filter((x) => inM(x.at)).length, hist, dias: Object.keys(planDays).length, planned, peak: peak && peak.avg > 0 ? peak : null, hasRows: rows.length > 0 };
+}
+function vDad() {
+  if (!isMgr()) return '<div class="wrap"><div class="panel empty"><h3>Só o programador e o dono veem esta aba</h3></div></div>';
+  const L = Object.entries(S.listeners).filter(([id]) => S.names[id] && S.names[id].nome).map(([id, v]) => Object.assign({ id }, v));
+  const total = L.reduce((a, x) => a + (x.sec || 0), 0), cad = Object.values(S.names).filter((x) => x && x.nome).length;
+  const novos7 = Object.values(S.names).filter((x) => x && x.at && Date.now() - x.at < 7 * 864e5).length;
+  const styles = {}; L.forEach((x) => Object.entries(x.styles || {}).forEach(([k, v]) => { styles[k] = (styles[k] || 0) + v; }));
+  const sb = Object.entries(styles).filter((e) => e[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 8), smax = sb.length ? sb[0][1] : 1;
+  const hs = hourAgg(S.stats), hmax = Math.max(1, ...hs.map((x) => x.avg)), peak = hs.slice().sort((a, b) => b.avg - a.avg)[0];
+  const hbars = '<div class="hbars" role="img" aria-label="Pessoas por hora do dia">' + hs.map((x) => '<div class="hb" title="' + p2(x.h) + 'h: média de ' + x.avg.toFixed(1) + ' pessoas no site (máx. ' + x.max + ')"><i style="height:' + Math.max(2, x.avg / hmax * 100).toFixed(1) + '%"></i><span>' + (x.h % 3 === 0 ? p2(x.h) : '') + '</span></div>').join('') + '</div>';
+  const wb = weekBuckets(8), wmax = Math.max(1, ...wb.map((x) => x.n));
+  const wbars = '<div class="hbars wk8" role="img" aria-label="Pessoas novas por semana">' + wb.map((x) => '<div class="hb" title="Semana de ' + shortDate(x.a) + ': ' + x.n + ' novas"><i style="height:' + Math.max(2, x.n / wmax * 100).toFixed(1) + '%"></i><em>' + x.n + '</em><span>' + shortDate(x.a) + '</span></div>').join('') + '</div>';
+  const top = (S.top10 || []).filter((x) => S.songs[x.song]);
+  const tl = top.length ? '<ol class="tn">' + top.map((x, i) => '<li><span class="t rk">' + (i + 1) + '</span>' + thumb(S.songs[x.song]) + '<span style="min-width:0"><b>' + esc(S.songs[x.song].title) + '</b><small>' + esc(S.songs[x.song].artist) + '</small></span><span class="chip acc">' + ic('heart') + x.count + '</span></li>').join('') + '</ol>' : '<p class="hint">Ninguém curtiu nada ainda.</p>';
+  const ym = val('repM', nowSP().date.slice(0, 7));
+  return '<div class="wrap"><div class="ph"><div><h1>Dados da rádio</h1><p>Quanta gente ouve, em que horário e o que mais agrada. Os números por hora começam a ser contados a partir de hoje.</p></div></div>' +
+    '<div class="panel stats"><div><div class="n">' + cad + '</div><div class="l">Pessoas cadastradas</div></div><div><div class="n">' + novos7 + '</div><div class="l">Novas nos últimos 7 dias</div></div><div><div class="n">' + hm(total) + '</div><div class="l">Tempo total ouvido</div></div><div><div class="n">' + (S.pres ? (S.pres.listening | 0) : 0) + '</div><div class="l">Ouvindo agora</div></div><div><div class="n">' + (peak && peak.avg > 0 ? p2(peak.h) + 'h' : '—') + '</div><div class="l">Horário de pico</div></div></div>' +
+    '<section class="panel sec2"><div><h2>Pessoas no site por hora</h2><p class="muted">Média de pessoas conectadas em cada hora do dia, nos últimos 60 dias. Ajuda a escolher os melhores horários para avisos e músicas de destaque.</p></div>' + (S.stats && S.stats.length ? hbars : '<p class="hint">' + (S.stats ? 'Ainda não há dados. Eles aparecem conforme as pessoas usam a rádio.' : 'Carregando…') + '</p>') + '</section>' +
+    '<section class="panel sec2"><div><h2>Pessoas novas por semana</h2><p class="muted">Cadastros feitos nas últimas 8 semanas.</p></div>' + wbars + '</section>' +
+    '<div class="extras"><section class="panel next"><h3>Estilos mais ouvidos</h3>' + (sb.length ? '<div class="bars">' + sb.map(([k, v]) => '<div class="bar"><span class="n">' + esc(folderName(k)) + '</span><span class="tr"><i style="width:' + (v / smax * 100).toFixed(1) + '%"></i></span><span class="v">' + hm(v) + '</span></div>').join('') + '</div>' : '<p class="hint">Aparece quando alguém ouvir a rádio.</p>') + '</section><section class="panel next"><h3>Músicas mais curtidas</h3>' + tl + '</section></div>' +
+    '<section class="panel sec2"><div><h2>Relatório mensal</h2><p class="muted">Uma página para mostrar à direção quanto a rádio foi usada no mês. Abre a impressão, onde dá para salvar em PDF.</p></div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end"><div class="fld" style="margin:0"><label for="repM">Mês</label><input id="repM" type="month" data-d="repM" data-re="1" value="' + esc(ym) + '"></div><button class="btn pri" type="button" data-act="rep-print">' + ic('print') + 'Gerar relatório do mês</button></div></section></div>';
+}
+function repPrint() {
+  const ym = val('repM', nowSP().date.slice(0, 7)), m = monthStats(ym), [y, mo] = ym.split('-'), nome = MES[+mo - 1] + ' de ' + y;
+  const L = Object.entries(S.listeners).filter(([id]) => S.names[id] && S.names[id].nome).map(([id, v]) => v), total = L.reduce((a, x) => a + (x.sec || 0), 0);
+  const li = (k, v) => '<tr><td>' + esc(k) + '</td><td class="n">' + esc(v) + '</td></tr>';
+  const top = (S.top10 || []).filter((x) => S.songs[x.song]).slice(0, 5);
+  const html = '<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Relatório ' + esc(nome) + '</title><style>body{font:14px Georgia,serif;margin:34px;color:#2b1a10}h1{font-size:30px;margin:0}p.s{margin:2px 0 18px;color:#7a5a40}h2{margin:22px 0 6px;font-size:17px;border-bottom:2px solid #8a5a2b;padding-bottom:3px}table{width:100%;border-collapse:collapse}td{padding:6px 8px;border-bottom:1px solid #e3d6c6}td.n{text-align:right;font-family:monospace;width:160px}small{color:#7a5a40}</style><h1>Paris Cast · Relatório de ' + esc(nome) + '</h1><p class="s">Rádio da escola · gerado em ' + esc(new Date().toLocaleDateString('pt-BR')) + '</p>' +
+    '<h2>Público</h2><table>' + li('Pessoas novas cadastradas no mês', m.novos) + li('Pessoas cadastradas no total', Object.values(S.names).filter((x) => x && x.nome).length) + li('Tempo total ouvido (acumulado até hoje)', hm(total)) + (m.peak ? li('Horário de maior movimento', p2(m.peak.h) + 'h (média de ' + m.peak.avg.toFixed(1) + ' pessoas)') : '') + '</table>' +
+    '<h2>Participação</h2><table>' + li('Pedidos de música recebidos', m.pedidos) + li('Sugestões recebidas', m.sug) + '</table>' +
+    '<h2>Programação</h2><table>' + li('Dias com grade própria no mês', m.dias) + li('Músicas colocadas nessas grades', m.planned) + li('Alterações feitas na grade', m.hist) + li('Músicas na biblioteca', Object.keys(S.songs).length) + '</table>' +
+    (top.length ? '<h2>Músicas mais curtidas (total)</h2><table>' + top.map((x) => li(S.songs[x.song].title + ' — ' + S.songs[x.song].artist, x.count + ' curtidas')).join('') + '</table>' : '') +
+    '<p><small>' + (m.hasRows ? '' : 'Obs.: o movimento por hora só é contado a partir da atualização que ativou as estatísticas. ') + 'Dias com grade vinda da “grade da semana” não entram na contagem de grades próprias.</small></p>';
+  const f = document.createElement('iframe');
+  f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  document.body.appendChild(f);
+  f.contentDocument.open(); f.contentDocument.write(html); f.contentDocument.close();
+  setTimeout(() => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { toast('Não consegui abrir a impressão.'); } setTimeout(() => f.remove(), 3000); }, 300);
+}
+
+/* ---------- Meu histórico ---------- */
+async function loadMine(force) {
+  if (!HAS_RPC() || !S.uid) return;
+  if (!force && S.myLikes && Date.now() - (S.myAt || 0) < 30000) return;
+  S.myAt = Date.now();
+  const r = await rpc('my_likes');
+  if (Array.isArray(r)) { S.myLikes = r; if (S.view === 'meu') scheduleRender(); }
+}
+function vMeu() {
+  const me = S.listeners[S.uid] || {}, sec = me.sec || 0;
+  const st = Object.entries(me.styles || {}).filter((e) => e[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 5), smax = st.length ? st[0][1] : 1;
+  const lk = (S.myLikes || []).filter((x) => S.songs[x.song]);
+  const since = me.first ? new Date(me.first).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) : '—';
+  return '<div class="wrap"><div class="ph"><div><h1>Meu histórico</h1><p>Só você vê esta página. Mostra quanto você ouviu a rádio e do que mais gosta.</p></div></div>' +
+    '<div class="panel stats"><div><div class="n">' + hm(sec) + '</div><div class="l">Tempo que você ouviu</div></div><div><div class="n">' + (me.visits || 0) + '</div><div class="l">Visitas</div></div><div><div class="n">' + (S.myLikes ? S.myLikes.length : '—') + '</div><div class="l">Músicas curtidas</div></div><div><div class="n" style="font-size:20px">' + esc(since) + '</div><div class="l">Entrou em</div></div></div>' +
+    '<div class="extras"><section class="panel next"><h3>Seus estilos favoritos</h3>' + (st.length ? '<div class="bars">' + st.map(([k, v]) => '<div class="bar"><span class="n">' + esc(folderName(k)) + '</span><span class="tr"><i style="width:' + (v / smax * 100).toFixed(1) + '%"></i></span><span class="v">' + hm(v) + '</span></div>').join('') + '</div>' : '<p class="hint">Ouça a rádio por um tempo e seus estilos favoritos aparecem aqui.</p>') + '</section>' +
+    '<section class="panel next"><h3>Músicas que você curtiu</h3>' + (lk.length ? '<ol class="tn">' + lk.slice(0, 30).map((x) => '<li>' + thumb(S.songs[x.song]) + '<span style="min-width:0"><b>' + esc(S.songs[x.song].title) + '</b><small>' + esc(S.songs[x.song].artist) + '</small></span><span class="chip acc">' + ic('heart') + '</span></li>').join('') + '</ol>' : '<p class="hint">' + (HAS_RPC() ? 'Toque no coração na música que estiver tocando para ela aparecer aqui.' : 'Indisponível no momento.') + '</p>') + '</section></div></div>';
+}
+
+/* ---------- Pergunta da semana ---------- */
+const wqDoc = () => S.polls.semana || null;
+let wqAt = 0;
+async function refreshWq(force) {
+  const p = wqDoc();
+  if (!p || p.status !== 'open' || !HAS_RPC() || !S.uid) return;
+  const now = Date.now();
+  if (!force && now - wqAt < 10000) return;
+  wqAt = now;
+  const r = await rpc('poll_results', { p_poll: p.id });
+  if (r) { S.wqRes = Object.assign({ pid: p.id }, r); if (S.view === 'aovivo') scheduleRender(); }
+}
+function wqHTML() {
+  if (!HAS_RPC()) return '';
+  const p = wqDoc(), mgr = isMgr();
+  const ctrl = (b) => (mgr ? '<div class="acts" style="justify-content:flex-start">' + b + '</div>' : '');
+  if (!p || (p.status === 'closed' && Date.now() - (p.closedAt || 0) > 3 * 864e5)) {
+    return mgr ? '<section class="panel poll"><div><h3>Pergunta da semana</h3><p class="muted">Uma pergunta rápida para a escola, com 2 a 4 respostas. Ex.: “Qual estilo você quer mais de manhã?”. É separada da enquete da próxima música.</p></div>' + ctrl('<button class="btn pri" type="button" data-act="wq-new">' + ic('plus') + 'Criar pergunta</button>') + '</section>' : '';
+  }
+  const open = p.status === 'open';
+  const res = open ? (S.wqRes && S.wqRes.pid === p.id ? S.wqRes : { counts: {}, total: 0, mine: null }) : { counts: p.counts || {}, total: p.total || 0, mine: S.wqRes && S.wqRes.pid === p.id ? S.wqRes.mine : null };
+  const tot = +res.total || 0, blocked = !!S.blockedMe;
+  const opts = (p.opts || []).map((o) => {
+    const c = +(res.counts || {})[o] || 0, pc = tot ? Math.round(c / tot * 100) : 0, mine = res.mine === o;
+    return '<button type="button" class="opt" data-act="wq-vote" data-o="' + esc(o) + '" aria-pressed="' + mine + '"' + (open && !blocked ? '' : ' disabled') + '><i class="ob" style="width:' + pc + '%"></i><span class="ot"><b>' + esc(o) + '</b></span><span class="op">' + (mine ? ic('check') : '') + pc + '%</span></button>';
+  }).join('');
+  return '<section class="panel poll" aria-label="Pergunta da semana"><div class="pollh"><div><span class="eyebrow">Pergunta da semana' + (open ? '' : ' · encerrada') + '</span><h3>' + esc(p.q) + '</h3></div>' + (open ? '<span class="chip warn">aberta</span>' : '') + '</div><div class="opts">' + opts + '</div><p class="hint">' + tot + (tot === 1 ? ' voto' : ' votos') + (open ? (res.mine ? '. Você pode trocar seu voto.' : '. Toque para votar.') : '.') + (blocked ? ' Seus votos estão pausados pela equipe.' : '') + '</p>' + ctrl(open ? '<button class="btn sm" type="button" data-act="wq-close">Encerrar e mostrar resultado</button>' : '<button class="btn sm pri" type="button" data-act="wq-new">' + ic('plus') + 'Nova pergunta</button>') + '</section>';
+}
+function wqModal() {
+  openModal('<div><h2>Pergunta da semana</h2><p class="muted">Escreva a pergunta e de 2 a 4 respostas. Fica aberta até você encerrar.</p></div><div class="fld"><label for="wqQ">Pergunta</label><input id="wqQ" maxlength="100" autocomplete="off" placeholder="Ex.: Qual estilo você quer mais de manhã?"></div>' + [1, 2, 3, 4].map((i) => '<div class="fld"><label for="wqO' + i + '">Resposta ' + i + (i > 2 ? ' (opcional)' : '') + '</label><input id="wqO' + i + '" maxlength="40" autocomplete="off"></div>').join('') + '<p class="msg" id="wqMsg" role="status"></p><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="wq-open">Publicar pergunta</button></div>');
+}
+async function wqOpen() {
+  const q = ($('#wqQ').value || '').trim(), m = $('#wqMsg');
+  const opts = [1, 2, 3, 4].map((i) => ($('#wqO' + i).value || '').trim()).filter(Boolean);
+  const bad = !q ? 'Escreva a pergunta.' : opts.length < 2 ? 'Coloque pelo menos 2 respostas.' : new Set(opts.map(fold)).size < opts.length ? 'As respostas precisam ser diferentes.' : '';
+  if (bad) { m.className = 'msg'; m.textContent = bad; return; }
+  const id = 'q' + Date.now().toString(36);
+  const ok = await W(() => S.db.doc('polls/semana').set({ id, q, opts, status: 'open', at: Date.now(), by: S.uid }));
+  if (ok) { S.wqRes = null; closeModal(); toast('Pergunta publicada!'); wqAt = 0; render(); }
+}
+async function wqVote(o) {
+  const p = wqDoc();
+  if (!p || p.status !== 'open' || S.blockedMe) return;
+  const r = await rpc('poll_vote', { p_poll: p.id, p_opt: o });
+  if (r) { S.wqRes = Object.assign({ pid: p.id }, r); toast('Voto registrado.'); render(); } else toast('Não consegui registrar o voto. Tente de novo.');
+}
+async function wqClose() {
+  const p = wqDoc(); if (!p || p.status !== 'open') return;
+  const r = (await rpc('poll_results', { p_poll: p.id })) || { counts: {}, total: 0 };
+  const ok = await W(() => S.db.doc('polls/semana').update({ status: 'closed', closedAt: Date.now(), counts: r.counts || {}, total: r.total || 0 }));
+  if (ok) { toast('Pergunta encerrada.'); render(); }
+}
+
+/* ---------- Cartão para o Stories ---------- */
+function loadImg(src) { return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; }); }
+function wrapTxt(c, t, x, y, w, lh, maxL) {
+  const words = String(t).split(/\s+/); let line = '', n = 0;
+  for (let k = 0; k < words.length; k++) {
+    const tryL = line ? line + ' ' + words[k] : words[k];
+    if (c.measureText(tryL).width > w && line) { c.fillText(line, x, y + n * lh); n++; line = words[k]; if (n >= maxL - 1) { line = words.slice(k).join(' '); break; } } else line = tryL;
+  }
+  while (c.measureText(line).width > w && line.length > 1) line = line.slice(0, -2) + '…';
+  c.fillText(line, x, y + n * lh); return n + 1;
+}
+async function shareCard() {
+  const cur = AIR && AIR.cur;
+  if (!cur || !cur.song) { toast('Nenhuma música no ar agora.'); return; }
+  const s = cur.song, cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920;
+  const c = cv.getContext('2d');
+  const g = c.createLinearGradient(0, 0, 1080, 1920); g.addColorStop(0, '#6b4220'); g.addColorStop(1, '#1d110a');
+  c.fillStyle = g; c.fillRect(0, 0, 1080, 1920);
+  c.fillStyle = 'rgba(255,255,255,.05)'; c.beginPath(); c.arc(960, 220, 420, 0, 7); c.fill(); c.beginPath(); c.arc(100, 1750, 360, 0, 7); c.fill();
+  try { const im = await loadImg(coverSrc(s)); c.save(); c.shadowColor = 'rgba(0,0,0,.5)'; c.shadowBlur = 60; c.shadowOffsetY = 24; c.beginPath(); c.roundRect(140, 430, 800, 800, 44); c.clip(); c.drawImage(im, 140, 430, 800, 800); c.restore(); } catch (e) { /* sem capa */ }
+  c.textAlign = 'center'; c.fillStyle = '#e9c9a0'; c.font = '600 44px Georgia, serif'; c.fillText('● NO AR AGORA', 540, 330);
+  c.fillStyle = '#fff'; c.font = '700 70px Georgia, serif'; const n = wrapTxt(c, s.title, 540, 1340, 900, 80, 2);
+  c.fillStyle = '#e9c9a0'; c.font = '44px Georgia, serif'; wrapTxt(c, s.artist || '', 540, 1340 + n * 80 + 30, 900, 56, 1);
+  c.fillStyle = '#fff'; c.font = '700 64px Georgia, serif'; c.fillText('Paris Cast', 540, 1660);
+  c.fillStyle = '#e9c9a0'; c.font = '36px Georgia, serif'; c.fillText('A rádio da nossa escola · ouça ao vivo', 540, 1725);
+  const u = siteUrl().replace(/^https?:\/\//, '').replace(/\/$/, ''); if (u) { c.font = '32px monospace'; c.fillStyle = '#c9a77e'; c.fillText(u, 540, 1790); }
+  const blob = await new Promise((r) => cv.toBlob(r, 'image/png'));
+  if (!blob) { toast('Não consegui criar a imagem.'); return; }
+  const f = new File([blob], 'paris-cast.png', { type: 'image/png' });
+  try { if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], text: 'Ouvindo agora na Paris Cast' }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  dl('paris-cast-stories.png', blob); toast('Imagem baixada. Poste nos Stories!');
+}
+
+/* ---------- Sobre a rádio ---------- */
+const ABOUT_DEF = 'A Paris Cast é a rádio da nossa escola. A programação é montada pela equipe e toca todos os dias, no mesmo horário para todo mundo, como numa rádio de verdade.';
+function vSob() {
+  const ab = (S.config.about || {}).intro || ABOUT_DEF;
+  const sec = SECT.map((x) => '<li>' + sectIc(x.id) + '<span><b>' + esc(x.nome) + '</b><small>' + p2(x.ini) + 'h às ' + p2(x.fim === 24 ? 0 : x.fim) + 'h</small></span></li>').join('');
+  return '<div class="wrap"><div class="ph"><div><h1>Sobre a rádio</h1><p>Conheça a Paris Cast e como participar.</p></div></div>' +
+    '<section class="panel sec2"><h2>Quem somos</h2><p style="white-space:pre-wrap">' + esc(ab) + '</p><div class="acts" style="justify-content:flex-start"><button class="btn pri" type="button" data-act="nav" data-v="aovivo">' + ic('play') + 'Ouvir agora</button>' + (!isStandalone() ? '<button class="btn" type="button" data-act="install">Instalar no celular</button>' : '') + '</div></section>' +
+    '<section class="panel sec2"><h2>Como funciona</h2><ul class="how"><li><b>Programação fixa.</b> Todos ouvem a mesma música ao mesmo tempo. Não dá para escolher faixa: é rádio.</li><li><b>Quatro horários por dia.</b> Cada setor tem seu estilo e sua equipe.</li><li><b>Dá para participar.</b> Peça músicas, mande sugestões, curta o que está tocando e vote nas enquetes.</li></ul><ul class="how sects">' + sec + '</ul></section>' +
+    '<section class="panel sec2"><h2>Regras de convivência</h2><ul class="how"><li>Cada pessoa pode fazer até <b>' + limitOf('requests') + '</b> pedidos e <b>' + limitOf('suggestions') + '</b> sugestões por dia.</li><li>Seus pedidos e sugestões são privados: só a equipe autorizada lê.</li><li>Respeite todo mundo. A equipe pode pausar quem usar a rádio para ofender.</li><li>Não aceitamos músicas com palavrões ou conteúdo impróprio.</li></ul></section></div>';
+}
+function aboutHint() {
+  if (S.view !== 'aovivo' || !S.uid) return '';
+  try { if (localStorage.getItem('pc_about_seen')) return ''; } catch (e) { return ''; }
+  return '<div class="panel abouth" role="note"><div><b>Primeira vez por aqui?</b><br><small>Veja como a rádio funciona e como participar.</small></div><div class="acts" style="margin:0"><button class="btn sm pri" type="button" data-act="about-go">Ver Sobre a rádio</button><button class="btn sm ghost" type="button" data-act="about-x">Dispensar</button></div></div>';
+}
+const aboutSeen = () => { try { localStorage.setItem('pc_about_seen', '1'); } catch (e) { /* sem armazenamento */ } };
+
+/* ---------- Bloqueios ---------- */
+async function blockSet(uid, on) {
+  if (!isDono() || S.as || !uid || uid === S.uid) return;
+  const ok = await W(() => (on ? S.db.doc('blocked/' + uid).set({ at: Date.now(), by: S.uid, nome: nm(uid) }) : S.db.doc('blocked/' + uid).delete()));
+  if (ok) { toast(on ? nm(uid) + ' foi bloqueado(a).' : nm(uid) + ' foi desbloqueado(a).'); render(); }
+}
+
+/* ---------- Ações novas ---------- */
+async function act3(a, el) {
+  const d = el && el.dataset ? el.dataset : {};
+  switch (a) {
+    case 'nav':
+      if (d.v === 'meu') loadMine(true); else if (d.v === 'dados') loadStats(true); else if (d.v === 'sobre') aboutSeen();
+      return false;
+    case 'wk-dow': WK.dow = +d.d; render(); return true;
+    case 'wk-sec': WK.sid = d.id; render(); return true;
+    case 'wk-folder': WK.folder = d.id || null; render(); return true;
+    case 'wk-add': wkAdd(d.id); return true;
+    case 'wk-up': wkMove(+d.i, -1); return true;
+    case 'wk-down': wkMove(+d.i, 1); return true;
+    case 'wk-rm': wkRm(+d.i); return true;
+    case 'wk-copy': wkCopyModal(); return true;
+    case 'wk-util': document.querySelectorAll('.wkc').forEach((x) => { x.checked = +x.value >= 1 && +x.value <= 5; }); return true;
+    case 'wk-copy-go': wkCopyGo(); return true;
+    case 'wk-imp': wkImpModal(); return true;
+    case 'wk-imp-go': wkImpGo(); return true;
+    case 'wk-clear': wkClear(); return true;
+    case 'vin-open': vinModal(); return true;
+    case 'vin-go': vinRun(); return true;
+    case 'nt-add': {
+      const t = (val('ntText', '') || '').trim();
+      if (!t) { toast('Escreva a anotação.'); return true; }
+      const ok = await W(() => S.db.collection('notes').add({ text: t.slice(0, 500), by: S.uid, at: Date.now(), done: false }));
+      if (ok) { D.ntText = ''; render(); } return true;
+    }
+    case 'nt-done': { const n = S.notes[d.id]; if (n) await W(() => S.db.doc('notes/' + d.id).update({ done: !n.done })); return true; }
+    case 'nt-del': askModal('Apagar anotação?', 'Ela some para toda a equipe.', 'Apagar', () => W(() => S.db.doc('notes/' + d.id).delete()), true); return true;
+    case 'dr-send': { const date = val('drDate', nowSP().date); await W(() => S.db.doc('drafts/' + date).set({ status: 'pendente', by: S.uid, at: Date.now(), sig: daySig(date) })); toast('Enviado para o dono conferir.'); return true; }
+    case 'dr-ok': { const date = val('drDate', nowSP().date), old = S.drafts[date] || {}; await W(() => S.db.doc('drafts/' + date).set(Object.assign({}, old, { status: 'aprovado', sig: daySig(date), decBy: S.uid, decAt: Date.now(), comment: (val('drCom', '') || '').trim().slice(0, 140) }))); toast('Grade aprovada.'); return true; }
+    case 'dr-adj': { const date = val('drDate', nowSP().date), old = S.drafts[date] || {}; await W(() => S.db.doc('drafts/' + date).set(Object.assign({}, old, { status: 'ajustes', sig: daySig(date), decBy: S.uid, decAt: Date.now(), comment: (val('drCom', '') || '').trim().slice(0, 140) }))); toast('Ajustes pedidos.'); return true; }
+    case 'bk-now': backupNow(); return true;
+    case 'rs-sel': if (RS) { RS.sel[d.k] = !!el.checked; } return true;
+    case 'rs-go': rsConfirm(); return true;
+    case 'rs-x': RS = null; render(); return true;
+    case 'blk-set': blockSet(d.uid, true); return true;
+    case 'blk-off': blockSet(d.uid, false); return true;
+    case 'dn-go': { const u = val('dnPick', ''); if (!u) { toast('Escolha uma pessoa.'); return true; } roleModal(u); return true; }
+    case 'rv-on': return true;
+    case 'ab-save': { const t = (val('abText', '') || '').trim(); const ok = await W(() => S.db.doc('config/about').set({ intro: t.slice(0, 600), at: Date.now(), by: S.uid })); if (ok) toast('Texto salvo.'); return true; }
+    case 'rep-print': repPrint(); return true;
+    case 'wq-new': wqModal(); return true;
+    case 'wq-open': wqOpen(); return true;
+    case 'wq-vote': wqVote(d.o); return true;
+    case 'wq-close': askModal('Encerrar a pergunta?', 'O resultado fica visível para todos por 3 dias.', 'Encerrar', wqClose, false); return true;
+    case 'share-card': shareCard(); return true;
+    case 'about-go': aboutSeen(); S.view = 'sobre'; render(); window.scrollTo(0, 0); return true;
+    case 'about-x': aboutSeen(); render(); return true;
+    default: return false;
+  }
+}
+async function chg3(t) {
+  const d = t.dataset || {};
+  if (t.id === 'rsFile' && t.files && t.files[0]) { rsRead(t.files[0]); t.value = ''; return true; }
+  if (d.act === 'sh-set') { const k = d.k; await W(() => (t.value ? S.db.doc('shifts/' + k).set({ uid: t.value, at: Date.now(), by: S.uid }) : S.db.doc('shifts/' + k).delete())); return true; }
+  if (d.act === 'rv-on') { await W(() => S.db.doc('config/reserve').set(Object.assign({}, S.config.reserve || {}, { on: !!t.checked }))); return true; }
+  if (d.act === 'rv-folder') { await W(() => S.db.doc('config/reserve').set(Object.assign({}, S.config.reserve || {}, { folder: t.value }))); return true; }
+  if (d.act === 'rs-sel') { if (RS) RS.sel[d.k] = !!t.checked; return true; }
+  return false;
+}
+const views = { semana: vSem, equipe: vEq, dados: vDad, painel: vPan, meu: vMeu, sobre: vSob, estudio: vEstudio, aovivo: vAoVivo, programacao: vProg, pedidos: vPed, sugestoes: vSug, programateca: vLib, ouvintes: vOuv, alteracoes: vHist, divulgar: vDiv, radialistas: vRad };
 
 const navOk = (n) => n.roles.includes(role()) && (!n.owner || (S.isOwner && !S.as)) && (!n.dono || (window.__staff && isDono() && !S.as));
 function teamBtn() { return !window.__staff || !S.uid ? '' : window.__staff.isAnon() ? '<button class="btn sm ghost" type="button" data-act="rad-enter">Entrar como radialista</button>' : '<button class="btn sm ghost" type="button" data-act="rad-out">Sair da conta</button>'; }
@@ -2654,7 +3291,7 @@ function render() {
   const sv = {}, wy = window.scrollY;
   if (sameView) ['.qlist', '.lsongs', '.bklist'].forEach((q) => { const el = main.querySelector(q); if (el) sv[q] = el.scrollTop; });
   $('#side').innerHTML = sideHTML();
-  main.innerHTML = mheadHTML() + mntBanner() + stripHTML() + instHTML() + (views[S.view] || vAoVivo)();
+  main.innerHTML = mheadHTML() + mntBanner() + stripHTML() + instHTML() + aboutHint() + (views[S.view] || vAoVivo)();
   if (sameView) {
     Object.entries(sv).forEach(([q, t]) => { const el = main.querySelector(q); if (el) el.scrollTop = t; });
     if (window.scrollY !== wy) window.scrollTo(0, wy);
@@ -3276,6 +3913,7 @@ async function removeReg(uid) {
 
 /* ---------- Ações ---------- */
 async function act(a, el) {
+  if (await act3(a, el)) return;
   switch (a) {
     case 'nav': cueStop(); S.fade = 1; S.view = el.dataset.v; S.sel = null; render(); window.scrollTo(0, 0);
       if (S.view === 'pedidos') refreshQuota('requests', true); else if (S.view === 'sugestoes') refreshQuota('suggestions', true); else if (S.view === 'aovivo') { refreshLikes(true); refreshPoll(true); ping(true); }
@@ -3435,6 +4073,7 @@ async function act(a, el) {
       let enc;
       try { enc = await encReq({ title: title.slice(0, 120), artist: artist.slice(0, 120), msg: msg.slice(0, 400), by: S.uid || null }); } catch (e) { out.textContent = 'Este navegador não conseguiu proteger o pedido.'; break; }
       try { await S.db.collection('requests').add({ enc, kid: rk.kid || null, at: Date.now(), status: 'novo' }); } catch (e) {
+        if (/bloqueado/.test((e && e.message) || '')) { S.blockedMe = true; render(); break; }
         if (/limite_diario/.test((e && e.message) || '')) { S.quota.requests = 0; out.textContent = 'Você já usou os pedidos de hoje. Volte amanhã!'; render(); }
         else out.textContent = 'Não foi possível enviar agora. Tente de novo.';
         break;
@@ -3536,6 +4175,7 @@ document.addEventListener('input', (e) => {
 });
 document.addEventListener('change', async (e) => {
   const t = e.target;
+  if (await chg3(t)) return;
   if (t.id === 'bkFile' && t.files && t.files.length) { bulkRun(Array.from(t.files)); t.value = ''; return; }
   if (t.id === 'sfFile' && t.files && t.files[0]) {
     const f = t.files[0], m = $('#sfMsg');
@@ -3578,7 +4218,7 @@ function tick() {
   const cur = AIR.cur;
   curKey = cur ? cur.date + cur.sector + cur.id : null;
   syncAudio(AIR);
-  ping(); refreshLikes(); refreshPoll();
+  ping(); refreshLikes(); refreshPoll(); refreshWq();
   if (S.view === 'pedidos') refreshQuota('requests'); else if (S.view === 'sugestoes') refreshQuota('suggestions');
   const pl0 = S.polls.atual;
   if (pl0 && pl0.status === 'open' && Date.now() >= pl0.endsAt && can('programar') && !S.as) closePoll(false);
@@ -3664,8 +4304,16 @@ async function boot() {
     sub('names', 'names', null, () => { S.namesLoaded = true; land(); });
     if (isDono()) { S.peopleSub = true; sub('people', 'people'); }
     else if (S.uid) S.db.doc('people/' + S.uid).onSnapshot((d) => { S.people = d.exists ? { [S.uid]: d.data() } : {}; scheduleRender(); }, () => {});
-    sub('songs', 'songs', (d) => Object.assign({}, d.data(), { id: d.id }));
-    sub('plan', 'plan');
+    sub('songs', 'songs', (d) => Object.assign({}, d.data(), { id: d.id }), injectWeek);
+    sub('weekly', 'weekly', null, injectWeek);
+    sub('shifts', 'shifts');
+    sub('drafts', 'drafts');
+    if (isStaff()) sub('notes', 'notes');
+    if (isDono()) sub('stafflog', 'stafflog');
+    if (isStaff()) sub('blocked', 'blocked');
+    else if (S.uid) S.db.doc('blocked/' + S.uid).onSnapshot((d) => { S.blockedMe = !!d.exists; scheduleRender(); }, () => {});
+    logStaff();
+    sub('plan', 'plan', null, injectWeek);
     sub('requests', 'requests', null, () => { decryptAll(); });
     sub('suggestions', 'suggestions', null, () => { decryptAll(); });
     sub('templates', 'templates');
