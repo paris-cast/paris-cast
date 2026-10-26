@@ -185,6 +185,17 @@
     list: async function () { return { assets: [], usage: {} }; },
     delete: async function (id) { await init(); await sb.storage.from('audio').remove([id]); return { deleted: true }; }
   };
+  var signed = {};
+  window.__signedUrl = function (id) { var c = signed[id]; return c && c.exp > Date.now() ? c.url : null; };
+  window.__signAsset = async function (id) {
+    var c = window.__signedUrl(id); if (c) return c;
+    if (!sb) return window.__assetUrl(id);
+    await init();
+    var r = await sb.storage.from('audio').createSignedUrl(id, 14400);
+    if (r.error || !r.data) return null;
+    signed[id] = { url: r.data.signedUrl, exp: Date.now() + 12600000 };
+    return r.data.signedUrl;
+  };
   window.__assetUrl = function (id) { return sb ? sb.storage.from('audio').getPublicUrl(id).data.publicUrl : '/_blob/' + id; };
   /* funcoes do banco (curtidas, enquete, ouvindo agora, limites) */
   window.__rpc = sb ? async function (name, args) {

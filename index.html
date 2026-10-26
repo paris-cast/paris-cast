@@ -1282,6 +1282,19 @@ function startKeep(title) {
 }
 const stopKeep = () => { try { pauseQuiet(keep); } catch (e) { /* ok */ } };
 autoResume(audio); autoResume(keep);
+function audioUrl(id, ok, bad) {
+  const u = window.__signedUrl ? window.__signedUrl(id) : null;
+  if (u) { ok(u); return; }
+  if (!window.__signAsset) { ok(window.__assetUrl ? window.__assetUrl(id) : '/_blob/' + id); return; }
+  window.__signAsset(id).then((x) => (x ? ok(x) : bad && bad()), () => bad && bad());
+}
+function prefetchAudio() {
+  if (!window.__signAsset || !S.uid || needsReg() || mntOf()) return;
+  const ids = [];
+  if (AIR && AIR.cur && AIR.cur.song) ids.push(AIR.cur.song.assetId);
+  (AIR.list || []).filter((e) => e.song && e.abs > AIR.n.sec).slice(0, 2).forEach((e) => ids.push(e.song.assetId));
+  ids.filter(Boolean).forEach((id) => { if (!window.__signedUrl(id)) window.__signAsset(id).catch(() => {}); });
+}
 function syncAudio(air) {
   if (mntOf()) {
     const was = S.tuned;
@@ -1304,8 +1317,10 @@ function syncAudio(air) {
   if (key !== loadedKey) {
     loadedKey = key;
     setAudioMsg('');
-    audio.src = window.__assetUrl ? window.__assetUrl(cur.song.assetId) : '/_blob/' + cur.song.assetId;
     stopKeep();
+    const st = (url) => {
+    if (loadedKey !== key) return;
+    audio.src = url;
     try {
       if ('mediaSession' in navigator && window.MediaMetadata) {
         navigator.mediaSession.metadata = new MediaMetadata({ title: cur.song.title || 'Paris Cast', artist: cur.song.artist || '', album: 'Paris Cast' });
@@ -1317,6 +1332,8 @@ function syncAudio(air) {
     audio.addEventListener('loadedmetadata', () => { try { audio.currentTime = Math.min(offset, (audio.duration || offset) - 0.5); } catch (e) { /* sem seek */ } }, { once: true });
     const pr = audio.play();
     if (pr && pr.catch) pr.catch(() => setAudioMsg('O navegador bloqueou o áudio. Toque em “Ouvir ao vivo” de novo.'));
+    };
+    audioUrl(cur.song.assetId, st, () => { if (loadedKey === key) setAudioMsg('Não consegui abrir o áudio. Confirme se seu cadastro foi concluído.'); });
   } else if (!audio.paused && Math.abs(audio.currentTime - offset) > 4) {
     try { audio.currentTime = offset; } catch (e) { /* ignorar */ }
   }
@@ -2433,9 +2450,13 @@ function cueToggle(id) {
   if (!sg || !sg.assetId) { toast('Esta música está sem arquivo de áudio.'); return; }
   if (CUE.a && CUE.id === id && !CUE.a.paused) { cueStop(); render(); return; }
   cueStop();
-  CUE.a = new Audio(window.__assetUrl(sg.assetId)); CUE.id = id; CUE.a.volume = 0.8;
-  CUE.a.onended = () => { CUE.id = null; CUE.a = null; scheduleRender(); };
-  CUE.a.play().then(() => scheduleRender()).catch(() => { toast('Não consegui tocar a pré-escuta.'); CUE.id = null; CUE.a = null; scheduleRender(); });
+  CUE.id = id;
+  audioUrl(sg.assetId, (url) => {
+    if (CUE.id !== id) return;
+    CUE.a = new Audio(url); CUE.a.volume = 0.8;
+    CUE.a.onended = () => { CUE.id = null; CUE.a = null; scheduleRender(); };
+    CUE.a.play().then(() => scheduleRender()).catch(() => { toast('Não consegui tocar a pré-escuta.'); CUE.id = null; CUE.a = null; scheduleRender(); });
+  }, () => { toast('Não consegui abrir o áudio.'); CUE.id = null; });
 }
 let ASK = null;
 function askModal(title, text, label, fn, danger) {
@@ -3762,6 +3783,8 @@ async function doReg() {
     await S.db.doc('names/' + S.uid).set({ nome, at });
     S.people[S.uid] = { nome, tel, pk, nk, at };
     S.names[S.uid] = { nome, at };
+    try { sessionStorage.setItem('pc_welcome', nome.split(' ')[0]); } catch (e2) { /* sem armazenamento */ }
+    if (window.__signAsset) { location.reload(); return; }
     S.view = LAND[role()]; S.landed = true;
     toast('Cadastro feito. Bem-vindo(a), ' + nome.split(' ')[0] + '.');
     render(); window.scrollTo(0, 0);
@@ -4218,7 +4241,7 @@ function tick() {
   const cur = AIR.cur;
   curKey = cur ? cur.date + cur.sector + cur.id : null;
   syncAudio(AIR);
-  ping(); refreshLikes(); refreshPoll(); refreshWq();
+  ping(); refreshLikes(); refreshPoll(); refreshWq(); prefetchAudio();
   if (S.view === 'pedidos') refreshQuota('requests'); else if (S.view === 'sugestoes') refreshQuota('suggestions');
   const pl0 = S.polls.atual;
   if (pl0 && pl0.status === 'open' && Date.now() >= pl0.endsAt && can('programar') && !S.as) closePoll(false);
@@ -4277,6 +4300,7 @@ async function boot() {
   AIR = onAir();
   render();
   setInterval(tick, 1000);
+  try { const w = sessionStorage.getItem('pc_welcome'); if (w) { sessionStorage.removeItem('pc_welcome'); setTimeout(() => toast('Cadastro feito. Bem-vindo(a), ' + w + '.'), 1500); } } catch (e) { /* sem armazenamento */ }
   const [db, user, assets] = await Promise.all([use('db'), use('user'), use('assets')]);
   S.db = db; S.user = user; S.assets = assets;
   use('sample').then((x) => { SMP = x; });
