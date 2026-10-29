@@ -56,6 +56,17 @@ language sql stable security definer set search_path = public as $$
 $$;
 
 -- 4) Regras de leitura
+-- Cadastro concluido (nome salvo) ou equipe: so esses ouvem a radio
+create or replace function public.app_registered() returns boolean
+language sql stable security definer set search_path = public as $$
+  select auth.uid() is not null and (
+    public.app_level() >= 3
+    or public.app_role() in ('produtor', 'programador', 'dono')
+    or exists (select 1 from public.docs d where d.path = 'names/' || auth.uid()::text and coalesce(d.data ->> 'nome', '') <> ''))
+$$;
+revoke all on function public.app_registered() from public, anon;
+grant execute on function public.app_registered() to authenticated;
+
 create or replace function public.app_can_read(p text) returns boolean
 language plpgsql stable security definer set search_path = public as $$
 declare seg text[] := string_to_array(p, '/'); me text := auth.uid()::text; lvl int := public.app_level(); n int := array_length(string_to_array(p, '/'), 1);
@@ -70,6 +81,10 @@ begin
     when 'notes' then return lvl >= 3 or public.app_role() in ('produtor', 'programador', 'dono');
     when 'stafflog' then return lvl >= 3 or public.app_role() = 'dono';
     when 'blocked' then return lvl >= 3 or (n = 2 and seg[2] = me);
+    when 'songs' then return public.app_registered();
+    when 'plan' then return public.app_registered();
+    when 'weekly' then return public.app_registered();
+    when 'problems' then return lvl >= 3 or public.app_role() in ('produtor', 'programador', 'dono');
     else return true;
   end case;
 end $$;
@@ -103,6 +118,10 @@ begin
     when 'notes' then return r in ('produtor', 'programador', 'dono');
     when 'stafflog' then return old is null and new is not null and r in ('produtor', 'programador', 'dono');
     when 'history' then return r in ('programador', 'dono');
+    when 'problems' then
+      if r in ('produtor', 'programador', 'dono') then return true; end if;
+      return old is null and new is not null and length(new::text) < 1500 and public.app_registered()
+        and not exists (select 1 from public.docs b where b.path = 'blocked/' || me);
     else return false;
   end case;
 end $$;
@@ -184,8 +203,10 @@ grant execute on function public.app_is_producer() to authenticated;
 do $$ begin
   if to_regclass('storage.buckets') is not null then
     insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-    values ('audio', 'audio', true, 20971520, array['video/mp4','video/webm','audio/mp4','audio/webm','audio/x-m4a'])
-    on conflict (id) do update set public = true, file_size_limit = 20971520, allowed_mime_types = excluded.allowed_mime_types;
+    values ('audio', 'audio', false, 20971520, array['video/mp4','video/webm','audio/mp4','audio/webm','audio/x-m4a'])
+    on conflict (id) do update set public = false, file_size_limit = 20971520, allowed_mime_types = excluded.allowed_mime_types;
+    execute 'drop policy if exists audio_select on storage.objects';
+    execute 'create policy audio_select on storage.objects for select to authenticated using (bucket_id = ''audio'' and public.app_registered())';
     execute 'drop policy if exists audio_insert on storage.objects';
     execute 'drop policy if exists audio_delete on storage.objects';
     execute 'create policy audio_insert on storage.objects for insert to authenticated with check (bucket_id = ''audio'' and public.app_is_producer())';
@@ -361,4 +382,19 @@ end $$;
 
 revoke all on function public.quota_left(text), public.presence_ping(boolean), public.like_toggle(text), public.like_info(text), public.likes_top(int), public.poll_vote(text, text), public.poll_results(text), public.likes_who(text), public.my_likes(), public.stats_hours(int), public.app_is_anon() from public, anon;
 grant execute on function public.quota_left(text), public.presence_ping(boolean), public.like_toggle(text), public.like_info(text), public.likes_top(int), public.poll_vote(text, text), public.poll_results(text), public.likes_who(text), public.my_likes(), public.stats_hours(int), public.app_is_anon() to authenticated;
+-- Numeros publicos da radio (so para quem concluiu o cadastro)
+create or replace function public.public_stats() returns json
+language plpgsql stable security definer set search_path = public as $$
+begin
+  if not public.app_registered() then raise exception 'sem cadastro'; end if;
+  return json_build_object(
+    'cadastros', (select count(*) from public.docs where path like 'names/%' and coalesce(data ->> 'nome', '') <> ''),
+    'segundos', (select coalesce(sum((data ->> 'sec')::numeric), 0) from public.docs where path like 'listeners/%'),
+    'musicas', (select count(*) from public.docs where path like 'songs/%'),
+    'curtidas', (select count(*) from public.likes),
+    'desde', (select min((data ->> 'at')::bigint) from public.docs where path like 'names/%' and (data ->> 'at') ~ '^[0-9]+$'));
+end $$;
+revoke all on function public.public_stats() from public, anon;
+grant execute on function public.public_stats() to authenticated;
+
 revoke all on function public.docs_quota() from public, anon, authenticated;

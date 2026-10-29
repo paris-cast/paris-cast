@@ -897,6 +897,21 @@ a.btn { color: inherit; text-decoration: none; }
 .wks .meter { display: block; width: 100%; margin: 8px 0 4px; }
 .wks .mt { display: flex; }
 .wks .hrs { white-space: nowrap; }
+
+.terms { margin: 4px 0 8px; font-size: 13.5px; color: var(--ink-2); }
+.terms summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+.terms ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+.hc { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.hc li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
+.hc li.bad { border-color: var(--bad); }
+.hc li small { display: block; color: var(--ink-3); margin-top: 2px; }
+.faq { display: grid; gap: 6px; }
+.faq details { border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+.faq summary { cursor: pointer; font-weight: 600; }
+.faq p { margin: 8px 0 0; color: var(--ink-2); line-height: 1.55; }
+.cd.mini { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; font-size: 13.5px; }
+.cd.mini b { font: 600 15px var(--f-mono); }
+.mnt .btn { margin-left: auto; flex: none; }
 </style>
 </head>
 <body>
@@ -946,6 +961,8 @@ const NAV = [
   { id: 'ouvintes', nome: 'Ouvintes', ic: 'people', roles: STAFF },
   { id: 'alteracoes', nome: 'Alterações', curto: 'Histórico', ic: 'history', roles: ['programador', 'dono'] },
   { id: 'divulgar', nome: 'Divulgar', ic: 'qr', roles: STAFF },
+  { id: 'manual', nome: 'Manual da equipe', curto: 'Manual', ic: 'book', roles: STAFF },
+  { id: 'numeros', nome: 'A rádio em números', curto: 'Números', ic: 'chart', roles: ALL },
   { id: 'semana', nome: 'Grade da semana', curto: 'Semana', ic: 'week', roles: ['programador', 'dono'] },
   { id: 'equipe', nome: 'Equipe', ic: 'team', roles: STAFF },
   { id: 'dados', nome: 'Dados', ic: 'chart', roles: ['programador', 'dono'] },
@@ -984,6 +1001,7 @@ const emblem = (cls) => '<svg class="emb ' + (cls || '') + '" viewBox="0 0 64 72
 const SECT_IC = { madrugada: 'stars', dia: 'sun', tarde: 'sunset', noite: 'moon' };
 const sectIc = (id) => ic(SECT_IC[id] || 'sun');
 Object.assign(ICON, {
+  book: '<path d="M5 4.5h10.5A2.5 2.5 0 0 1 18 7v13H7.5A2.5 2.5 0 0 1 5 17.5z"/><path d="M5 17.5A2.5 2.5 0 0 1 7.5 15H18"/>',
   week: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M7.5 14h2M11 14h2M14.5 14h2"/>',
   team: '<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="17" cy="9.5" r="2.4"/><path d="M16 14.2c2.6-.3 4.5 1.4 4.5 4.3"/>',
   chart: '<path d="M4 20V4M4 20h16"/><rect x="7.5" y="11" width="3" height="6" rx=".6"/><rect x="12.5" y="7" width="3" height="10" rx=".6"/><rect x="17.5" y="13" width="2.6" height="4" rx=".6"/>',
@@ -1151,7 +1169,7 @@ function entriesAbs(fromDay, days) {
 function onAir() {
   const n = nowSP();
   const list = entriesAbs(n.date, 3);
-  const cur = list.find((e) => e.song && e.dur > 0 && e.abs <= n.sec && n.sec < e.absEnd) || reserveCur(n, list);
+  const cur = (emOn() && reserveCur(n, [], true)) || list.find((e) => e.song && e.dur > 0 && e.abs <= n.sec && n.sec < e.absEnd) || reserveCur(n, list);
   const sector = SECT.find((s) => n.sec >= s.ini * 3600 && n.sec < s.fim * 3600) || null;
   return { n, list, cur, sector };
 }
@@ -1380,6 +1398,7 @@ function greet() {
   const n = S.uid && S.names[S.uid] && S.names[S.uid].nome;
   return n ? g + ', ' + n.split(' ')[0] : g;
 }
+const cdCur = (nx) => (nx ? '<div class="cd mini"><span class="eyebrow">Próxima música em</span> <b id="cdNext">' + cdFmt(nx.abs - AIR.n.sec) + '</b> <small class="muted">· ' + esc(nx.song.title) + '</small></div>' : '');
 const eqHTML = (on) => '<span class="eq' + (on ? ' on' : '') + '" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>';
 const vinylHTML = (song, spin) => '<div class="vinyl' + (spin ? ' spin' : '') + '" style="--c:' + (song ? sColor(song.style) : 'var(--ink-3)') + '" aria-hidden="true"><span class="lbl"></span></div>';
 
@@ -1394,7 +1413,7 @@ function vAoVivo() {
     hero = artHTML(cur.song, S.tuned) + '<div class="hinfo"><div class="onair">' + (mntOf() ? '<span class="lamp"></span>Em manutenção · sem som' : '<span class="lamp on"></span>' + (cur.reserve ? 'Programação reserva' : 'No ar · setor ' + esc(sectName(cur.sector))) + eqHTML(S.tuned)) + '</div>' +
       '<div><h2>' + esc(cur.song.title) + '</h2><p class="art">' + esc(cur.song.artist) + '</p></div>' +
       '<div class="muted dotline">' + dotFor(cur.song.style) + esc(folderName(cur.song.style)) + '</div>' +
-      '<div><div class="prog"><i id="progBar" style="width:' + pct.toFixed(2) + '%"></i></div><div class="times"><span id="tEl">' + mmss(n.sec - cur.abs) + '</span><span>' + mmss(cur.dur) + '</span></div></div>' + reactHTML(cur) + '</div>';
+      '<div><div class="prog"><i id="progBar" style="width:' + pct.toFixed(2) + '%"></i></div><div class="times"><span id="tEl">' + mmss(n.sec - cur.abs) + '</span><span>' + mmss(cur.dur) + '</span></div></div>' + cdCur(nextList[0]) + reactHTML(cur) + '</div>';
   } else if (nothing) {
     hero = vinylHTML(null, false) + '<div class="hinfo"><div class="onair"><span class="lamp"></span>Fora do ar</div><div><h2>A grade está vazia</h2><p class="art">Ainda não há músicas programadas. Quando o programador montar a programação, ela começa a tocar no horário.</p></div>' +
       (can('programar') ? '<div><button class="btn pri" type="button" data-act="nav" data-v="estudio">Montar programação</button></div>' : can('cadastrar') ? '<div><button class="btn pri" type="button" data-act="nav" data-v="programateca">Abrir programateca</button></div>' : '') + '</div>';
@@ -1408,12 +1427,12 @@ function vAoVivo() {
     ? '<button class="btn pri lg" type="button" data-act="stop">' + ic('stop') + 'Parar</button>'
     : '<button class="btn pri lg" type="button" data-act="play">' + ic('play') + 'Ouvir ao vivo</button>') +
     '<label class="vol"><span class="eyebrow">Volume</span><input id="vol" type="range" min="0" max="100" value="' + Math.round(S.vol * 100) + '" aria-label="Volume"></label></div>' +
-    '<p class="hint" id="audioMsg" role="status">' + esc(S.audioMsg) + '</p>' + presHTML();
+    '<p class="hint" id="audioMsg" role="status">' + esc(S.audioMsg) + '</p>' + presHTML() + '<p class="hint"><button class="linkbtn" type="button" data-act="prob-open">Algo errado? Relatar um problema</button></p>';
   const nxt = nextList.length
     ? '<ol class="tn">' + nextList.map((e) => '<li><span class="t">' + hh(e.start) + '</span>' + thumb(e.song) + '<span style="min-width:0"><b>' + esc(e.song.title) + '</b><small>' + esc(e.song.artist) + '</small></span><span class="chip">' + (e.abs >= 86400 ? 'amanhã' : sectIc(e.sector) + esc(sectName(e.sector))) + '</span></li>').join('') + '</ol>'
     : '<div class="empty" style="padding:24px 0"><p>Nada programado à frente.</p></div>';
   const lays = SECT.map((s) => ({ s, items: layout(n.date, s.id) }));
-  return '<div class="wrap"><div class="ph"><div><h1>Ao vivo</h1><p>' + esc(greet()) + '. Todos ouvem a mesma coisa ao mesmo tempo. A programação é montada pela equipe da rádio.</p></div></div>' +
+  return '<div class="wrap"><div class="ph"><div><h1>' + esc(greet()) + '!</h1><p>Você está na Paris Cast. Todos ouvem a mesma coisa ao mesmo tempo, e a programação é montada pela equipe da rádio.</p></div></div>' +
     '<div class="live"><section class="panel hero" aria-label="No ar"><div class="hero-in">' + hero + '</div>' + ctl + '</section><section class="panel next" aria-label="A seguir"><h3>A seguir</h3>' + nxt + '</section></div>' +
     pollHTML() + wqHTML() + mntPanel() + extrasHTML(a) + '<section class="panel today" aria-label="Grade de hoje"><h3>A grade de hoje</h3>' + reguaHTML(n.date, lays) + '</section></div>';
 }
@@ -1722,8 +1741,10 @@ function pedBoard(ready) {
     if (r.songId && S.songs[r.songId]) a.push('<button class="btn sm" type="button" data-act="go-song" data-id="' + r.songId + '">Abrir música</button>');
     if (r.status !== 'recusada') a.push('<button class="btn sm ghost" type="button" data-act="req-status" data-id="' + id + '" data-s="recusada">Recusar</button>');
     else a.push('<button class="btn sm ghost" type="button" data-act="req-status" data-id="' + id + '" data-s="novo">Reabrir</button>');
+    if (!r.flag) a.push('<button class="btn sm ghost" type="button" data-act="req-flag" data-id="' + id + '">Denunciar</button>');
+    if (isDono() && !S.as && d.by && d.by !== S.uid) a.push('<button class="btn sm ghost" type="button" data-act="blk-set" data-uid="' + esc(d.by) + '">Bloquear autor</button>');
     const done = r.doneBy && (r.status === 'programateca' || r.status === 'programada') ? '<p class="doneby">' + ic('check') + 'Confirmado por ' + esc(nm(r.doneBy)) + (r.doneAt ? ' ' + ago(r.doneAt) : '') + '</p>' : '';
-    return '<li class="rq" data-st="' + stKey + '">' + avatar(d.by) + '<div style="min-width:0"><div class="hd"><b>' + esc(d.by ? nm(d.by) : 'Ouvinte') + '</b><small>pediu ' + ago(r.at) + '</small><span class="chip ' + st[1] + '">' + st[0] + '</span></div>' +
+    return '<li class="rq" data-st="' + stKey + '">' + avatar(d.by) + '<div style="min-width:0"><div class="hd"><b>' + esc(d.by ? nm(d.by) : 'Ouvinte') + '</b><small>pediu ' + ago(r.at) + '</small><span class="chip ' + st[1] + '">' + st[0] + '</span>' + (r.flag ? '<span class="chip bad">Denunciado</span>' : '') + '</div>' +
       '<p class="song-t">' + esc(d.title) + '</p>' + (d.artist ? '<p class="song-a">' + esc(d.artist) + '</p>' : '') +
       (d.msg ? '<p class="quote">' + esc(d.msg) + '</p>' : '') + done + '<div class="acts" style="justify-content:flex-start">' + a.join('') + '</div></div></li>';
   }).join('');
@@ -1803,7 +1824,7 @@ const BAD_SET = new Set(BAD_WORDS.map(collapse));
 function badWord(text) {
   const t = fold(text).replace(/[@]/g, 'a').replace(/\$/g, 's').replace(/[0]/g, 'o').replace(/[1!|]/g, 'i').replace(/3/g, 'e').replace(/4/g, 'a').replace(/5/g, 's').replace(/7/g, 't');
   const toks = t.split(/[^a-z]+/).filter(Boolean);
-  const check = (w) => { const c = collapse(w); return BAD_SET.has(c) || BAD_STEMS.some((s) => c.startsWith(collapse(s))) ? w : null; };
+  const check = (w) => { const c = collapse(w); return BAD_SET.has(c) || customBad().has(c) || BAD_STEMS.some((s) => c.startsWith(collapse(s))) ? w : null; };
   for (const w of toks) { const r = check(w); if (r) return r; }
   let run = [];
   for (const w of toks.concat([''])) {
@@ -2207,7 +2228,7 @@ function vSug() {
       const lida = r.status === 'lida';
       return '<li class="rq" data-st="' + (lida ? 'programada' : 'novo') + '"><span class="av" aria-hidden="true">' + ic('bulb') + '</span><div style="min-width:0"><div class="hd"><b>' + esc(SUG_KIND[d.kind] || 'Sugestão') + '</b><small>' + ago(r.at) + '</small><span class="chip ' + (lida ? 'ok' : 'warn') + '">' + (lida ? 'Lida' : 'Nova') + '</span></div>' + (isDono() && !S.as && d.by ? '<p class="hint">Enviada por <b>' + esc(nm(d.by)) + '</b>' + (S.people[d.by] && S.people[d.by].tel ? ' · ' + esc(fmtPhone(S.people[d.by].tel)) : '') + ' <small>(só o dono vê isto)</small></p>' : '') + '<p class="quote" style="white-space:pre-wrap">' + esc(d.text) + '</p><div class="acts" style="justify-content:flex-start">' +
         (lida ? '<button class="btn sm ghost" type="button" data-act="sg-status" data-id="' + id + '" data-s="nova">Marcar como nova</button>' : '<button class="btn sm pri" type="button" data-act="sg-status" data-id="' + id + '" data-s="lida">' + ic('check') + 'Marcar como lida</button>') +
-        (S.confirmSug === id ? '<button class="btn sm danger" type="button" data-act="sg-del" data-id="' + id + '">Apagar mesmo</button><button class="btn sm ghost" type="button" data-act="sg-no">Cancelar</button>' : '<button class="btn sm ghost" type="button" data-act="sg-ask" data-id="' + id + '">Apagar</button>') + '</div></div></li>';
+        (r.flag ? '<span class="chip bad">Denunciada</span>' : '<button class="btn sm ghost" type="button" data-act="sg-flag" data-id="' + id + '">Denunciar</button>') + (isDono() && !S.as && d.by && d.by !== S.uid ? '<button class="btn sm ghost" type="button" data-act="blk-set" data-uid="' + esc(d.by) + '">Bloquear autor</button>' : '') + (S.confirmSug === id ? '<button class="btn sm danger" type="button" data-act="sg-del" data-id="' + id + '">Apagar mesmo</button><button class="btn sm ghost" type="button" data-act="sg-no">Cancelar</button>' : '<button class="btn sm ghost" type="button" data-act="sg-ask" data-id="' + id + '">Apagar</button>') + '</div></div></li>';
     }).join('');
     body = '<div class="rq-head">' + tabs + '</div>' + (list.length ? '<ul class="panel rqs">' + items + '</ul>' : '<div class="panel empty"><span class="bigic">' + ic('check') + '</span><h3>' + (f === 'todas' ? 'Nenhuma sugestão ainda' : 'Nenhuma sugestão nova') + '</h3><p>As mensagens anônimas da escola aparecem aqui.</p></div>');
   }
@@ -2828,9 +2849,9 @@ function wkClear() {
 }
 
 /* ---------- Programação reserva: toca no lugar do silêncio ---------- */
-function reserveCur(n, list) {
-  const rv = S.config && S.config.reserve;
-  if (!rv || !rv.on) return null;
+function reserveCur(n, list, force) {
+  const rv = (S.config && S.config.reserve) || {};
+  if (!force && !rv.on) return null;
   const fid = rv.folder || 'reserva';
   const pool = Object.values(S.songs).filter((s) => s.style === fid && +s.dur > 0).sort((a, b) => (a.id < b.id ? -1 : 1));
   if (!pool.length) return null;
@@ -2920,7 +2941,7 @@ function vEq() {
   // entradas
   const lg = Object.entries(S.stafflog).map(([id, l]) => Object.assign({ id }, l)).sort((a, b) => (b.at || 0) - (a.at || 0)).slice(0, 40);
   const logs = dono ? '<section class="panel sec2"><div><h2>Entradas da equipe</h2><p class="muted">Quem entrou com conta de radialista e quando. Só o dono vê. Mostra as 40 mais recentes.</p></div>' + (lg.length ? '<ul class="panel rqs">' + lg.map((l) => '<li class="rq">' + avatar(l.uid) + '<div style="min-width:0"><div class="hd"><b>' + esc(nm(l.uid)) + '</b><span class="rb r-' + esc(ROLES[l.role] ? l.role : 'ouvinte') + '">' + esc(ROLES[l.role] || 'Equipe') + '</span><small>' + ago(l.at) + ' · ' + esc(new Date(l.at).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })) + '</small></div></div></li>').join('') + '</ul>' : '<p class="hint">Nenhuma entrada registrada ainda.</p>') + '</section>' : '';
-  return '<div class="wrap"><div class="ph"><div><h1>Equipe</h1><p>Anotações, escala de turnos, revisão da grade e registro de entradas. Só quem tem cargo vê esta aba.</p></div></div>' + notes + shifts + appr + logs + '</div>';
+  return '<div class="wrap"><div class="ph"><div><h1>Equipe</h1><p>Anotações, escala de turnos, revisão da grade e registro de entradas. Só quem tem cargo vê esta aba.</p></div></div>' + healthCard() + emCard() + probCard() + notes + shifts + appr + logs + '</div>';
 }
 async function logStaff() {
   if (S.logged || !S.db || !S.uid || S.as) return;
@@ -3003,7 +3024,7 @@ function vPan() {
   const rsv = '<section class="panel sec2"><div><h2>Programação reserva</h2><p class="muted">Quando a grade estiver sem música (um buraco ou um setor vazio), a rádio toca músicas de uma pasta reserva em vez de ficar em silêncio. A reserva sai da frente assim que a próxima música da grade começa.</p></div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end"><label class="tg"><input type="checkbox" data-act="rv-on"' + (rv.on ? ' checked' : '') + '> Ligada</label><div class="fld" style="margin:0"><label for="rvFolder">Pasta da reserva</label><select id="rvFolder" data-act="rv-folder">' + vf.map((f) => '<option value="' + esc(f.id) + '"' + ((rv.folder || 'reserva') === f.id ? ' selected' : '') + '>' + esc(f.nome) + '</option>').join('') + '</select></div></div><p class="hint">Músicas na pasta escolhida: <b>' + Object.values(S.songs).filter((s) => s.style === (rv.folder || 'reserva') && +s.dur > 0).length + '</b>.' + (rv.on ? '' : ' Ligue para a reserva funcionar.') + '</p></section>';
   const ab = S.config.about || {};
   const abt = '<section class="panel sec2"><div><h2>Texto da página “Sobre a rádio”</h2><p class="muted">A apresentação que os ouvintes novos leem. Deixe em branco para usar o texto padrão.</p></div><div class="fld"><label for="abText">Apresentação</label><textarea id="abText" data-d="abText" maxlength="600" placeholder="Ex.: A Paris Cast é a rádio da nossa escola…">' + esc(val('abText', ab.intro || '')) + '</textarea></div><div class="acts" style="justify-content:flex-start"><button class="btn pri" type="button" data-act="ab-save">Salvar texto</button></div></section>';
-  return '<div class="wrap"><div class="ph"><div><h1>Painel do dono</h1><p>Cópia de segurança, restauração, bloqueios, donos e ajustes gerais da rádio.</p></div></div>' + bk + rest + blk + dn + rsv + abt + '</div>';
+  return '<div class="wrap"><div class="ph"><div><h1>Painel do dono</h1><p>Cópia de segurança, restauração, bloqueios, donos e ajustes gerais da rádio.</p></div></div>' + bk + rest + blk + dn + rsv + abt + panExtra() + '</div>';
 }
 
 /* ---------- Dados: estatísticas e relatório mensal ---------- */
@@ -3188,7 +3209,7 @@ function vSob() {
   return '<div class="wrap"><div class="ph"><div><h1>Sobre a rádio</h1><p>Conheça a Paris Cast e como participar.</p></div></div>' +
     '<section class="panel sec2"><h2>Quem somos</h2><p style="white-space:pre-wrap">' + esc(ab) + '</p><div class="acts" style="justify-content:flex-start"><button class="btn pri" type="button" data-act="nav" data-v="aovivo">' + ic('play') + 'Ouvir agora</button>' + (!isStandalone() ? '<button class="btn" type="button" data-act="install">Instalar no celular</button>' : '') + '</div></section>' +
     '<section class="panel sec2"><h2>Como funciona</h2><ul class="how"><li><b>Programação fixa.</b> Todos ouvem a mesma música ao mesmo tempo. Não dá para escolher faixa: é rádio.</li><li><b>Quatro horários por dia.</b> Cada setor tem seu estilo e sua equipe.</li><li><b>Dá para participar.</b> Peça músicas, mande sugestões, curta o que está tocando e vote nas enquetes.</li></ul><ul class="how sects">' + sec + '</ul></section>' +
-    '<section class="panel sec2"><h2>Regras de convivência</h2><ul class="how"><li>Cada pessoa pode fazer até <b>' + limitOf('requests') + '</b> pedidos e <b>' + limitOf('suggestions') + '</b> sugestões por dia.</li><li>Seus pedidos e sugestões são privados: só a equipe autorizada lê.</li><li>Respeite todo mundo. A equipe pode pausar quem usar a rádio para ofender.</li><li>Não aceitamos músicas com palavrões ou conteúdo impróprio.</li></ul></section></div>';
+    '<section class="panel sec2"><h2>Regras de convivência</h2><ul class="how"><li>Cada pessoa pode fazer até <b>' + limitOf('requests') + '</b> pedidos e <b>' + limitOf('suggestions') + '</b> sugestões por dia.</li><li>Seus pedidos e sugestões são privados: só a equipe autorizada lê.</li><li>Respeite todo mundo. A equipe pode pausar quem usar a rádio para ofender.</li><li>Não aceitamos músicas com palavrões ou conteúdo impróprio.</li></ul></section>' + faqHTML() + bgHelp() + '<div class="acts" style="justify-content:flex-start"><button class="btn" type="button" data-act="prob-open">Relatar um problema</button></div></div>';
 }
 function aboutHint() {
   if (S.view !== 'aovivo' || !S.uid) return '';
@@ -3209,7 +3230,7 @@ async function act3(a, el) {
   const d = el && el.dataset ? el.dataset : {};
   switch (a) {
     case 'nav':
-      if (d.v === 'meu') loadMine(true); else if (d.v === 'dados') loadStats(true); else if (d.v === 'sobre') aboutSeen();
+      if (d.v === 'meu') loadMine(true); else if (d.v === 'dados') loadStats(true); else if (d.v === 'sobre') aboutSeen(); else if (d.v === 'numeros') loadNum(true);
       return false;
     case 'wk-dow': WK.dow = +d.d; render(); return true;
     case 'wk-sec': WK.sid = d.id; render(); return true;
@@ -3266,7 +3287,199 @@ async function chg3(t) {
   if (d.act === 'rs-sel') { if (RS) RS.sel[d.k] = !!t.checked; return true; }
   return false;
 }
-const views = { semana: vSem, equipe: vEq, dados: vDad, painel: vPan, meu: vMeu, sobre: vSob, estudio: vEstudio, aovivo: vAoVivo, programacao: vProg, pedidos: vPed, sugestoes: vSug, programateca: vLib, ouvintes: vOuv, alteracoes: vHist, divulgar: vDiv, radialistas: vRad };
+
+/* ---------- Termo de uso e palavras bloqueadas ---------- */
+const TERMS_DEF = 'A Paris Cast é a rádio da nossa escola e é feita para a comunidade escolar.\nSeu nome e telefone ficam guardados só para a gestão da rádio, e o telefone só o dono vê.\nPedidos e sugestões não podem ter palavrões nem ofensas. Quem desrespeitar pode ser bloqueado pela equipe.\nCada pessoa usa o próprio nome. Não vale se passar por outra pessoa ou pela equipe.\nA programação é decidida pela equipe: pedir uma música não garante que ela vai tocar.';
+const termsText = () => ((S.config.terms || {}).text || TERMS_DEF);
+function termsBox() {
+  return '<details class="terms"><summary>Ler o termo de uso</summary><ul>' + termsText().split('\n').filter((l) => l.trim()).map((l) => '<li>' + esc(l.trim()) + '</li>').join('') + '</ul></details><label class="tg" style="align-items:flex-start;min-height:0"><input type="checkbox" id="regTerms"> <span>Li e aceito o termo de uso da rádio.</span></label>';
+}
+let CB = { k: '', s: new Set() };
+function customBad() {
+  const list = (S.config.badwords || {}).list || [], k = list.join('|');
+  if (CB.k !== k) CB = { k, s: new Set(list.map((w) => collapse(fold(String(w)).replace(/[^a-z0-9]/g, ''))).filter(Boolean)) };
+  return CB.s;
+}
+function panExtra() {
+  const bw = ((S.config.badwords || {}).list || []).join(', '), tm = (S.config.terms || {}).text || '';
+  return '<section class="panel sec2"><div><h2>Palavras bloqueadas</h2><p class="muted">A rádio já bloqueia vários palavrões em pedidos e sugestões. Aqui você acrescenta outras palavras ou gírias, separadas por vírgula. Valem junto com as que já existem.</p></div><div class="fld"><label for="bwText">Palavras a mais</label><textarea id="bwText" data-d="bwText" placeholder="palavra1, palavra2, palavra3">' + esc(val('bwText', bw)) + '</textarea></div><div class="acts" style="justify-content:flex-start"><button class="btn pri" type="button" data-act="bw-save">Salvar palavras</button></div></section>' +
+    '<section class="panel sec2"><div><h2>Termo de uso do cadastro</h2><p class="muted">Aparece para quem vai se cadastrar, que precisa marcar que leu. Uma regra por linha. Deixe em branco para usar o texto padrão.</p></div><div class="fld"><label for="tmText">Texto do termo</label><textarea id="tmText" data-d="tmText" maxlength="1200" style="min-height:150px" placeholder="' + esc(TERMS_DEF.split('\n')[0]) + '…">' + esc(val('tmText', tm)) + '</textarea></div><div class="acts" style="justify-content:flex-start"><button class="btn pri" type="button" data-act="tm-save">Salvar termo</button></div></section>';
+}
+
+/* ---------- Denunciar pedido ou sugestão ---------- */
+async function flagReq(id) {
+  const ok = await W(() => S.db.doc('requests/' + id).update({ status: 'recusada', flag: { by: S.uid, at: Date.now() } }));
+  if (ok) toast('Pedido denunciado e marcado como recusado.');
+}
+async function flagSug(id) {
+  const ok = await W(() => S.db.doc('suggestions/' + id).update({ flag: { by: S.uid, at: Date.now() } }));
+  if (ok) toast('Mensagem denunciada. O dono foi avisado.');
+}
+
+/* ---------- Modo de emergência ---------- */
+const emOn = () => !!(S.config.emergency || {}).on;
+function emBanner() {
+  if (!isStaff() || !emOn()) return '';
+  return '<div class="mnt" role="alert"><span class="mi" aria-hidden="true">' + ic('shield') + '</span><div class="tx"><b>Modo de emergência ligado</b><span>A rádio está tocando só a pasta reserva, ignorando a grade. Desligue na aba Equipe quando o problema passar.</span></div></div>';
+}
+function emCard() {
+  const on = emOn(), mgr = isMgr(), rv = S.config.reserve || {}, pool = Object.values(S.songs).filter((s) => s.style === (rv.folder || 'reserva') && +s.dur > 0).length;
+  return '<section class="panel sec2"><div><h2>Modo de emergência</h2><p class="muted">Se algo der errado e a grade não puder ser corrigida na hora, este botão faz a rádio tocar só a pasta reserva, sem tocar a grade, até você desligar. Os ouvintes seguem ouvindo música normalmente.</p></div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><span class="chip ' + (on ? 'bad' : 'ok') + '" style="font-size:14px;padding:6px 12px">' + (on ? 'LIGADO' : 'Desligado') + '</span>' + (mgr ? (on ? '<button class="btn pri" type="button" data-act="em-off">Voltar para a grade</button>' : '<button class="btn danger" type="button" data-act="em-on"' + (pool ? '' : ' disabled') + '>Ligar modo de emergência</button>') : '<small class="muted">Só o programador e o dono ligam.</small>') + '</div><p class="hint">Músicas na pasta reserva (' + esc(folderName(rv.folder || 'reserva')) + '): <b>' + pool + '</b>.' + (pool ? '' : ' Coloque músicas nessa pasta para o modo funcionar.') + '</p></section>';
+}
+async function emSet(on) {
+  const ok = await W(() => S.db.doc('config/emergency').set({ on, by: S.uid, at: Date.now() }));
+  if (ok) { AIR = onAir(); syncAudio(AIR); toast(on ? 'Modo de emergência ligado.' : 'A rádio voltou para a grade.'); render(); }
+}
+
+/* ---------- Verificação das próximas 24 horas ---------- */
+let HC = null;
+function healthCheck(force) {
+  if (!force && HC && Date.now() - HC.at < 30000) return HC;
+  const n = nowSP(), from = n.sec, to = n.sec + 86400;
+  const list = entriesAbs(n.date, 3).filter((e) => e.song && e.dur > 0).sort((a, b) => a.abs - b.abs);
+  let cov = 0, t = from; const gaps = [], noAudio = [];
+  for (const e of list) {
+    if (e.absEnd <= from || e.abs >= to) continue;
+    const s = Math.max(e.abs, from), en = Math.min(e.absEnd, to);
+    if (s > t) gaps.push(s - t);
+    cov += en - s; t = Math.max(t, en);
+    if (!e.song.assetId && !noAudio.includes(e.song.title)) noAudio.push(e.song.title);
+  }
+  if (t < to) gaps.push(to - t);
+  const rv = S.config.reserve || {}, pool = Object.values(S.songs).filter((s) => s.style === (rv.folder || 'reserva') && +s.dur > 0).length;
+  const resOk = !!rv.on && pool >= 1, big = gaps.filter((g) => g > 600);
+  const c = [];
+  const pct = Math.round(cov / 864);
+  c.push(cov === 0 ? { l: resOk ? 'warn' : 'bad', t: 'Nada programado nas próximas 24 horas', d: resOk ? 'A rádio vai tocar só a reserva.' : 'A rádio vai ficar em silêncio.' } : { l: pct >= 85 ? 'ok' : 'warn', t: pct + '% das próximas 24 horas têm música da grade', d: big.length ? big.length + (big.length === 1 ? ' buraco' : ' buracos') + ' de mais de 10 minutos' + (resOk ? ', cobertos pela reserva.' : ' (silêncio).') : 'Sem buracos grandes.' });
+  c.push(noAudio.length ? { l: 'bad', t: noAudio.length + (noAudio.length === 1 ? ' música sem arquivo de áudio' : ' músicas sem arquivo de áudio') + ' nas próximas 24 horas', d: noAudio.slice(0, 4).join(', ') + (noAudio.length > 4 ? '…' : '') + '. Elas ficam mudas no ar.' } : { l: 'ok', t: 'Todas as músicas das próximas 24 horas têm áudio', d: '' });
+  c.push(resOk ? { l: pool >= 5 ? 'ok' : 'warn', t: 'Reserva ligada com ' + pool + (pool === 1 ? ' música' : ' músicas'), d: pool >= 5 ? '' : 'Coloque mais músicas na pasta reserva para não repetir tanto.' } : { l: 'warn', t: 'Reserva desligada ou vazia', d: 'Em buracos da grade a rádio fica em silêncio. Ative no Painel do dono.' });
+  const tm = addDays(n.date, 1);
+  c.push(dayCount(tm) ? { l: 'ok', t: 'Amanhã tem ' + dayCount(tm) + ' músicas programadas', d: '' } : { l: 'warn', t: 'Amanhã está sem programação', d: 'Use a grade da semana ou monte o dia no Estúdio.' });
+  if (mntOf()) c.push({ l: 'warn', t: 'Aviso de manutenção ligado', d: 'A rádio está sem som para os ouvintes.' });
+  if (emOn()) c.push({ l: 'warn', t: 'Modo de emergência ligado', d: 'A grade está sendo ignorada.' });
+  HC = { at: Date.now(), c, bad: c.filter((x) => x.l === 'bad').length, warn: c.filter((x) => x.l === 'warn').length };
+  return HC;
+}
+function healthCard() {
+  const h = healthCheck(true);
+  return '<section class="panel sec2"><div><h2>Verificação das próximas 24 horas</h2><p class="muted">Confere sozinha se a rádio vai ter música, áudio e reserva. Roda de 5 em 5 minutos enquanto alguém da equipe estiver com o site aberto.</p></div><ul class="hc">' + h.c.map((x) => '<li class="' + x.l + '"><span class="chip ' + (x.l === 'ok' ? 'ok' : x.l === 'bad' ? 'bad' : 'warn') + '">' + (x.l === 'ok' ? 'OK' : x.l === 'bad' ? 'Problema' : 'Atenção') + '</span><span><b>' + esc(x.t) + '</b>' + (x.d ? '<small>' + esc(x.d) + '</small>' : '') + '</span></li>').join('') + '</ul><div class="acts" style="justify-content:flex-start"><button class="btn sm" type="button" data-act="hc-run">Verificar agora</button></div></section>';
+}
+function healthBanner() {
+  if (!isStaff() || S.view === 'equipe' || !S.uid || S.as) return '';
+  const h = healthCheck();
+  if (!h.bad) return '';
+  return '<div class="mnt" role="alert"><span class="mi" aria-hidden="true">' + ic('shield') + '</span><div class="tx"><b>A verificação achou ' + h.bad + (h.bad === 1 ? ' problema' : ' problemas') + '</b><span>' + esc(h.c.find((x) => x.l === 'bad').t) + '.</span></div><button class="btn sm" type="button" data-act="nav" data-v="equipe">Ver na aba Equipe</button></div>';
+}
+let hcAt = 0, hcSig = '';
+function healthTick() {
+  if (!isStaff() || !S.uid || S.as || !S.namesLoaded || Date.now() - hcAt < 300000) return;
+  hcAt = Date.now();
+  const h = healthCheck(true), sig = h.c.filter((x) => x.l === 'bad').map((x) => x.t).join('|');
+  if (sig && sig !== hcSig) toast('Verificação da rádio: ' + h.c.find((x) => x.l === 'bad').t + '.');
+  hcSig = sig;
+  if (S.view === 'equipe' || sig) scheduleRender();
+}
+
+/* ---------- Relatar problema ---------- */
+const PROB_KIND = { nao_toca: 'A rádio não toca / está sem som', errada: 'Toca uma música diferente do mostrado', trava: 'O site trava ou não carrega', outro: 'Outro problema' };
+function probModal() {
+  if (S.blockedMe) { toast('Seus envios estão pausados pela equipe.'); return; }
+  openModal('<div><h2>Relatar um problema</h2><p class="muted">Conte o que aconteceu. A equipe vê quem relatou para poder te responder.</p></div><div class="fld"><label for="prKind">O que houve?</label><select id="prKind">' + Object.entries(PROB_KIND).map(([k, v]) => '<option value="' + k + '">' + esc(v) + '</option>').join('') + '</select></div><div class="fld"><label for="prText">Detalhes (opcional)</label><textarea id="prText" maxlength="300" placeholder="Ex.: parou de tocar às 10h e voltou depois."></textarea></div><p class="msg" id="prMsg" role="status"></p><div class="acts"><button class="btn ghost" type="button" data-act="close-modal">Cancelar</button><button class="btn pri" type="button" data-act="prob-send">Enviar</button></div>');
+}
+async function probSend() {
+  const m = $('#prMsg'), text = ($('#prText').value || '').trim(), kind = $('#prKind').value;
+  try { if (Date.now() - (+localStorage.getItem('pc_prob_at') || 0) < 300000) { m.className = 'msg'; m.textContent = 'Você acabou de enviar um relato. Espere uns minutos.'; return; } } catch (e) { /* sem armazenamento */ }
+  if (text && badWord(text) && !isStaff()) { m.className = 'msg'; m.textContent = 'Reescreva sem palavrões.'; return; }
+  const cur = AIR && AIR.cur;
+  try {
+    await S.db.collection('problems').add({ kind, text: text.slice(0, 300), by: S.uid, at: Date.now(), status: 'novo', song: cur && cur.song ? cur.song.title : '', tuned: !!S.tuned, ua: (navigator.userAgent || '').slice(0, 120) });
+  } catch (e) { m.className = 'msg'; m.textContent = 'Não foi possível enviar agora. Tente de novo.'; return; }
+  try { localStorage.setItem('pc_prob_at', String(Date.now())); } catch (e) { /* sem armazenamento */ }
+  closeModal(); toast('Relato enviado. Obrigado!');
+}
+function probCard() {
+  const L = Object.entries(S.problems || {}).map(([id, p]) => Object.assign({ id }, p)).sort((a, b) => (a.status === 'resolvido' ? 1 : 0) - (b.status === 'resolvido' ? 1 : 0) || (b.at || 0) - (a.at || 0)).slice(0, 30);
+  const open = L.filter((x) => x.status !== 'resolvido').length;
+  return '<section class="panel sec2"><div><h2>Problemas relatados <span class="chip ' + (open ? 'warn' : 'ok') + '">' + open + ' em aberto</span></h2><p class="muted">Relatos enviados pelos ouvintes pelo botão “Relatar um problema” na tela Ao vivo.</p></div>' + (L.length ? '<ul class="panel rqs">' + L.map((p) => '<li class="rq' + (p.status === 'resolvido' ? ' undone' : '') + '">' + avatar(p.by) + '<div style="min-width:0"><div class="hd"><b>' + esc(nm(p.by)) + '</b><small>' + ago(p.at) + '</small><span class="chip">' + esc(PROB_KIND[p.kind] || 'Problema') + '</span></div>' + (p.text ? '<p class="quote">' + esc(p.text) + '</p>' : '') + '<small class="muted">' + (p.song ? 'Tocando: ' + esc(p.song) + ' · ' : '') + (p.tuned ? 'estava ouvindo' : 'não estava ouvindo') + '</small><div class="acts" style="justify-content:flex-start"><button class="btn sm ' + (p.status === 'resolvido' ? 'ghost' : 'pri') + '" type="button" data-act="pr-done" data-id="' + esc(p.id) + '">' + (p.status === 'resolvido' ? 'Reabrir' : 'Marcar como resolvido') + '</button><button class="btn sm ghost" type="button" data-act="pr-del" data-id="' + esc(p.id) + '">Apagar</button></div></div></li>').join('') + '</ul>' : '<p class="hint">Nenhum relato ainda.</p>') + '</section>';
+}
+
+/* ---------- Manual da equipe ---------- */
+function vMan() {
+  const r = role(), sec = (t, items) => '<section class="panel sec2"><h2>' + t + '</h2><ul class="how">' + items.map((i) => '<li>' + i + '</li>').join('') + '</ul></section>';
+  const prod = sec('Produtor: cuida da programateca', ['Abra <b>Programateca</b> e escolha uma pasta. Use “Adicionar música” para um arquivo ou o envio em massa para vários de uma vez.', 'O nome do arquivo vira o nome da música. Confira título, artista e estilo antes de salvar.', 'Se aparecer o aviso de música repetida, não cadastre de novo.', 'Em <b>Pedidos</b>, veja o que a escola pediu. Use “Confirmar: já está na pasta” quando cadastrar, ou “Recusar”. O botão “Denunciar” serve para pedidos ofensivos.', 'Músicas da pasta <b>Vinhetas</b> são chamadas curtas. As da pasta <b>Reserva</b> tocam quando a grade fica vazia.']);
+  const prog = sec('Programador: monta a grade', ['<b>Grade da semana</b>: monte uma vez cada dia da semana. Ela vale para todos os dias que não tiverem programação própria.', '<b>Estúdio</b>: ajuste um dia específico. Arraste a música para o horário. Se mexer num dia, ele passa a ser só dele.', 'Use “Intercalar vinhetas” para colocar uma vinheta a cada N músicas.', 'Em <b>Equipe</b>, envie o dia para o dono aprovar e veja a verificação das próximas 24 horas.', 'A <b>Enquete</b> e a <b>Pergunta da semana</b> ficam na tela Ao vivo.', 'Se algo der muito errado, ligue o <b>Modo de emergência</b> na aba Equipe.']);
+  const dono = sec('Dono: administra tudo', ['<b>Painel do dono</b>: baixe a cópia de segurança toda semana, restaure se algo for apagado, bloqueie quem abusar e escolha um segundo dono.', '<b>Radialistas</b>: crie contas para a equipe com telefone e senha. A senha tem mais de 5 caracteres, com letra, número e símbolo.', 'Só o dono vê quem curtiu, quem enviou sugestões e os telefones.', 'Revise as denúncias em Pedidos e Sugestões e use “Bloquear autor” se precisar.', '<b>Dados</b> mostra o movimento e gera o relatório mensal para a direção.']);
+  const geral = sec('Para todos da equipe', ['A aba <b>Equipe</b> tem anotações, escala de turnos e problemas relatados pelos ouvintes.', 'Pedidos e sugestões são protegidos. Se aparecer “bloqueado neste aparelho”, peça ao dono para abrir a rádio um instante.', 'O aviso de manutenção silencia a rádio e mostra o aviso a todos. Use só quando precisar.', 'Em caso de dúvida, fale com o dono antes de apagar músicas ou mudar a grade de hoje.']);
+  return '<div class="wrap"><div class="ph"><div><h1>Manual da equipe</h1><p>O que cada cargo faz na Paris Cast. Você é <b>' + esc(ROLES[r] || r) + '</b>.</p></div></div>' + geral + (r === 'produtor' || r === 'dono' ? prod : '') + (r === 'programador' || r === 'dono' ? prog : '') + (r === 'dono' ? dono : '') + (r === 'produtor' ? '<p class="hint">O manual do programador e do dono aparece para quem tem esses cargos.</p>' : '') + '</div>';
+}
+
+/* ---------- A rádio em números ---------- */
+async function loadNum(force) {
+  if (!HAS_RPC() || !S.uid) return;
+  if (!force && S.numAt && Date.now() - S.numAt < 60000) return;
+  S.numAt = Date.now();
+  const r = await rpc('public_stats');
+  if (r && typeof r === 'object') { S.num = r; if (S.view === 'numeros') scheduleRender(); }
+  const t = await rpc('likes_top', { p_n: 5 });
+  if (Array.isArray(t)) { S.top = t; if (S.view === 'numeros') scheduleRender(); }
+}
+function vNum() {
+  const x = S.num, top = (S.top || []).filter((y) => S.songs[y.song]).slice(0, 5);
+  const big = (n, l) => '<div><div class="n">' + n + '</div><div class="l">' + l + '</div></div>';
+  const since = x && x.desde ? new Date(+x.desde).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) : '—';
+  return '<div class="wrap"><div class="ph"><div><h1>A rádio em números</h1><p>Quanto a Paris Cast já foi ouvida pela escola. Os números são de todo mundo junto, sem nomes.</p></div></div>' +
+    (x ? '<div class="panel stats">' + big(x.cadastros | 0, 'Pessoas cadastradas') + big(hm(+x.segundos || 0), 'Tempo total ouvido') + big(S.pres ? (S.pres.listening | 0) : 0, 'Ouvindo agora') + big(x.musicas | 0, 'Músicas na rádio') + big(x.curtidas | 0, 'Curtidas dadas') + big('<span style="font-size:22px">' + esc(since) + '</span>', 'No ar desde') + '</div>' : '<div class="panel empty"><p>Carregando…</p></div>') +
+    '<section class="panel next"><h3>As 5 músicas mais curtidas</h3>' + (top.length ? '<ol class="tn">' + top.map((y, i) => '<li><span class="t rk">' + (i + 1) + '</span>' + thumb(S.songs[y.song]) + '<span style="min-width:0"><b>' + esc(S.songs[y.song].title) + '</b><small>' + esc(S.songs[y.song].artist) + '</small></span><span class="chip acc">' + ic('heart') + y.count + '</span></li>').join('') + '</ol>' : '<p class="hint">Ninguém curtiu nada ainda.</p>') + '</section></div>';
+}
+
+/* ---------- Som com a tela apagada ---------- */
+let WL = null;
+async function wakeSet(on) {
+  try {
+    if (on) { if ('wakeLock' in navigator) WL = await navigator.wakeLock.request('screen'); S.wake = !!WL; }
+    else { if (WL) await WL.release(); WL = null; S.wake = false; }
+  } catch (e) { WL = null; S.wake = false; toast('Seu aparelho não deixou manter a tela ligada.'); }
+  try { localStorage.setItem('pc_wake', S.wake ? '1' : ''); } catch (e) { /* sem armazenamento */ }
+  render();
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && S.wake && !WL && 'wakeLock' in navigator) navigator.wakeLock.request('screen').then((l) => { WL = l; }).catch(() => {}); });
+function bgHelp() {
+  return '<section class="panel sec2"><h2>O som parou com a tela apagada?</h2><ul class="how"><li><b>Android:</b> instale a rádio na tela inicial (botão “Instalar”). Em Configurações do celular, Bateria, procure o Chrome ou a Paris Cast e escolha “Sem restrições”.</li><li><b>iPhone:</b> use o Safari e “Adicionar à Tela de Início”. Mantenha o volume ligado e o modo silencioso desativado.</li><li>Se continuar parando, use “Manter a tela ligada enquanto ouço” abaixo. Gasta mais bateria.</li></ul>' + ('wakeLock' in navigator ? '<label class="tg"><input type="checkbox" data-act="wake-set"' + (S.wake ? ' checked' : '') + '> Manter a tela ligada enquanto ouço</label>' : '<p class="hint">Este navegador não permite manter a tela ligada.</p>') + '</section>';
+}
+
+/* ---------- Perguntas frequentes ---------- */
+const FAQ = [
+  ['Preciso me cadastrar para ouvir?', 'Sim. Só quem faz o cadastro com nome e telefone consegue ouvir a rádio.'],
+  ['Posso escolher a música que toca?', 'Não escolher na hora, porque todos ouvem a mesma coisa ao mesmo tempo, como numa rádio de verdade. Mas você pode pedir músicas e votar nas enquetes.'],
+  ['Quantas músicas posso pedir?', 'Há um limite diário de pedidos e de sugestões por pessoa. O limite aparece na página de pedidos.'],
+  ['Meu pedido é anônimo?', 'Para os outros ouvintes, sim. Só a equipe autorizada lê os pedidos.'],
+  ['Por que minha música não tocou?', 'A equipe monta a grade. Se o pedido for aprovado, a música entra na programateca e depois na programação.'],
+  ['Como ouço com a tela apagada?', 'Instale a rádio na tela inicial e ajuste a bateria do celular. Veja as dicas mais abaixo nesta página.'],
+  ['Encontrei um problema, e agora?', 'Na tela Ao vivo, toque em “Relatar um problema”. A equipe recebe na hora.'],
+  ['Fui bloqueado, o que faço?', 'Fale com a coordenação da rádio. Só a equipe pode desbloquear.']
+];
+function faqHTML() { return '<section class="panel sec2"><h2>Perguntas frequentes</h2><div class="faq">' + FAQ.map(([q, a]) => '<details><summary>' + esc(q) + '</summary><p>' + esc(a) + '</p></details>').join('') + '</div></section>'; }
+
+/* ---------- Ações do lote 4 ---------- */
+async function act4(a, el) {
+  const d = el && el.dataset ? el.dataset : {};
+  switch (a) {
+    case 'bw-save': { const list = String(val('bwText', '')).split(/[,\n;]+/).map((w) => w.trim()).filter(Boolean).slice(0, 300); const ok = await W(() => S.db.doc('config/badwords').set({ list, at: Date.now(), by: S.uid })); if (ok) toast(list.length + ' palavras salvas.'); return true; }
+    case 'tm-save': { const text = String(val('tmText', '')).trim().slice(0, 1200); const ok = await W(() => S.db.doc('config/terms').set({ text, at: Date.now(), by: S.uid })); if (ok) toast(text ? 'Termo salvo.' : 'Voltou ao termo padrão.'); return true; }
+    case 'req-flag': askModal('Denunciar este pedido?', 'Ele fica marcado como recusado e o dono pode ver a denúncia.', 'Denunciar', () => flagReq(d.id), true); return true;
+    case 'sg-flag': askModal('Denunciar esta mensagem?', 'Ela fica marcada para o dono revisar.', 'Denunciar', () => flagSug(d.id), true); return true;
+    case 'em-on': askModal('Ligar o modo de emergência?', 'A rádio passa a tocar só a pasta reserva e ignora a grade até você desligar.', 'Ligar', () => emSet(true), true); return true;
+    case 'em-off': emSet(false); return true;
+    case 'hc-run': healthCheck(true); render(); toast('Verificação feita.'); return true;
+    case 'prob-open': probModal(); return true;
+    case 'prob-send': probSend(); return true;
+    case 'pr-done': { const p = (S.problems || {})[d.id]; if (p) await W(() => S.db.doc('problems/' + d.id).update({ status: p.status === 'resolvido' ? 'novo' : 'resolvido' })); return true; }
+    case 'pr-del': askModal('Apagar este relato?', 'Ele some para toda a equipe.', 'Apagar', () => W(() => S.db.doc('problems/' + d.id).delete()), true); return true;
+    case 'wake-set': wakeSet(!!el.checked); return true;
+    default: return false;
+  }
+}
+const views = { manual: vMan, numeros: vNum, semana: vSem, equipe: vEq, dados: vDad, painel: vPan, meu: vMeu, sobre: vSob, estudio: vEstudio, aovivo: vAoVivo, programacao: vProg, pedidos: vPed, sugestoes: vSug, programateca: vLib, ouvintes: vOuv, alteracoes: vHist, divulgar: vDiv, radialistas: vRad };
 
 const navOk = (n) => n.roles.includes(role()) && (!n.owner || (S.isOwner && !S.as)) && (!n.dono || (window.__staff && isDono() && !S.as));
 function teamBtn() { return !window.__staff || !S.uid ? '' : window.__staff.isAnon() ? '<button class="btn sm ghost" type="button" data-act="rad-enter">Entrar como radialista</button>' : '<button class="btn sm ghost" type="button" data-act="rad-out">Sair da conta</button>'; }
@@ -3312,7 +3525,7 @@ function render() {
   const sv = {}, wy = window.scrollY;
   if (sameView) ['.qlist', '.lsongs', '.bklist'].forEach((q) => { const el = main.querySelector(q); if (el) sv[q] = el.scrollTop; });
   $('#side').innerHTML = sideHTML();
-  main.innerHTML = mheadHTML() + mntBanner() + stripHTML() + instHTML() + aboutHint() + (views[S.view] || vAoVivo)();
+  main.innerHTML = mheadHTML() + mntBanner() + emBanner() + healthBanner() + stripHTML() + instHTML() + aboutHint() + (views[S.view] || vAoVivo)();
   if (sameView) {
     Object.entries(sv).forEach(([q, t]) => { const el = main.querySelector(q); if (el) el.scrollTop = t; });
     if (window.scrollY !== wy) window.scrollTo(0, wy);
@@ -3743,7 +3956,7 @@ function regHTML() {
     '<div class="reg-form"><div><h1>Entrar na rádio</h1><p class="muted" style="margin-top:8px">Informe seu nome e seu telefone. Cada nome e cada telefone só podem ser usados por uma pessoa, e o telefone fica visível só para o dono da rádio.</p></div>' +
     '<form class="fmod" data-act="do-reg" novalidate><div class="fld"><label for="regNome">Nome</label><input id="regNome" type="text" data-d="regNome" value="' + esc(val('regNome', pre)) + '" maxlength="40" autocomplete="name" placeholder="Seu nome e sobrenome"></div>' +
     '<div class="fld"><label for="regTel">Telefone com DDD</label><input id="regTel" type="text" inputmode="tel" data-d="regTel" value="' + esc(val('regTel', '')) + '" maxlength="20" autocomplete="tel" placeholder="(11) 91234-5678"></div>' +
-    '<p class="msg" id="regOut" role="status"></p><button class="btn pri lg" id="regBtn" type="submit">Cadastrar e entrar</button></form>' + (window.__staff ? '<p class="muted" style="margin:0">Faz parte da equipe? <button class="linkbtn" type="button" data-act="rad-login">Entrar como radialista</button></p>' : '') + '</div></section></div>';
+    termsBox() + '<p class="msg" id="regOut" role="status"></p><button class="btn pri lg" id="regBtn" type="submit">Cadastrar e entrar</button></form>' + (window.__staff ? '<p class="muted" style="margin:0">Faz parte da equipe? <button class="linkbtn" type="button" data-act="rad-login">Entrar como radialista</button></p>' : '') + '</div></section></div>';
 }
 async function doReg() {
   const out = $('#regOut'), btn = $('#regBtn');
@@ -3758,6 +3971,7 @@ async function doReg() {
     const w = ' ' + fold(nome).replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
     if (RESERVED.some((x) => w.includes(' ' + x + ' ')) || w.includes(' radio paris ')) { out.textContent = 'Esse nome é reservado à equipe da rádio. Use o seu nome verdadeiro.'; return; }
   }
+  if (!S.isOwner && !($('#regTerms') && $('#regTerms').checked)) { out.textContent = 'Marque que você leu e aceita o termo de uso para continuar.'; return; }
   if (window.__staff && tel === window.__staff.ownerPhone && !S.isOwner) { S.rad = { mode: 'create', ctx: 'owner', tel, nome }; S.radDirty = true; render(); return; }
   btn.disabled = true;
   try {
@@ -3779,7 +3993,7 @@ async function doReg() {
       return;
     }
     const at = Date.now();
-    await S.db.doc('people/' + S.uid).set({ nome, tel, pk, nk, at });
+    await S.db.doc('people/' + S.uid).set({ nome, tel, pk, nk, at, termo: at });
     await S.db.doc('names/' + S.uid).set({ nome, at });
     S.people[S.uid] = { nome, tel, pk, nk, at };
     S.names[S.uid] = { nome, at };
@@ -3937,6 +4151,7 @@ async function removeReg(uid) {
 /* ---------- Ações ---------- */
 async function act(a, el) {
   if (await act3(a, el)) return;
+  if (await act4(a, el)) return;
   switch (a) {
     case 'nav': cueStop(); S.fade = 1; S.view = el.dataset.v; S.sel = null; render(); window.scrollTo(0, 0);
       if (S.view === 'pedidos') refreshQuota('requests', true); else if (S.view === 'sugestoes') refreshQuota('suggestions', true); else if (S.view === 'aovivo') { refreshLikes(true); refreshPoll(true); ping(true); }
@@ -4241,7 +4456,7 @@ function tick() {
   const cur = AIR.cur;
   curKey = cur ? cur.date + cur.sector + cur.id : null;
   syncAudio(AIR);
-  ping(); refreshLikes(); refreshPoll(); refreshWq(); prefetchAudio();
+  ping(); refreshLikes(); refreshPoll(); refreshWq(); prefetchAudio(); healthTick();
   if (S.view === 'pedidos') refreshQuota('requests'); else if (S.view === 'sugestoes') refreshQuota('suggestions');
   const pl0 = S.polls.atual;
   if (pl0 && pl0.status === 'open' && Date.now() >= pl0.endsAt && can('programar') && !S.as) closePoll(false);
@@ -4330,6 +4545,7 @@ async function boot() {
     else if (S.uid) S.db.doc('people/' + S.uid).onSnapshot((d) => { S.people = d.exists ? { [S.uid]: d.data() } : {}; scheduleRender(); }, () => {});
     sub('songs', 'songs', (d) => Object.assign({}, d.data(), { id: d.id }), injectWeek);
     sub('weekly', 'weekly', null, injectWeek);
+    if (isStaff()) sub('problems', 'problems');
     sub('shifts', 'shifts');
     sub('drafts', 'drafts');
     if (isStaff()) sub('notes', 'notes');
