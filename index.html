@@ -912,6 +912,7 @@ a.btn { color: inherit; text-decoration: none; }
 .cd.mini { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; font-size: 13.5px; }
 .cd.mini b { font: 600 15px var(--f-mono); }
 .mnt .btn { margin-left: auto; flex: none; }
+.tg.need { outline: 2px solid var(--bad); outline-offset: 4px; border-radius: 8px; }
 </style>
 </head>
 <body>
@@ -1300,6 +1301,11 @@ function startKeep(title) {
 }
 const stopKeep = () => { try { pauseQuiet(keep); } catch (e) { /* ok */ } };
 autoResume(audio); autoResume(keep);
+function unlockAudio() {
+  try {
+    if (keep.src && (!audio.src || audio.src === location.href)) { audio.src = keep.src; const pr = audio.play(); if (pr && pr.catch) pr.catch(() => {}); }
+  } catch (e) { /* ok */ }
+}
 function audioUrl(id, ok, bad) {
   const u = window.__signedUrl ? window.__signedUrl(id) : null;
   if (u) { ok(u); return; }
@@ -1338,6 +1344,7 @@ function syncAudio(air) {
     stopKeep();
     const st = (url) => {
     if (loadedKey !== key) return;
+    setAudioMsg('');
     audio.src = url;
     try {
       if ('mediaSession' in navigator && window.MediaMetadata) {
@@ -1351,6 +1358,7 @@ function syncAudio(air) {
     const pr = audio.play();
     if (pr && pr.catch) pr.catch(() => setAudioMsg('O navegador bloqueou o áudio. Toque em “Ouvir ao vivo” de novo.'));
     };
+    if (!(window.__signedUrl && window.__signedUrl(cur.song.assetId)) && window.__signAsset) setAudioMsg('Carregando a rádio…');
     audioUrl(cur.song.assetId, st, () => { if (loadedKey === key) setAudioMsg('Não consegui abrir o áudio. Confirme se seu cadastro foi concluído.'); });
   } else if (!audio.paused && Math.abs(audio.currentTime - offset) > 4) {
     try { audio.currentTime = offset; } catch (e) { /* ignorar */ }
@@ -3971,7 +3979,11 @@ async function doReg() {
     const w = ' ' + fold(nome).replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
     if (RESERVED.some((x) => w.includes(' ' + x + ' ')) || w.includes(' radio paris ')) { out.textContent = 'Esse nome é reservado à equipe da rádio. Use o seu nome verdadeiro.'; return; }
   }
-  if (!S.isOwner && !($('#regTerms') && $('#regTerms').checked)) { out.textContent = 'Marque que você leu e aceita o termo de uso para continuar.'; return; }
+  if (!S.isOwner && !($('#regTerms') && $('#regTerms').checked)) {
+    out.textContent = 'Falta marcar a caixinha “Li e aceito o termo de uso”, logo acima do botão.';
+    const tb = $('#regTerms'); if (tb) { const lb = tb.closest('label'); if (lb) lb.classList.add('need'); try { tb.focus(); tb.scrollIntoView({ block: 'center' }); } catch (e) { /* ok */ } }
+    return;
+  }
   if (window.__staff && tel === window.__staff.ownerPhone && !S.isOwner) { S.rad = { mode: 'create', ctx: 'owner', tel, nome }; S.radDirty = true; render(); return; }
   btn.disabled = true;
   try {
@@ -4156,7 +4168,7 @@ async function act(a, el) {
     case 'nav': cueStop(); S.fade = 1; S.view = el.dataset.v; S.sel = null; render(); window.scrollTo(0, 0);
       if (S.view === 'pedidos') refreshQuota('requests', true); else if (S.view === 'sugestoes') refreshQuota('suggestions', true); else if (S.view === 'aovivo') { refreshLikes(true); refreshPoll(true); ping(true); }
       break;
-    case 'play': if (mntOf()) { mntListenModal(); break; } S.tuned = true; userPaused = false; loadedKey = null; S.audioMsg = ''; AIR = onAir(); syncAudio(AIR); render(); ping(true); break;
+    case 'play': if (mntOf()) { mntListenModal(); break; } unlockAudio(); S.tuned = true; userPaused = false; loadedKey = null; S.audioMsg = ''; AIR = onAir(); syncAudio(AIR); render(); ping(true); break;
     case 'install': doInstall(); break;
     case 'install-x': try { localStorage.setItem('pc_inst_x', String(Date.now())); } catch (e) { /* sem armazenamento */ } render(); break;
     case 'mnt-open': if (isDono() && !S.as) mntModal(); break;
@@ -4464,7 +4476,7 @@ function tick() {
     acc.sec++;
     const st = cur.song.style || 'outros';
     acc.styles[st] = (acc.styles[st] || 0) + 1;
-    if (++sinceFlush >= 30) { sinceFlush = 0; flush(); }
+    if (++sinceFlush >= 90) { sinceFlush = 0; flush(); }
   }
   const clk = $('#sideClock');
   if (clk) clk.textContent = hhmmss(AIR.n.sec);
