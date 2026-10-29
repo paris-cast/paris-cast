@@ -3507,9 +3507,12 @@ function mheadHTML() {
 
 /* ---------- Render ---------- */
 let rafId = 0, RV = null;
+document.addEventListener('focusout', (e) => { const t = e.target; if (t && t.dataset && t.dataset.act === 'view-as' && S.pendRender) { S.pendRender = false; setTimeout(scheduleRender, 50); } });
 function scheduleRender() { if (!rafId) rafId = requestAnimationFrame(() => { rafId = 0; render(); }); }
 function allowed(v) { return NAV.some((n) => n.id === v && navOk(n)); }
 function render() {
+  const ae0 = document.activeElement;
+  if (ae0 && ae0.tagName === 'SELECT' && ae0.dataset && ae0.dataset.act === 'view-as') { S.pendRender = true; return; }
   AIR = onAir();
   if (window.__staff) {
     if (!S.rad && needsPw()) { S.rad = { mode: 'create', ctx: isOwnerTel() ? 'owner' : 'staff', tel: (S.people[S.uid] || {}).tel || '' }; S.radDirty = true; }
@@ -4441,7 +4444,7 @@ document.addEventListener('change', async (e) => {
     if (!ar.value.trim() || d <= 0) lookupSong();
     return;
   }
-  if (t.dataset && t.dataset.act === 'view-as') { S.as = t.value === 'dono' ? null : t.value; S.view = LAND[role()]; S.folder = null; S.sel = null; render(); return; }
+  if (t.dataset && t.dataset.act === 'view-as') { t.blur(); S.pendRender = false; S.as = t.value === 'dono' ? null : t.value; S.view = LAND[role()]; S.folder = null; S.sel = null; render(); return; }
   if (t.dataset && t.dataset.act === 'date-input') { act('date-input', t); return; }
   if (t.dataset && t.dataset.act === 'est-zoom') { const n = nowSP(), x = SECT.find((q) => q.id === estSector()), old = E.zoom; E.zoom = +t.value; const tls = $('#tlscroll'); if (tls) E.scroll = tls.scrollLeft * E.zoom / old; render(); return; }
   if (t.dataset && t.dataset.act === 'limit-set') { const k = t.dataset.k, n = +t.value; W(() => S.db.doc('config/limits').set(Object.assign({}, S.config.limits || {}, { [k]: n }))).then((ok) => { if (ok) toast('Limite atualizado.'); }); return; }
@@ -4513,7 +4516,7 @@ function sub(path, key, build, first) {
     S[key] = o;
     if (first) first();
     scheduleNames();
-    scheduleRender();
+    if (key !== 'listeners' || S.view === 'ouvintes' || S.view === 'dados') scheduleRender();
   }, (e) => console.warn(path, e));
 }
 async function use(name) { try { return window.claude && window.claude.use ? await window.claude.use(name) : null; } catch (e) { return null; } }
